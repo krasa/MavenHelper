@@ -1,0 +1,56 @@
+<idea-plugin version="2">
+
+	<id>MavenRunHelper</id>
+	<name>Maven Run Helper</name>
+	<version>0.1</version>
+
+	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
+		Krasa
+	</vendor>
+
+	<description><![CDATA[
+Adds actions for running maven goals for current module. <br>
+<br>
+Usage:<br>
+Right click in Editor or Project View Toolbar | Run Maven.
+<br>
+      ]]></description>
+
+	<change-notes><![CDATA[
+      Add change notes here.<br>
+      <small>most HTML tags may be used</small>
+      ]]>
+	</change-notes>
+
+	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+	<idea-version since-build="107.105"/>
+
+	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+		   on how to target different products -->
+	<!-- uncomment to enable plugin in all products
+	  <depends>com.intellij.modules.lang</depends>
+	  -->
+	<application-components>
+		<component>
+			<implementation-class>krasa.mavenrun.ApplicationComponent</implementation-class>
+		</component>
+	</application-components>
+
+	<project-components>
+		<!-- Add your project components here -->
+	</project-components>
+
+	<actions>
+		<!-- Add your actions here -->
+		<!--<action id="RefreshIconsAction" class="krasa.mavenrun.RefreshIconsAction" icon="MavenIcons.MavenLogo"  text="RefreshIconsAction" description="RefreshIconsAction">-->
+		<!--<add-to-group group-id="MainToolBar"  anchor="last"/>-->
+		<!--</action>-->
+	</actions>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<!-- Add your extensions here -->
+	</extensions>
+
+	<depends>org.jetbrains.idea.maven</depends>
+
+</idea-plugin>
