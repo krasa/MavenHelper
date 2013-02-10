@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MavenRunHelper.ipr" afterPath="$PROJECT_DIR$/MavenRunHelper.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MavenRunHelper.iws" afterPath="$PROJECT_DIR$/MavenRunHelper.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/META-INF/plugin.xml" />
     </list>
     <ignored path="MavenRunPlugin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -12,15 +12,17 @@
     <file path="/*.regexp" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360454693806" ignored="false" />
     <file path="/ProjectComponent.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360512105353" ignored="false" />
     <file path="/a.dummy" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360515836406" ignored="false" />
-    <file path="/Dummy.txt" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360516160749" ignored="false" />
+    <file path="/Dummy.txt" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360516281585" ignored="false" />
     <file path="$PROJECT_DIR$/../intellij-community/plugins/maven/maven3-server-impl/lib/maven3/conf/settings.xml" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360500035141" ignored="false" />
     <file path="/AddMultipleFilesOptionsDialog.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360500109066" ignored="false" />
     <file path="/DefaultActionGroup.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360501526361" ignored="false" />
     <file path="/RefreshIcons.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360502031983" ignored="false" />
     <file path="/fragment.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360512859675" ignored="false" />
-    <file path="/MainMavenActionGroup.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360515165032" ignored="false" />
+    <file path="/MainMavenActionGroup.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360517528615" ignored="false" />
     <file path="$PROJECT_DIR$/../intellij-community/plugins/maven/src/main/java/icons/MavenIcons.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360512133481" ignored="false" />
     <file path="/ApplicationSettings.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360512795275" ignored="false" />
+    <file path="$PROJECT_DIR$/../../krasa-utils/pom.xml" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360516349338" ignored="false" />
+    <file path="/MavenIcons.java" changelist="d1ab73c4-4d2e-48a7-b4f4-ee5561d6e51d" time="1360517726563" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +37,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint url="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunner.java" line="68" class="org.jetbrains.idea.maven.execution.MavenRunner" package="org.jetbrains.idea.maven.execution">
         <option name="ENABLED" value="false" />
@@ -100,6 +101,7 @@
         <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -113,16 +115,7 @@
       <file leaf-file-name="MainMavenActionGroup.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MainMavenActionGroup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="30" selection-start="1840" selection-end="1875" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ApplicationComponent.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/ApplicationComponent.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="19" selection-start="2373" selection-end="2373" vertical-scroll-proportion="0.0">
+            <state line="28" column="13" selection-start="1308" selection-end="1308" vertical-scroll-proportion="-6.52">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -130,20 +123,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DefaultActionGroup.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-api/src/com/intellij/openapi/actionSystem/DefaultActionGroup.java">
+      <file leaf-file-name="MavenGoalRunAction.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenGoalRunAction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="13" selection-start="1418" selection-end="1418" vertical-scroll-proportion="0.0">
+            <state line="40" column="27" selection-start="1443" selection-end="1541" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MavenRunHelper.ipr" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/MavenRunHelper.ipr">
+      <file leaf-file-name="MavenProjectActionGroup.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenProjectActionGroup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="8" column="74" selection-start="375" selection-end="395" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ApplicationComponent.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/ApplicationComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="83" column="0" selection-start="3109" selection-end="3109" vertical-scroll-proportion="0.5399306">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -151,16 +155,7 @@
       <file leaf-file-name="MavenRunHelper.iml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MavenRunHelper.iml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="14" selection-start="403" selection-end="403" vertical-scroll-proportion="-4.76">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="4" selection-start="386" selection-end="386" vertical-scroll-proportion="0.0">
+            <state line="7" column="14" selection-start="403" selection-end="403" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -193,10 +188,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MavenProjectActionGroup.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenProjectActionGroup.java">
+      <file leaf-file-name="MavenActionGroup.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenActionGroup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="74" selection-start="375" selection-end="395" vertical-scroll-proportion="0.0">
+            <state line="8" column="26" selection-start="337" selection-end="337" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="34" selection-start="598" selection-end="598" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -231,9 +235,10 @@
         <option value="$PROJECT_DIR$/src/krasa/mavenrun/Profile.java" />
         <option value="$PROJECT_DIR$/src/krasa/mavenrun/ApplicationSettings.java" />
         <option value="$PROJECT_DIR$/src/krasa/mavenrun/model/ApplicationSettings.java" />
-        <option value="$PROJECT_DIR$/META-INF/plugin.xml" />
-        <option value="$PROJECT_DIR$/src/krasa/mavenrun/ApplicationComponent.java" />
+        <option value="$PROJECT_DIR$/src/krasa/mavenrun/MavenIcons.java" />
         <option value="$PROJECT_DIR$/src/krasa/mavenrun/action/MainMavenActionGroup.java" />
+        <option value="$PROJECT_DIR$/src/krasa/mavenrun/ApplicationComponent.java" />
+        <option value="$PROJECT_DIR$/META-INF/plugin.xml" />
       </list>
     </option>
   </component>
@@ -272,14 +277,22 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="MavenRunHelper" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; IDEA IU-122.746 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -307,6 +320,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="mavenrun" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MavenRunHelper" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MavenRunHelper" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mavenrun" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -354,21 +389,23 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="OverrideImplement.combined" value="false" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="net.intellij.plugins.changelistaction.ChangelistActionComponent" />
+    <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
+    <property name="last_opened_file_path" value="E:/workspace/IntelliJ IDEA 11.0.2/plugins/maven/lib/wadl-core.jar!/" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -504,6 +541,11 @@
       <created>1360454317580</created>
       <updated>1360454317580</updated>
     </task>
+    <task id="LOCAL-00001" summary="0.1">
+      <created>1360516188876</created>
+      <updated>1360516188876</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -513,7 +555,6 @@
       <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32962137" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TunnelliJ" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="JRebel Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -538,6 +579,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24973261" sideWeight="0.6013363" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -606,41 +648,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_37/src.zip!/java/awt/event/InvocationEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="0" selection-start="8309" selection-end="8309" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_37/src.zip!/java/awt/EventQueue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="665" column="0" selection-start="29278" selection-end="29278" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-impl/src/com/intellij/openapi/application/impl/LaterInvocator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="332" column="0" selection-start="11080" selection-end="11080" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/project/actions/RunBuildAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="0" selection-start="1407" selection-end="1407" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/utils/MavenUIUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="0" selection-start="1855" selection-end="1855" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_37/src.zip!/javax/swing/JTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="138" column="41" selection-start="5200" selection-end="5200" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/tasks/MavenTasksManagerState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="704" selection-end="704" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/tasks/MavenTasksManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="47" column="21" selection-start="2104" selection-end="2104" vertical-scroll-proportion="0.0" />
@@ -660,11 +667,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/project/MavenProjectsTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="24" selection-start="3514" selection-end="3514" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#0#53106#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="75" column="24" selection-start="3514" selection-end="3514" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/utils/actions/MavenActionUtil.java">
@@ -686,19 +689,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/project/MavenProject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="898" column="34" selection-start="32093" selection-end="32093" vertical-scroll-proportion="-15.48">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#23411#23451#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/icons/MavenIcons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="70" selection-start="995" selection-end="995" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="898" column="34" selection-start="32093" selection-end="32093" vertical-scroll-proportion="-15.48" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/maven-server-api/src/org/jetbrains/idea/maven/model/MavenPlugin.java">
@@ -717,9 +708,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/core-api/src/com/intellij/openapi/project/PossiblyDumbAware.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="17" selection-start="681" selection-end="681" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="20" column="17" selection-start="681" selection-end="681" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-api/src/com/intellij/openapi/actionSystem/AnAction.java">
@@ -731,121 +720,82 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunnerConfigurable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="67" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="72" column="67" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/ExecutionManagerImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="26" selection-start="4097" selection-end="4097" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="105" column="26" selection-start="4097" selection-end="4097" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/RunConfigurationSettingsEditor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="17" selection-start="232" selection-end="232" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="9" column="17" selection-start="232" selection-end="232" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/RunConfigurable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="6" selection-start="2928" selection-end="2928" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="76" column="6" selection-start="2928" selection-end="2928" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/RunConfigurationBeforeRunProvider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="13" selection-start="2231" selection-end="2231" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="57" column="13" selection-start="2231" selection-end="2231" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/RunManagerImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="13" selection-start="1521" selection-end="1521" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="42" column="13" selection-start="1521" selection-end="1521" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/tasks/tasks-core/src/com/intellij/tasks/context/RunConfigurationsContextProvider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="16" selection-start="1008" selection-end="1008" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="29" column="16" selection-start="1008" selection-end="1008" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/RunnerAndConfigurationSettingsImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="16" selection-start="2486" selection-end="2486" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="69" column="16" selection-start="2486" selection-end="2486" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/lang-impl/src/com/intellij/execution/impl/ProjectRunConfigurationManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="53" selection-start="1687" selection-end="1688" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="47" column="53" selection-start="1687" selection-end="1688" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-impl/src/com/intellij/ide/IdeEventQueue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="677" column="0" selection-start="21946" selection-end="21946" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="677" column="0" selection-start="21946" selection-end="21946" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/test/java/org/jetbrains/idea/maven/execution/MavenRunConfigurationTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="39" selection-start="1935" selection-end="1935" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="42" column="39" selection-start="1935" selection-end="1935" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenConfigurationProducer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="12" selection-start="2682" selection-end="2682" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="67" column="12" selection-start="2682" selection-end="2682" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="41" column="0" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenResumeAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="78" selection-start="3470" selection-end="3470" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="85" column="78" selection-start="3470" selection-end="3470" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunConfigurationSettings.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="10" selection-start="1253" selection-end="1253" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="32" column="10" selection-start="1253" selection-end="1253" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenExternalParameters.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="396" column="5" selection-start="16539" selection-end="16539" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenGoalRunAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="27" selection-start="1443" selection-end="1541" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="396" column="5" selection-start="16539" selection-end="16539" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunConfigurationType.java">
@@ -857,7 +807,78 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/org/jetbrains/idea/maven/execution/MavenRunnerParametersConfigurable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="9" selection-start="2855" selection-end="2855" vertical-scroll-proportion="0.0">
+        <state line="65" column="9" selection-start="2855" selection-end="2855" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/model/Profile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="9" selection-start="340" selection-end="340" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-api/src/com/intellij/openapi/actionSystem/DefaultActionGroup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="13" selection-start="1418" selection-end="1418" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MavenRunHelper.ipr">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="32" selection-start="401" selection-end="401" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 10.5.4/plugins/maven/lib/maven.jar!/org/jetbrains/idea/maven/utils/MavenIcons.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="173" selection-end="173" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 11.0.2/plugins/maven/lib/maven.jar!/images/phase.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 11.0.2/lib/openapi.jar!/com/intellij/openapi/actionSystem/AnActionEvent.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="80" selection-start="1549" selection-end="1549" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 11.0.2/plugins/maven/lib/maven.jar!/images/modulesClosed.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../intellij-community-123/plugins/maven/src/main/java/icons/MavenIcons.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="62" selection-start="474" selection-end="483" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 11.0.2/lib/util.jar!/com/intellij/openapi/util/IconLoader.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="67" selection-start="1213" selection-end="1213" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://E:/workspace/IntelliJ IDEA 11.0.2/plugins/maven/lib/maven.jar!/org/jetbrains/idea/maven/utils/MavenIcons.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="173" selection-end="173" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="34" selection-start="598" selection-end="598" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -869,9 +890,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/model/Profile.java">
+    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MainMavenActionGroup.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="9" selection-start="340" selection-end="340" vertical-scroll-proportion="0.0">
+        <state line="28" column="13" selection-start="1308" selection-end="1308" vertical-scroll-proportion="-6.52">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MavenGoalRunAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="27" selection-start="1443" selection-end="1541" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -899,14 +929,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MavenRunHelper.iml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="14" selection-start="403" selection-end="403" vertical-scroll-proportion="-4.76">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="4" selection-start="386" selection-end="386" vertical-scroll-proportion="0.0">
+        <state line="7" column="14" selection-start="403" selection-end="403" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -918,33 +941,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../intellij-community-123/platform/platform-api/src/com/intellij/openapi/actionSystem/DefaultActionGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="13" selection-start="1418" selection-end="1418" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/ApplicationComponent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="19" selection-start="2373" selection-end="2373" vertical-scroll-proportion="0.0">
+        <state line="83" column="0" selection-start="3109" selection-end="3109" vertical-scroll-proportion="0.5399306">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/krasa/mavenrun/action/MainMavenActionGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="30" selection-start="1840" selection-end="1875" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MavenRunHelper.ipr">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -989,7 +991,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.6</last-edited>
+          <last-edited>IDEA IU-111.277</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
