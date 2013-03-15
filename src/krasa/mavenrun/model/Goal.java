@@ -3,6 +3,10 @@ package krasa.mavenrun.model;
 public class Goal {
 	String commandLine;
 
+	public Goal(String s) {
+		commandLine = s;
+	}
+
 	public String getCommandLine() {
 		return commandLine;
 	}

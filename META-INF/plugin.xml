@@ -2,21 +2,23 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>0.1</version>
+	<version>0.2</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
 	</vendor>
 
-	<description><![CDATA[
-Adds actions for running maven goals for current module. <br>
-<br>
-Usage:<br>
-Right click in Editor or Project View Toolbar | Run Maven.
-<br>
+    <description><![CDATA[
+	    Successor of "Maven build-this-module" plugin.<br><br>
+        Adds actions to run maven goals for module that contains the current file. <br>
+        <br>    
+        Usage:<br>
+        Right click in Editor or Project View Toolbar | Run Maven.<br>
+        <br>
       ]]></description>
 
-	<change-notes><![CDATA[
+    <change-notes><![CDATA[
+            0.2 - jetty:run and tomcatX:run added to main group, when there is a plugin for it
 			]]>
 	</change-notes>
 

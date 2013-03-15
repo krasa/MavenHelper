@@ -24,7 +24,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		PersistentStateComponent<ApplicationSettings> {
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
-	ApplicationSettings applicationSettings = new ApplicationSettings();
+	ApplicationSettings applicationSettings;
 
 
 	public void initComponent() {
@@ -67,8 +67,12 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		return "ApplicationComponent";
 	}
 
-	@Nullable
+	@NotNull
+	@Override
 	public ApplicationSettings getState() {
+		if (applicationSettings == null) {
+			applicationSettings = ApplicationSettings.defaultApplicationSettings();
+		}
 		return applicationSettings;
 	}
 
@@ -78,7 +82,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	@Nls
 	public String getDisplayName() {
-		return "MavenRunHelper";
+		return "Maven Run Helper";
 	}
 
 	@Nullable
