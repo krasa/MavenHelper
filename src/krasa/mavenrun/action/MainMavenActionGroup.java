@@ -30,6 +30,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.MavenIcons;
 
+@SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 	private Set<String> pluginGoalsSet = new HashSet<String>();
@@ -49,7 +50,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 			List<MavenActionGroup> mavenActionGroups = getPlugins(e);
 
-			addCustomActions(anActions);
+			addCustomActions(anActions, mavenActionGroups);
 			separator(anActions);
 
 			addPlugins(anActions, mavenActionGroups);
@@ -78,7 +79,8 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	private void addCustomActions(ArrayList<AnAction> anActions) {
+	private void addCustomActions(ArrayList<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
+		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
 		for (Goal goal : ApplicationComponent.getInstance().getState().getSmartGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
 				anActions.add(createGoalRunAction(goal.getCommandLine()));
@@ -91,11 +93,13 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		Project project = e.getProject();
 		MavenProjectsNavigator.getInstance(project).getState();
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
-			MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
-			plugin.getTemplatePresentation().setIcon(MavenIcons.PhasesClosed);
-			addPluginGoals(project, mavenPlugin, plugin);
-			mavenActionGroups.add(plugin);
+		if (mavenProject != null) {
+			for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
+				MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
+				plugin.getTemplatePresentation().setIcon(MavenIcons.PhasesClosed);
+				addPluginGoals(project, mavenPlugin, plugin);
+				mavenActionGroups.add(plugin);
+			}
 		}
 		return mavenActionGroups;
 	}

@@ -1,12 +1,12 @@
 <idea-plugin version="2" url="https://github.com/krasa/MavenRunHelper">
 
-	<id>MavenRunHelper</id>
-	<name>Maven Run Helper</name>
-	<version>0.2</version>
+    <id>MavenRunHelper</id>
+    <name>Maven Run Helper</name>
+    <version>0.2</version>
 
-	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
-		Krasa
-	</vendor>
+    <vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
+        Krasa
+    </vendor>
 
     <description><![CDATA[
 	    Successor of "Maven build-this-module" plugin.<br><br>
@@ -20,31 +20,31 @@
     <change-notes><![CDATA[
             0.2 - jetty:run and tomcatX:run added to main group, when there is a plugin for it
 			]]>
-	</change-notes>
+    </change-notes>
 
-	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-	<idea-version since-build="122.000"/>
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="122.000"/>
 
-	<application-components>
-		<component>
-			<implementation-class>krasa.mavenrun.ApplicationComponent</implementation-class>
-		</component>
-	</application-components>
+    <application-components>
+        <component>
+            <implementation-class>krasa.mavenrun.ApplicationComponent</implementation-class>
+        </component>
+    </application-components>
 
-	<project-components>
-	</project-components>
+    <project-components>
+    </project-components>
 
-	<actions>
-		<!-- Add your actions here -->
-		<!--<action id="RefreshIconsAction" class="krasa.mavenrun.RefreshIconsAction" icon="MavenIcons.MavenLogo"  text="RefreshIconsAction" description="RefreshIconsAction">-->
-		<!--<add-to-group group-id="MainToolBar"  anchor="last"/>-->
-		<!--</action>-->
-	</actions>
+    <actions>
+        <!--FOR DEV ONLY-->
+        <!--<action id="RefreshIconsAction" class="krasa.mavenrun.RefreshIconsAction" icon="MavenIcons.MavenLogo"  text="RefreshIconsAction" description="RefreshIconsAction">-->
+        <!--<add-to-group group-id="MainToolBar"  anchor="last"/>-->
+        <!--</action>-->
+    </actions>
 
-	<extensions defaultExtensionNs="com.intellij">
-		<!-- Add your extensions here -->
-	</extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
 
-	<depends>org.jetbrains.idea.maven</depends>
+    <depends>org.jetbrains.idea.maven</depends>
 
 </idea-plugin>
