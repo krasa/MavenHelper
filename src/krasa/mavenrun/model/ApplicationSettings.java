@@ -19,7 +19,6 @@ public class ApplicationSettings {
 		return goals;
 	}
 
-
 	public static ApplicationSettings defaultApplicationSettings() {
 		ApplicationSettings applicationSettings = new ApplicationSettings();
 		applicationSettings.addSmartGoal("jetty:run");

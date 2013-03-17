@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://github.com/krasa/MavenRunHelper">
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>

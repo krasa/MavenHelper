@@ -1,7 +1,7 @@
 package krasa.mavenrun.model;
 
 public class Goal {
-	String commandLine;
+	private String commandLine;
 
 	public Goal(String s) {
 		commandLine = s;
