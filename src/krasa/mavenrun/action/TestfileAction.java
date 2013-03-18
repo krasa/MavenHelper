@@ -3,11 +3,8 @@ package krasa.mavenrun.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
-
-import krasa.mavenrun.model.Goal;
-
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -16,32 +13,18 @@ import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.psi.JavaDirectoryService;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPackage;
 
-public class MavenGoalRunAction extends AnAction implements DumbAware {
+public class TestFileAction extends AnAction implements DumbAware {
 
-	private List<String> goalsToRun;
-
-	public MavenGoalRunAction() {
-	}
-
-	public MavenGoalRunAction(String goal) {
-		this.goalsToRun = parse(goal);
-	}
-
-	public MavenGoalRunAction(String goal, Icon icon) {
-		super(goal, goal, icon);
-		this.goalsToRun = parse(goal);
-	}
-
-	public MavenGoalRunAction(Goal goal, Icon icon) {
-		super(goal.getCommandLine(), goal.getCommandLine(), icon);
-		this.goalsToRun = parse(goal.getCommandLine());
-	}
-
-	public MavenGoalRunAction(Goal goal) {
-		this.goalsToRun = parse(goal.getCommandLine());
+	public TestFileAction() {
+		super("Test file");
 	}
 
 	private List<String> parse(String goal) {
@@ -58,11 +41,34 @@ public class MavenGoalRunAction extends AnAction implements DumbAware {
 	public void actionPerformed(AnActionEvent e) {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {
-			final DataContext context = e.getDataContext();
-			MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goalsToRun,
-					MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
-			MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+
+			PsiPackage filePackage = getFilePackage(e.getDataContext());
+			if (filePackage != null) {
+				List<String> goals = new ArrayList<String>();
+				goals.add("test");
+
+				PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
+				goals.add("-Dtest=" + filePackage.getQualifiedName() + "." + psiFile.getName());
+				goals.add("test-compile");
+				goals.add("surefire:test");
+
+				final DataContext context = e.getDataContext();
+				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
+						MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
+				MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+			}
 		}
+	}
+
+	@Nullable
+	static PsiPackage getFilePackage(DataContext dataContext) {
+		PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
+		if (psiFile == null)
+			return null;
+		PsiDirectory containingDirectory = psiFile.getContainingDirectory();
+		if (containingDirectory == null || !containingDirectory.isValid())
+			return null;
+		return JavaDirectoryService.getInstance().getPackage(containingDirectory);
 	}
 
 	@Override
