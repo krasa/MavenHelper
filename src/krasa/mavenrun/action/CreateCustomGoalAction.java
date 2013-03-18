@@ -23,13 +23,16 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	}
 
 	public void actionPerformed(AnActionEvent e) {
-		ApplicationSettings state = ApplicationComponent.getInstance().getState();
+		ApplicationComponent instance = ApplicationComponent.getInstance();
+		ApplicationSettings state = instance.getState();
 		List<String> goals = state.getGoalsAsStrings();
 
 		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(),
 				goals.toArray(goals.toArray(new String[goals.size()])), "", new NonEmptyInputValidator());
 		if (StringUtils.isNotBlank(s)) {
-			state.add(new Goal(s.trim()));
+			Goal o = new Goal(s.trim());
+			state.add(o);
+			instance.registerAction(o);
 			new MavenGoalRunAction(s).actionPerformed(e);
 		}
 	}

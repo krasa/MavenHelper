@@ -1,6 +1,6 @@
 package krasa.mavenrun.model;
 
-public class Goal {
+public class Goal extends DomainObject {
 	private String commandLine;
 
 	public Goal() {

@@ -2,7 +2,7 @@
 
     <id>MavenRunHelper</id>
     <name>Maven Run Helper</name>
-    <version>0.3.1</version>
+    <version>0.4</version>
 
     <vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
         Krasa
@@ -18,6 +18,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
+            0.4 - ability to define shortcuts and delete goals
+            <br>
             0.3 - ability to define custom goals
             <br>
             0.2 - jetty:run and tomcatX:run added to main group, when there is a plugin for it

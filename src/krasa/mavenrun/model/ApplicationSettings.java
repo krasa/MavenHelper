@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.jetbrains.idea.maven.model.MavenConstants;
 
-public class ApplicationSettings implements Cloneable {
+import com.rits.cloning.Cloner;
+
+public class ApplicationSettings extends DomainObject implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 
 	int version = 0;
@@ -71,4 +73,12 @@ public class ApplicationSettings implements Cloneable {
 		}
 		return strings;
 	}
+
+	@Override
+	public ApplicationSettings clone() {
+		Cloner cloner = new Cloner();
+		cloner.nullInsteadOfClone();
+		return cloner.deepClone(this);
+	}
+
 }

@@ -3,8 +3,12 @@ package krasa.mavenrun;
 import javax.swing.*;
 
 import krasa.mavenrun.action.MainMavenActionGroup;
+import krasa.mavenrun.action.MavenGoalRunAction;
+import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
+import krasa.mavenrun.model.Goal;
 
+import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
@@ -27,11 +32,32 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		PersistentStateComponent<ApplicationSettings> {
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
-
-	private ApplicationSettings applicationSettings = ApplicationSettings.defaultApplicationSettings();
+	private ApplicationSettingsForm form;
+	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase));
+		registerActions();
+	}
+
+	private void registerActions() {
+		ActionManager instance = ActionManager.getInstance();
+		for (Goal goal : settings.getGoals()) {
+			registerAction(instance, goal);
+		}
+	}
+
+	private void registerAction(ActionManager instance, Goal goal) {
+		String actionId = "MavenRunHelper" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
+		instance.unregisterAction(actionId);
+		instance.registerAction(actionId, new MavenGoalRunAction(goal, MavenIcons.PluginGoal),
+				PluginId.getId("MavenRunHelper"));
+		instance.getKeyboardShortcut(actionId);
+	}
+
+	public void registerAction(Goal o) {
+		ActionManager instance = ActionManager.getInstance();
+		registerAction(instance, o);
 	}
 
 	private void addActionGroup(ActionGroup actionGroup) {
@@ -76,14 +102,14 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	@NotNull
 	@Override
 	public ApplicationSettings getState() {
-		if (applicationSettings == null) {
-			applicationSettings = ApplicationSettings.defaultApplicationSettings();
+		if (settings == null) {
+			settings = ApplicationSettings.defaultApplicationSettings();
 		}
-		return applicationSettings;
+		return settings;
 	}
 
 	public void loadState(ApplicationSettings state) {
-		applicationSettings = state;
+		settings = state;
 	}
 
 	@Nls
@@ -98,23 +124,30 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	@Nullable
 	public JComponent createComponent() {
-		return null;
+		form = new ApplicationSettingsForm(getState());
+		return form.getRootComponent();
 	}
 
 	public boolean isModified() {
-		return false;
+		return form.isSettingsModified(settings);
 	}
 
 	public void apply() throws ConfigurationException {
+		settings = form.getSettings().clone();
 	}
 
 	public void reset() {
+		if (form != null) {
+			form.importFrom(settings);
+		}
 	}
 
 	public void disposeUIResources() {
+		form = null;
 	}
 
 	public static ApplicationComponent getInstance() {
 		return ApplicationManager.getApplication().getComponent(ApplicationComponent.class);
 	}
+
 }

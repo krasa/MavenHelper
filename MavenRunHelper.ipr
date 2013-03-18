@@ -430,7 +430,10 @@
     <option name="name" value="default" />
     <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../_T-Mobile/org.eclipse.jdt.core.prefs" />
   </component>
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/lib/cloning-1.8.5.jar" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lib/commons-beanutils.jar" charset="UTF-8" />
+  </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
@@ -587,6 +590,16 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
+  <component name="libraryTable">
+    <library name="lib">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    </library>
+  </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="annotationTypeSettings">
       <map>
@@ -612,7 +625,7 @@
         <entry key="property.minPriorityToReport" value="Medium" />
         <entry key="property.runAnalysisInBackground" value="false" />
         <entry key="property.showHiddenDetectors" value="false" />
-        <entry key="property.toolWindowEditorPreview" value="false" />
+        <entry key="property.toolWindowEditorPreview" value="true" />
         <entry key="property.toolWindowToFront" value="true" />
       </map>
     </option>

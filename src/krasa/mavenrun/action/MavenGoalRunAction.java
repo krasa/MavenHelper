@@ -40,6 +40,10 @@ public class MavenGoalRunAction extends AnAction implements DumbAware {
 		this.goalsToRun = parse(goal.getCommandLine());
 	}
 
+	public MavenGoalRunAction(Goal goal) {
+		this.goalsToRun = parse(goal.getCommandLine());
+	}
+
 	private List<String> parse(String goal) {
 		List<String> strings = new ArrayList<String>();
 		String[] split = goal.split(" ");
