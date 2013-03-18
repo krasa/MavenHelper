@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jetbrains.idea.maven.model.MavenConstants;
 
-public class ApplicationSettings {
+public class ApplicationSettings implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 
 	int version = 0;
@@ -27,6 +27,14 @@ public class ApplicationSettings {
 
 	public boolean add(Goal o) {
 		return goals.add(o);
+	}
+
+	public void setGoals(List<Goal> goals) {
+		this.goals = goals;
+	}
+
+	public void setPluginAwareGoals(List<Goal> pluginAwareGoals) {
+		this.pluginAwareGoals = pluginAwareGoals;
 	}
 
 	public List<Goal> getGoals() {

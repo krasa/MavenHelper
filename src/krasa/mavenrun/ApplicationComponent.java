@@ -22,12 +22,13 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
 
-@State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/MavenRunHelper.xml") })
+@State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent, Configurable,
 		PersistentStateComponent<ApplicationSettings> {
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
-	ApplicationSettings applicationSettings;
+
+	private ApplicationSettings applicationSettings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase));
