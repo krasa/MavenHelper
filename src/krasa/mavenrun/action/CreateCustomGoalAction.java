@@ -18,6 +18,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NonEmptyInputValidator;
 
 public class CreateCustomGoalAction extends AnAction implements DumbAware {
+	private boolean runGoal = true;
+
+	public CreateCustomGoalAction(boolean runGoal) {
+		this.runGoal = runGoal;
+	}
+
 	public CreateCustomGoalAction(@Nullable String text) {
 		super(text);
 	}
@@ -30,10 +36,16 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(),
 				goals.toArray(goals.toArray(new String[goals.size()])), "", new NonEmptyInputValidator());
 		if (StringUtils.isNotBlank(s)) {
-			Goal o = new Goal(s.trim());
+			Goal o = new Goal(s);
 			state.add(o);
 			instance.registerAction(o);
-			new MavenGoalRunAction(s).actionPerformed(e);
+			runGoal(e, s);
+		}
+	}
+
+	private void runGoal(AnActionEvent e, String s) {
+		if (runGoal) {
+			new RunGoalAction(s).actionPerformed(e);
 		}
 	}
 

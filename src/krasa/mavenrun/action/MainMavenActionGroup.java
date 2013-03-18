@@ -42,6 +42,9 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	public AnAction[] getChildren(@Nullable AnActionEvent e) {
 		List<AnAction> result = new ArrayList<AnAction>();
 		if (e != null && MavenActionUtil.getMavenProject(e.getDataContext()) != null) {
+			addTestFile(result);
+			separator(result);
+
 			addGoals(result);
 			separator(result);
 
@@ -57,6 +60,10 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 		}
 		return result.toArray(new AnAction[result.size()]);
+	}
+
+	private void addTestFile(List<AnAction> result) {
+		result.add(new TestFileAction());
 	}
 
 	private void addPlugins(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
@@ -111,12 +118,12 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		if (pluginInfo != null) {
 			for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 				pluginGoalsSet.add(mojo.getDisplayName());
-				pluginGroup.add(new MavenGoalRunAction(mojo.getDisplayName(), MavenIcons.PluginGoal));
+				pluginGroup.add(new RunGoalAction(mojo.getDisplayName(), MavenIcons.PluginGoal));
 			}
 		}
 	}
 
-	protected MavenGoalRunAction createGoalRunAction(String basicPhase) {
-		return new MavenGoalRunAction(basicPhase, MavenIcons.Phase);
+	protected RunGoalAction createGoalRunAction(String basicPhase) {
+		return new RunGoalAction(basicPhase, MavenIcons.Phase);
 	}
 }
