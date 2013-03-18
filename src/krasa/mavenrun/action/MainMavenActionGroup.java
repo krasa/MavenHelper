@@ -1,7 +1,6 @@
 package krasa.mavenrun.action;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +12,6 @@ import krasa.mavenrun.model.Goal;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.navigator.MavenProjectsNavigator;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -32,7 +30,6 @@ import icons.MavenIcons;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
-	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 	private Set<String> pluginGoalsSet = new HashSet<String>();
 
 	public MainMavenActionGroup(String shortName, Icon icon) {
@@ -43,28 +40,32 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	@NotNull
 	@Override
 	public AnAction[] getChildren(@Nullable AnActionEvent e) {
-		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
+		List<AnAction> result = new ArrayList<AnAction>();
 		if (e != null && MavenActionUtil.getMavenProject(e.getDataContext()) != null) {
-			addDefaultGoals(anActions);
-			separator(anActions);
+			addGoals(result);
+			separator(result);
 
 			List<MavenActionGroup> mavenActionGroups = getPlugins(e);
 
-			addCustomActions(anActions, mavenActionGroups);
-			separator(anActions);
+			addPluginAwareActions(result, mavenActionGroups);
+			separator(result);
 
-			addPlugins(anActions, mavenActionGroups);
+			addPlugins(result, mavenActionGroups);
+
+			separator(result);
+			result.add(new CreateCustomGoalAction("New Goal..."));
+
 		}
-		return anActions.toArray(new AnAction[anActions.size()]);
+		return result.toArray(new AnAction[result.size()]);
 	}
 
-	private void addPlugins(ArrayList<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
+	private void addPlugins(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
 		for (MavenActionGroup mavenActionGroup : mavenActionGroups) {
 			anActions.add(mavenActionGroup);
 		}
 	}
 
-	private void separator(ArrayList<AnAction> anActions) {
+	private void separator(List<AnAction> anActions) {
 		if (!anActions.isEmpty()) {
 			AnAction anAction = anActions.get(anActions.size() - 1);
 			if (!(anAction instanceof Separator)) {
@@ -73,15 +74,15 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	private void addDefaultGoals(ArrayList<AnAction> anActions) {
-		for (String basicPhase : BASIC_PHASES) {
-			anActions.add(createGoalRunAction(basicPhase));
+	private void addGoals(List<AnAction> anActions) {
+		for (Goal goal : ApplicationComponent.getInstance().getState().getGoals()) {
+			anActions.add(createGoalRunAction(goal.getCommandLine()));
 		}
 	}
 
-	private void addCustomActions(ArrayList<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
+	private void addPluginAwareActions(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
 		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
-		for (Goal goal : ApplicationComponent.getInstance().getState().getSmartGoals()) {
+		for (Goal goal : ApplicationComponent.getInstance().getState().getPluginAwareGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
 				anActions.add(createGoalRunAction(goal.getCommandLine()));
 			}
