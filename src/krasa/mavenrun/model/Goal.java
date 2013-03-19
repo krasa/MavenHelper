@@ -7,7 +7,7 @@ public class Goal extends DomainObject {
 	}
 
 	public Goal(String s) {
-		commandLine = s;
+		commandLine = s.trim();
 	}
 
 	public String getCommandLine() {

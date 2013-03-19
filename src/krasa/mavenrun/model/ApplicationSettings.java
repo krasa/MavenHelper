@@ -66,9 +66,17 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		pluginAwareGoals.add(new Goal(s));
 	}
 
+	public List<String> getPluginAwareGoalsAsString() {
+		return getStrings(pluginAwareGoals);
+	}
+
 	public List<String> getGoalsAsStrings() {
+		return getStrings(goals);
+	}
+
+	private List<String> getStrings(final List<Goal> goals1) {
 		List<String> strings = new ArrayList<String>();
-		for (Goal goal : goals) {
+		for (Goal goal : goals1) {
 			strings.add(goal.getCommandLine());
 		}
 		return strings;

@@ -3,7 +3,7 @@ package krasa.mavenrun;
 import javax.swing.*;
 
 import krasa.mavenrun.action.MainMavenActionGroup;
-import krasa.mavenrun.action.MavenGoalRunAction;
+import krasa.mavenrun.action.RunGoalAction;
 import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
@@ -50,7 +50,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private void registerAction(ActionManager instance, Goal goal) {
 		String actionId = "MavenRunHelper" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
 		instance.unregisterAction(actionId);
-		instance.registerAction(actionId, new MavenGoalRunAction(goal, MavenIcons.PluginGoal),
+		instance.registerAction(actionId, new RunGoalAction(goal, MavenIcons.PluginGoal),
 				PluginId.getId("MavenRunHelper"));
 		instance.getKeyboardShortcut(actionId);
 	}
