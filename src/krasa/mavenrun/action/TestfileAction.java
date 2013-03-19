@@ -14,28 +14,21 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPackage;
+import icons.MavenIcons;
 
 public class TestFileAction extends AnAction implements DumbAware {
 
 	public TestFileAction() {
-		super("Test file");
-	}
-
-	private List<String> parse(String goal) {
-		List<String> strings = new ArrayList<String>();
-		String[] split = goal.split(" ");
-		for (String s : split) {
-			if (StringUtils.isNotBlank(s)) {
-				strings.add(s);
-			}
-		}
-		return strings;
+		super("Test file", "Run current File with maven", MavenIcons.MavenLogo);
 	}
 
 	public void actionPerformed(AnActionEvent e) {
@@ -45,10 +38,10 @@ public class TestFileAction extends AnAction implements DumbAware {
 			PsiPackage filePackage = getFilePackage(e.getDataContext());
 			if (filePackage != null) {
 				List<String> goals = new ArrayList<String>();
-				goals.add("test");
+				// goals.add("test");
 
 				PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
-				goals.add("-Dtest=" + filePackage.getQualifiedName() + "." + psiFile.getName());
+				goals.add("-Dtest=" + wholePackageAndName(filePackage, psiFile));
 				goals.add("test-compile");
 				goals.add("surefire:test");
 
@@ -56,8 +49,20 @@ public class TestFileAction extends AnAction implements DumbAware {
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
 						MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
 				MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+			} else {
+				Messages.showWarningDialog(e.getProject(), "Cannot run for current file", "Maven Test File");
 			}
 		}
+	}
+
+	private String wholePackageAndName(PsiPackage filePackage, PsiFile psiFile) {
+		String qualifiedName = filePackage.getQualifiedName();
+		String name = psiFile.getName();
+		name = name.substring(0, name.indexOf("."));
+		if (StringUtils.isNotBlank(qualifiedName)) {
+			return qualifiedName + "." + name;
+		}
+		return name;
 	}
 
 	@Nullable
@@ -80,7 +85,13 @@ public class TestFileAction extends AnAction implements DumbAware {
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
+		boolean isFile = false;
+		VirtualFile data = PlatformDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+		if (data != null) {
+			isFile = !data.isDirectory();
+		}
+
+		return isFile && MavenActionUtil.hasProject(e.getDataContext());
 	}
 
 	protected boolean isVisible(AnActionEvent e) {

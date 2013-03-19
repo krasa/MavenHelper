@@ -10,10 +10,11 @@ import com.rits.cloning.Cloner;
 
 public class ApplicationSettings extends DomainObject implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
+	public static final int ACTUAL_VERSION = 1;
 
 	int version = 0;
-	private List<Goal> goals = new ArrayList<Goal>();
-	private List<Goal> pluginAwareGoals = new ArrayList<Goal>();
+	private Goals goals = new Goals();
+	private Goals pluginAwareGoals = new Goals();
 
 	public int getVersion() {
 		return version;
@@ -23,61 +24,54 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		this.version = version;
 	}
 
-	public boolean remove(Goal o) {
-		return goals.remove(o);
+	public Goals getPluginAwareGoals() {
+		return pluginAwareGoals;
 	}
 
-	public boolean add(Goal o) {
-		return goals.add(o);
-	}
-
-	public void setGoals(List<Goal> goals) {
-		this.goals = goals;
-	}
-
-	public void setPluginAwareGoals(List<Goal> pluginAwareGoals) {
+	public void setPluginAwareGoals(Goals pluginAwareGoals) {
 		this.pluginAwareGoals = pluginAwareGoals;
 	}
 
-	public List<Goal> getGoals() {
+	public Goals getGoals() {
 		return goals;
+	}
+
+	public void setGoals(Goals goals) {
+		this.goals = goals;
 	}
 
 	public static ApplicationSettings defaultApplicationSettings() {
 		ApplicationSettings applicationSettings = new ApplicationSettings();
-		applicationSettings.addPluginAwareGoals("jetty:run");
-		applicationSettings.addPluginAwareGoals("tomcat:run");
-		applicationSettings.addPluginAwareGoals("tomcat5:run");
-		applicationSettings.addPluginAwareGoals("tomcat6:run");
-		applicationSettings.addPluginAwareGoals("tomcat7:run");
+		Goals pluginAwareGoals = new Goals();
+		pluginAwareGoals.add("jetty:run");
+		pluginAwareGoals.add("tomcat:run");
+		pluginAwareGoals.add("tomcat5:run");
+		pluginAwareGoals.add("tomcat6:run");
+		pluginAwareGoals.add("tomcat7:run");
+		applicationSettings.setPluginAwareGoals(pluginAwareGoals);
 
+		Goals goals = new Goals();
 		for (String basicPhase : BASIC_PHASES) {
-			applicationSettings.add(new Goal(basicPhase));
+			goals.add(new Goal(basicPhase));
 		}
+		goals.add(new Goal("clean install"));
+		applicationSettings.setGoals(goals);
+		applicationSettings.setVersion(ACTUAL_VERSION);
 		return applicationSettings;
-
 	}
 
-	public List<Goal> getPluginAwareGoals() {
-		return pluginAwareGoals;
+	public List<Goal> getAllGoals() {
+		List<Goal> allGoals = new ArrayList<Goal>(goals.size() + pluginAwareGoals.size());
+		allGoals.addAll(goals.getGoals());
+		allGoals.addAll(pluginAwareGoals.getGoals());
+		return allGoals;
 	}
 
-	private void addPluginAwareGoals(String s) {
-		pluginAwareGoals.add(new Goal(s));
-	}
-
-	public List<String> getPluginAwareGoalsAsString() {
-		return getStrings(pluginAwareGoals);
-	}
-
-	public List<String> getGoalsAsStrings() {
-		return getStrings(goals);
-	}
-
-	private List<String> getStrings(final List<Goal> goals1) {
+	public List<String> getAllGoalsAsString() {
 		List<String> strings = new ArrayList<String>();
-		for (Goal goal : goals1) {
-			strings.add(goal.getCommandLine());
+		List<Goal> allGoals = getAllGoals();
+		for (Goal allGoal : allGoals) {
+			strings.add(allGoal.getCommandLine());
 		}
 		return strings;
 	}
@@ -87,6 +81,14 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		Cloner cloner = new Cloner();
 		cloner.nullInsteadOfClone();
 		return cloner.deepClone(this);
+	}
+
+	public String[] getAllGoalsAsStringArray() {
+		return toArray(getAllGoalsAsString());
+	}
+
+	private String[] toArray(List<String> goalsAsStrings) {
+		return goalsAsStrings.toArray(new String[goalsAsStrings.size()]);
 	}
 
 }

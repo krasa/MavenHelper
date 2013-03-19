@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Goals extends DomainObject {
-	private String commandLine;
 	private List<Goal> goals = new ArrayList<Goal>();
 
-	public String getCommandLine() {
-		return commandLine;
+	public Goals() {
 	}
 
-	public void setCommandLine(String commandLine) {
-		this.commandLine = commandLine;
+	public Goals(List<Goal> goals) {
+		this.goals = goals;
 	}
 
 	public List<Goal> getGoals() {
@@ -35,6 +33,10 @@ public class Goals extends DomainObject {
 		return goals.add(o);
 	}
 
+	public List<String> getGoalsAsStrings() {
+		return getStrings(goals);
+	}
+
 	private List<String> getStrings(final List<Goal> goals1) {
 		List<String> strings = new ArrayList<String>();
 		for (Goal goal : goals1) {
@@ -43,4 +45,15 @@ public class Goals extends DomainObject {
 		return strings;
 	}
 
+	public void add(String s) {
+		goals.add(new Goal(s));
+	}
+
+	public int size() {
+		return goals.size();
+	}
+
+	public boolean remove(Object goal) {
+		return goals.remove(goal);
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.swing.*;
 
 import krasa.mavenrun.ApplicationComponent;
+import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
 
 import org.jetbrains.annotations.NotNull;
@@ -82,14 +83,18 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	private void addGoals(List<AnAction> anActions) {
-		for (Goal goal : ApplicationComponent.getInstance().getState().getGoals()) {
+		for (Goal goal : getState().getGoals().getGoals()) {
 			anActions.add(createGoalRunAction(goal.getCommandLine()));
 		}
 	}
 
+	private ApplicationSettings getState() {
+		return ApplicationComponent.getInstance().getState();
+	}
+
 	private void addPluginAwareActions(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
 		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
-		for (Goal goal : ApplicationComponent.getInstance().getState().getPluginAwareGoals()) {
+		for (Goal goal : getState().getPluginAwareGoals().getGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
 				anActions.add(createGoalRunAction(goal.getCommandLine()));
 			}

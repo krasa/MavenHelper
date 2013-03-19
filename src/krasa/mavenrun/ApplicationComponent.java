@@ -37,27 +37,42 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	public void initComponent() {
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase));
+		unRegisterActions();
 		registerActions();
 	}
 
 	private void registerActions() {
 		ActionManager instance = ActionManager.getInstance();
-		for (Goal goal : settings.getGoals()) {
+		for (Goal goal : settings.getAllGoals()) {
 			registerAction(instance, goal);
 		}
-	}
-
-	private void registerAction(ActionManager instance, Goal goal) {
-		String actionId = "MavenRunHelper" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
-		instance.unregisterAction(actionId);
-		instance.registerAction(actionId, new RunGoalAction(goal, MavenIcons.PluginGoal),
-				PluginId.getId("MavenRunHelper"));
-		instance.getKeyboardShortcut(actionId);
 	}
 
 	public void registerAction(Goal o) {
 		ActionManager instance = ActionManager.getInstance();
 		registerAction(instance, o);
+	}
+
+	private void registerAction(ActionManager instance, Goal goal) {
+		String actionId = getActionId(goal);
+		instance.registerAction(actionId, new RunGoalAction(goal, MavenIcons.PluginGoal),
+				PluginId.getId("MavenRunHelper"));
+	}
+
+	private void unRegisterActions() {
+		ActionManager instance = ActionManager.getInstance();
+		for (Goal goal : settings.getAllGoals()) {
+			unRegisterAction(instance, goal);
+		}
+	}
+
+	private void unRegisterAction(ActionManager instance, Goal goal) {
+		String actionId = getActionId(goal);
+		instance.unregisterAction(actionId);
+	}
+
+	private String getActionId(Goal goal) {
+		return "MavenRunHelper" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
 	}
 
 	private void addActionGroup(ActionGroup actionGroup) {
@@ -109,7 +124,11 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	}
 
 	public void loadState(ApplicationSettings state) {
-		settings = state;
+		if (state.getVersion() < ApplicationSettings.ACTUAL_VERSION) {
+			settings = ApplicationSettings.defaultApplicationSettings();
+		} else {
+			settings = state;
+		}
 	}
 
 	@Nls
@@ -133,7 +152,9 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	}
 
 	public void apply() throws ConfigurationException {
+		unRegisterActions();
 		settings = form.getSettings().clone();
+		registerActions();
 	}
 
 	public void reset() {

@@ -7,12 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.List;
 
 import javax.swing.*;
 
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
+import krasa.mavenrun.model.Goals;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -33,7 +33,7 @@ public class ApplicationSettingsForm {
 	private JComponent rootComponent;
 	private JButton deleteButton;
 	private JList pluginAwareGoals;
-	private JButton add;
+	private JButton addGoal;
 	private JButton addPluginAware;
 
 	protected JBList focusedComponent;
@@ -41,10 +41,10 @@ public class ApplicationSettingsForm {
 	public ApplicationSettingsForm(ApplicationSettings settings) {
 		this.settings = settings.clone();
 		initializeModel();
-		add.addActionListener(new ActionListener() {
+		addGoal.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Goal o = showDialog(ApplicationSettingsForm.this.settings.getGoalsAsStrings());
+				Goal o = showDialog(ApplicationSettingsForm.this.settings);
 				if (o != null) {
 					ApplicationSettingsForm.this.settings.getGoals().add(o);
 					initializeModel();
@@ -54,8 +54,7 @@ public class ApplicationSettingsForm {
 		addPluginAware.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				List<String> goalsAsStrings = ApplicationSettingsForm.this.settings.getPluginAwareGoalsAsString();
-				Goal o = showDialog(goalsAsStrings);
+				Goal o = showDialog(ApplicationSettingsForm.this.settings);
 				if (o != null) {
 					ApplicationSettingsForm.this.settings.getPluginAwareGoals().add(o);
 					initializeModel();
@@ -68,24 +67,24 @@ public class ApplicationSettingsForm {
 		goals.addFocusListener(getFocusListener());
 	}
 
-	private Goal showDialog(List<String> goalsAsStrings) {
+	public static Goal showDialog(final ApplicationSettings settings1) {
+		String[] goalsAsStrings = settings1.getAllGoalsAsStringArray();
 		Goal o = null;
-		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(),
-				toArray(goalsAsStrings), "", new NonEmptyInputValidator());
+		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(), goalsAsStrings,
+				"", new NonEmptyInputValidator());
 		if (StringUtils.isNotBlank(s)) {
 			o = new Goal(s);
 		}
 		return o;
 	}
 
-	private String[] toArray(List<String> goalsAsStrings) {
-		return goalsAsStrings.toArray(new String[goalsAsStrings.size()]);
-	}
-
 	private FocusAdapter getFocusListener() {
 		return new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
+				if (focusedComponent != null) {
+					focusedComponent.getSelectionModel().clearSelection();
+				}
 				focusedComponent = (JBList) e.getComponent();
 			}
 		};
@@ -96,20 +95,18 @@ public class ApplicationSettingsForm {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (focusedComponent == goals) {
-					Object[] selectedValues = focusedComponent.getSelectedValues();
-					for (Object goal : selectedValues) {
-						boolean remove = settings.getGoals().remove(goal);
-						if (!remove || !((DefaultListModel) focusedComponent.getModel()).removeElement(goal)) {
-							throw new IllegalStateException("delete failed");
-						}
-					}
+					delete(settings.getGoals());
 				} else if (focusedComponent == pluginAwareGoals) {
-					Object[] selectedValues = focusedComponent.getSelectedValues();
-					for (Object goal : selectedValues) {
-						boolean remove = settings.getPluginAwareGoals().remove(goal);
-						if (!remove || !((DefaultListModel) focusedComponent.getModel()).removeElement(goal)) {
-							throw new IllegalStateException("delete failed");
-						}
+					delete(settings.getPluginAwareGoals());
+				}
+			}
+
+			private void delete(Goals goals) {
+				Object[] selectedValues = focusedComponent.getSelectedValues();
+				for (Object goal : selectedValues) {
+					boolean remove = goals.remove(goal);
+					if (!remove || !((DefaultListModel) focusedComponent.getModel()).removeElement(goal)) {
+						throw new IllegalStateException("delete failed");
 					}
 				}
 			}
@@ -141,10 +138,10 @@ public class ApplicationSettingsForm {
 	private void initializeModel() {
 		model.clear();
 		pluginsModel.clear();
-		for (Goal o : settings.getGoals()) {
+		for (Goal o : settings.getGoals().getGoals()) {
 			model.addElement(o);
 		}
-		for (Goal o : settings.getPluginAwareGoals()) {
+		for (Goal o : settings.getPluginAwareGoals().getGoals()) {
 			pluginsModel.addElement(o);
 		}
 	}
