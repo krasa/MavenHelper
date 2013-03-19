@@ -8,22 +8,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../IntelliJ IDEA Community Edition 129.17/plugins/maven/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../../../IntelliJ IDEA Community Edition 129.17/plugins/maven/lib" recursive="false" />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="lib" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
       <map>
         <entry key="property.analysisEffortLevel" value="default" />
         <entry key="property.analyzeAfterCompile" value="false" />
+        <entry key="property.annotationGutterIconEnabled" value="true" />
+        <entry key="property.annotationSuppressWarningsClass" value="edu.umd.cs.findbugs.annotations.SuppressWarnings" />
+        <entry key="property.annotationTextRangeMarkupEnabled" value="true" />
         <entry key="property.exportAsHtml" value="true" />
         <entry key="property.exportAsXml" value="true" />
         <entry key="property.exportBaseDir" value="" />
@@ -90,8 +84,8 @@
         <entry key="FindMaskedFields" value="true" />
         <entry key="FindMismatchedWaitOrNotify" value="true" />
         <entry key="FindNakedNotify" value="true" />
-        <entry key="FindNonSerializableStoreIntoSession" value="true" />
-        <entry key="FindNonSerializableValuePassedToWriteObject" value="true" />
+        <entry key="FindNonSerializableStoreIntoSession" value="false" />
+        <entry key="FindNonSerializableValuePassedToWriteObject" value="false" />
         <entry key="FindNonShortCircuit" value="true" />
         <entry key="FindNullDeref" value="true" />
         <entry key="FindNullDerefsInvolvingNonShortCircuitEvaluation" value="true" />
@@ -202,7 +196,6 @@
         <entry key="I18N" value="true" />
         <entry key="MALICIOUS_CODE" value="true" />
         <entry key="MT_CORRECTNESS" value="true" />
-        <entry key="NOISE" value="false" />
         <entry key="PERFORMANCE" value="true" />
         <entry key="SECURITY" value="true" />
         <entry key="STYLE" value="true" />
