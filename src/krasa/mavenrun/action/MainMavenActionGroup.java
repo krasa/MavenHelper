@@ -64,7 +64,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	private void addTestFile(List<AnAction> result) {
-		result.add(new TestFileAction());
+		result.add(new RunTestFileAction());
 	}
 
 	private void addPlugins(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {

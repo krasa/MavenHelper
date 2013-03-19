@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>0.5</version>
+	<version>0.5.1</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa

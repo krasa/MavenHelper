@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -19,15 +18,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaDirectoryService;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiJavaFile;
 import icons.MavenIcons;
 
-public class TestFileAction extends AnAction implements DumbAware {
+public class RunTestFileAction extends AnAction implements DumbAware {
 
-	public TestFileAction() {
+	public RunTestFileAction() {
 		super("Test file", "Run current File with maven", MavenIcons.MavenLogo);
 	}
 
@@ -35,15 +32,9 @@ public class TestFileAction extends AnAction implements DumbAware {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {
 
-			PsiPackage filePackage = getFilePackage(e.getDataContext());
-			if (filePackage != null) {
-				List<String> goals = new ArrayList<String>();
-				// goals.add("test");
-
-				PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
-				goals.add("-Dtest=" + wholePackageAndName(filePackage, psiFile));
-				goals.add("test-compile");
-				goals.add("surefire:test");
+			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
+			if (psiFile instanceof PsiJavaFile) {
+				List<String> goals = getGoals((PsiJavaFile) psiFile);
 
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
@@ -55,25 +46,23 @@ public class TestFileAction extends AnAction implements DumbAware {
 		}
 	}
 
-	private String wholePackageAndName(PsiPackage filePackage, PsiFile psiFile) {
-		String qualifiedName = filePackage.getQualifiedName();
-		String name = psiFile.getName();
-		name = name.substring(0, name.indexOf("."));
-		if (StringUtils.isNotBlank(qualifiedName)) {
-			return qualifiedName + "." + name;
-		}
-		return name;
+	private List<String> getGoals(PsiJavaFile psiFile) {
+		List<String> goals = new ArrayList<String>();
+		// goals.add("test");
+		goals.add("-Dtest=" + wholePackageAndName(psiFile));
+		goals.add("test-compile");
+		goals.add("surefire:test");
+		return goals;
 	}
 
-	@Nullable
-	static PsiPackage getFilePackage(DataContext dataContext) {
-		PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
-		if (psiFile == null)
-			return null;
-		PsiDirectory containingDirectory = psiFile.getContainingDirectory();
-		if (containingDirectory == null || !containingDirectory.isValid())
-			return null;
-		return JavaDirectoryService.getInstance().getPackage(containingDirectory);
+	private String wholePackageAndName(PsiJavaFile psiFile) {
+		String packageName = psiFile.getPackageName();
+		if (StringUtils.isNotBlank(packageName)) {
+			String psiFileName = psiFile.getName();
+			return packageName + "." + psiFileName.substring(0, psiFileName.indexOf("."));
+		} else {
+			return psiFile.getName();
+		}
 	}
 
 	@Override

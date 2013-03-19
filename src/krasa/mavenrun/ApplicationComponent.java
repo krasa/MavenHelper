@@ -37,7 +37,6 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	public void initComponent() {
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase));
-		unRegisterActions();
 		registerActions();
 	}
 
@@ -55,6 +54,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	private void registerAction(ActionManager instance, Goal goal) {
 		String actionId = getActionId(goal);
+		unRegisterAction(instance, actionId);
 		instance.registerAction(actionId, new RunGoalAction(goal, MavenIcons.PluginGoal),
 				PluginId.getId("MavenRunHelper"));
 	}
@@ -62,12 +62,11 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private void unRegisterActions() {
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
-			unRegisterAction(instance, goal);
+			unRegisterAction(instance, getActionId(goal));
 		}
 	}
 
-	private void unRegisterAction(ActionManager instance, Goal goal) {
-		String actionId = getActionId(goal);
+	private void unRegisterAction(ActionManager instance, final String actionId) {
 		instance.unregisterAction(actionId);
 	}
 
