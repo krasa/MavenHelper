@@ -9,10 +9,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
 
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
-import krasa.mavenrun.model.Goals;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -25,7 +25,7 @@ import com.intellij.ui.components.JBList;
  */
 public class ApplicationSettingsForm {
 
-	protected DefaultListModel model;
+	protected DefaultListModel goalsModel;
 	protected DefaultListModel pluginsModel;
 
 	protected ApplicationSettings settings;
@@ -46,8 +46,7 @@ public class ApplicationSettingsForm {
 			public void actionPerformed(ActionEvent e) {
 				Goal o = showDialog(ApplicationSettingsForm.this.settings);
 				if (o != null) {
-					ApplicationSettingsForm.this.settings.getGoals().add(o);
-					initializeModel();
+					goalsModel.addElement(o);
 				}
 			}
 		});
@@ -56,8 +55,7 @@ public class ApplicationSettingsForm {
 			public void actionPerformed(ActionEvent e) {
 				Goal o = showDialog(ApplicationSettingsForm.this.settings);
 				if (o != null) {
-					ApplicationSettingsForm.this.settings.getPluginAwareGoals().add(o);
-					initializeModel();
+					pluginsModel.addElement(o);
 				}
 			}
 		});
@@ -95,28 +93,25 @@ public class ApplicationSettingsForm {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (focusedComponent == goals) {
-					delete(settings.getGoals());
+					delete(goalsModel);
 				} else if (focusedComponent == pluginAwareGoals) {
-					delete(settings.getPluginAwareGoals());
+					delete(pluginsModel);
 				}
 			}
 
-			private void delete(Goals goals) {
+			private void delete(DefaultListModel goals) {
 				Object[] selectedValues = focusedComponent.getSelectedValues();
 				for (Object goal : selectedValues) {
-					boolean remove = goals.remove(goal);
-					if (!remove || !((DefaultListModel) focusedComponent.getModel()).removeElement(goal)) {
-						throw new IllegalStateException("delete failed");
-					}
+					goals.removeElement(goal);
 				}
 			}
 		};
 	}
 
 	private void createUIComponents() {
-		model = new DefaultListModel();
+		goalsModel = new DefaultListModel();
 		pluginsModel = new DefaultListModel();
-		goals = createJBList(model);
+		goals = createJBList(goalsModel);
 		pluginAwareGoals = createJBList(pluginsModel);
 	}
 
@@ -132,18 +127,38 @@ public class ApplicationSettingsForm {
 				return comp;
 			}
 		});
+		jbList.setDragEnabled(true);
+		jbList.setDropMode(DropMode.INSERT);
+		jbList.setTransferHandler(new MyListDropHandler(jbList));
+
+		new MyDragListener(jbList);
 		return jbList;
 	}
 
 	private void initializeModel() {
-		model.clear();
+		removeListeners(goalsModel);
+		removeListeners(pluginsModel);
+		goalsModel.clear();
 		pluginsModel.clear();
 		for (Goal o : settings.getGoals().getGoals()) {
-			model.addElement(o);
+			goalsModel.addElement(o);
 		}
 		for (Goal o : settings.getPluginAwareGoals().getGoals()) {
 			pluginsModel.addElement(o);
 		}
+		addModelListeners(settings);
+	}
+
+	private void removeListeners(final DefaultListModel listModel) {
+		ListDataListener[] listDataListeners = listModel.getListeners(MyListDataListener.class);
+		for (ListDataListener listDataListener : listDataListeners) {
+			listModel.removeListDataListener(listDataListener);
+		}
+	}
+
+	private void addModelListeners(ApplicationSettings settings) {
+		goalsModel.addListDataListener(new MyListDataListener(goalsModel, settings.getGoals()));
+		pluginsModel.addListDataListener(new MyListDataListener(pluginsModel, settings.getPluginAwareGoals()));
 	}
 
 	public ApplicationSettings getSettings() {
@@ -162,4 +177,5 @@ public class ApplicationSettingsForm {
 		this.settings = settings.clone();
 		initializeModel();
 	}
+
 }
