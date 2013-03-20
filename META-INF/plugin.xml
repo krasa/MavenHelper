@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>0.5.1</version>
+	<version>0.6</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            0.6 - Run Test action can run single method<br>
             0.5<br>
             - new settings gui<br>
             - new Test File action<br>

@@ -9,6 +9,10 @@ import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.BaseRunConfigurationAction;
+import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -34,7 +38,7 @@ public class RunTestFileAction extends AnAction implements DumbAware {
 
 			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 			if (psiFile instanceof PsiJavaFile) {
-				List<String> goals = getGoals((PsiJavaFile) psiFile);
+				List<String> goals = getGoals(e, (PsiJavaFile) psiFile);
 
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
@@ -46,31 +50,43 @@ public class RunTestFileAction extends AnAction implements DumbAware {
 		}
 	}
 
-	private List<String> getGoals(PsiJavaFile psiFile) {
+	private List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
 		List<String> goals = new ArrayList<String>();
 		// goals.add("test");
-		goals.add("-Dtest=" + wholePackageAndName(psiFile));
+		goals.add("-Dtest=" + getTestArgument(e, psiFile));
 		goals.add("test-compile");
 		goals.add("surefire:test");
 		return goals;
 	}
 
-	private String wholePackageAndName(PsiJavaFile psiFile) {
+	private String getTestArgument(AnActionEvent e, PsiJavaFile psiFile) {
+		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+		RunnerAndConfigurationSettings configuration = context.getConfiguration();
+		String classAndMethod = configuration.getName().replace(".", "#");
+
+		String result;
 		String packageName = psiFile.getPackageName();
 		if (StringUtils.isNotBlank(packageName)) {
-			String psiFileName = psiFile.getName();
-			return packageName + "." + psiFileName.substring(0, psiFileName.indexOf("."));
+			result = packageName + "." + classAndMethod;
 		} else {
-			return psiFile.getName();
+			result = classAndMethod;
 		}
+		return result;
 	}
 
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
 		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e));
+		boolean available = isAvailable(e);
+		p.setEnabled(available);
 		p.setVisible(isVisible(e));
+		if (available) {
+			final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+			RunnerAndConfigurationSettings configuration = context.getConfiguration();
+			String s = BaseRunConfigurationAction.suggestRunActionName((LocatableConfiguration) configuration.getConfiguration());
+			p.setText("Test " + s);
+		}
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {
