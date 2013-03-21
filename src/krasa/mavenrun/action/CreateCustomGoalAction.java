@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
+import icons.MavenIcons;
 
 public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	private boolean runGoal = true;
@@ -29,14 +30,18 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 		Goal goal = ApplicationSettingsForm.showDialog(state);
 		if (goal != null) {
 			state.getGoals().add(goal);
-			instance.registerAction(goal);
+			instance.registerAction(goal, getRunGoalAction(goal));
 			runGoal(e, goal);
 		}
 	}
 
+	protected RunGoalAction getRunGoalAction(Goal goal) {
+		return new RunGoalAction(goal, MavenIcons.PluginGoal);
+	}
+
 	private void runGoal(AnActionEvent e, Goal s) {
 		if (runGoal) {
-			new RunGoalAction(s).actionPerformed(e);
+			getRunGoalAction(s).actionPerformed(e);
 		}
 	}
 

@@ -21,7 +21,7 @@ import com.intellij.openapi.project.DumbAware;
 
 public class RunGoalAction extends AnAction implements DumbAware {
 
-	private List<String> goalsToRun;
+	protected List<String> goalsToRun;
 
 	public RunGoalAction() {
 	}
@@ -44,7 +44,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		this.goalsToRun = parse(goal.getCommandLine());
 	}
 
-	private List<String> parse(String goal) {
+	protected List<String> parse(String goal) {
 		List<String> strings = new ArrayList<String>();
 		String[] split = goal.split(" ");
 		for (String s : split) {
@@ -61,8 +61,12 @@ public class RunGoalAction extends AnAction implements DumbAware {
 			final DataContext context = e.getDataContext();
 			MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goalsToRun,
 					MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
-			MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+			run(context, params);
 		}
+	}
+
+	protected void run(DataContext context, MavenRunnerParameters params) {
+		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
 	}
 
 	@Override

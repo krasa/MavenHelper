@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>0.6</version>
+	<version>1.0</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            1.0 - Debugging support<br>
+		 	0.7 - drag&drop in settings<br>
             0.6 - Run Test action can run single method<br>
             0.5<br>
             - new settings gui<br>
@@ -35,7 +37,7 @@
 	</change-notes>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-	<idea-version since-build="122.000"/>
+	<idea-version since-build="129.60"/>
 
 	<application-components>
 		<component>

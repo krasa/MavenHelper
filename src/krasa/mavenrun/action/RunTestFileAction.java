@@ -3,7 +3,10 @@ package krasa.mavenrun.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.*;
+
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -13,23 +16,26 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.BaseRunConfigurationAction;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import icons.MavenIcons;
 
-public class RunTestFileAction extends AnAction implements DumbAware {
+public class RunTestFileAction extends DumbAwareAction {
 
 	public RunTestFileAction() {
-		super("Test file", "Run current File with maven", MavenIcons.MavenLogo);
+		super("Test file", "Run current File with Maven", MavenIcons.MavenLogo);
+	}
+
+	public RunTestFileAction(String text, @Nullable String description, @Nullable Icon icon) {
+		super(text, description, icon);
 	}
 
 	public void actionPerformed(AnActionEvent e) {
@@ -43,14 +49,18 @@ public class RunTestFileAction extends AnAction implements DumbAware {
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
 						MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
-				MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+				run(context, params);
 			} else {
 				Messages.showWarningDialog(e.getProject(), "Cannot run for current file", "Maven Test File");
 			}
 		}
 	}
 
-	private List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
+	protected void run(DataContext context, MavenRunnerParameters params) {
+		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+	}
+
+	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
 		List<String> goals = new ArrayList<String>();
 		// goals.add("test");
 		goals.add("-Dtest=" + getTestArgument(e, psiFile));
@@ -59,7 +69,7 @@ public class RunTestFileAction extends AnAction implements DumbAware {
 		return goals;
 	}
 
-	private String getTestArgument(AnActionEvent e, PsiJavaFile psiFile) {
+	protected String getTestArgument(AnActionEvent e, PsiJavaFile psiFile) {
 		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
 		RunnerAndConfigurationSettings configuration = context.getConfiguration();
 		String classAndMethod = configuration.getName().replace(".", "#");
@@ -77,16 +87,24 @@ public class RunTestFileAction extends AnAction implements DumbAware {
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
-		Presentation p = e.getPresentation();
+		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+		RunnerAndConfigurationSettings configuration = context.getConfiguration();
+
+		boolean isTest = configuration != null;
 		boolean available = isAvailable(e);
-		p.setEnabled(available);
-		p.setVisible(isVisible(e));
-		if (available) {
-			final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
-			RunnerAndConfigurationSettings configuration = context.getConfiguration();
+		boolean visible = isVisible(e);
+
+		Presentation p = e.getPresentation();
+		p.setEnabled(isTest && available);
+		p.setVisible(isTest && visible);
+		if (isTest && available && visible) {
 			String s = BaseRunConfigurationAction.suggestRunActionName((LocatableConfiguration) configuration.getConfiguration());
-			p.setText("Test " + s);
+			p.setText(getText(s));
 		}
+	}
+
+	protected String getText(String s) {
+		return "Test " + s;
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {

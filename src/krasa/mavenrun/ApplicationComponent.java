@@ -4,6 +4,9 @@ import javax.swing.*;
 
 import krasa.mavenrun.action.MainMavenActionGroup;
 import krasa.mavenrun.action.RunGoalAction;
+import krasa.mavenrun.action.debug.DebugGoalAction;
+import krasa.mavenrun.action.debug.DebugIcons;
+import krasa.mavenrun.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
@@ -36,34 +39,37 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
-		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase));
+		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, DebugIcons.PluginGoal), RUN_MAVEN);
+		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
 		registerActions();
 	}
 
 	private void registerActions() {
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
-			registerAction(instance, goal);
+			String actionId = getActionId(goal);
+			registerAction(instance, actionId, new RunGoalAction(goal, MavenIcons.PluginGoal));
+			actionId = getDebugActionId(goal);
+			registerAction(instance, actionId, new DebugGoalAction(goal, MavenIcons.PluginGoal));
 		}
-	}
-
-	public void registerAction(Goal o) {
-		ActionManager instance = ActionManager.getInstance();
-		registerAction(instance, o);
-	}
-
-	private void registerAction(ActionManager instance, Goal goal) {
-		String actionId = getActionId(goal);
-		unRegisterAction(instance, actionId);
-		instance.registerAction(actionId, new RunGoalAction(goal, MavenIcons.PluginGoal),
-				PluginId.getId("MavenRunHelper"));
 	}
 
 	private void unRegisterActions() {
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			unRegisterAction(instance, getActionId(goal));
+			unRegisterAction(instance, getDebugActionId(goal));
 		}
+	}
+
+	public void registerAction(Goal o, final RunGoalAction runGoalAction) {
+		ActionManager instance = ActionManager.getInstance();
+		registerAction(instance, getActionId(o), runGoalAction);
+	}
+
+	private void registerAction(ActionManager instance, final String actionId1, final RunGoalAction runGoalAction) {
+		unRegisterAction(instance, actionId1);
+		instance.registerAction(actionId1, runGoalAction, PluginId.getId("MavenRunHelper"));
 	}
 
 	private void unRegisterAction(ActionManager instance, final String actionId) {
@@ -74,12 +80,17 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		return "MavenRunHelper" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
 	}
 
-	private void addActionGroup(ActionGroup actionGroup) {
+	private String getDebugActionId(Goal goal) {
+		return "MavenRunHelperDebug" + WordUtils.capitalizeFully(goal.getCommandLine()).replaceAll(" ", "");
+
+	}
+
+	private void addActionGroup(ActionGroup actionGroup, final String runMaven) {
 		DefaultActionGroup editorPopupMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"EditorPopupMenu.Run");
 		DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"ProjectViewPopupMenuRunGroup");
-		clear(editorPopupMenu, projectViewPopupMenuRunGroup);
+		clear(editorPopupMenu, projectViewPopupMenuRunGroup, runMaven);
 
 		add(actionGroup, editorPopupMenu, projectViewPopupMenuRunGroup);
 	}
@@ -90,15 +101,16 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
 	}
 
-	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup) {
-		clear(editorPopupMenu);
-		clear(projectViewPopupMenuRunGroup);
+	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
+			final String runMaven) {
+		clear(editorPopupMenu, RUN_MAVEN);
+		clear(projectViewPopupMenuRunGroup, runMaven);
 	}
 
-	private void clear(DefaultActionGroup editorPopupMenu) {
+	private void clear(DefaultActionGroup editorPopupMenu, final String runMaven) {
 		AnAction[] childActionsOrStubs = editorPopupMenu.getChildActionsOrStubs();
 		for (AnAction childActionsOrStub : childActionsOrStubs) {
-			if (RUN_MAVEN.equals(childActionsOrStub.getTemplatePresentation().getText())) {
+			if (runMaven.equals(childActionsOrStub.getTemplatePresentation().getText())) {
 				editorPopupMenu.remove(childActionsOrStub);
 			}
 		}

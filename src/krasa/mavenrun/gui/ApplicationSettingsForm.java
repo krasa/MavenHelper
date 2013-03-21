@@ -40,7 +40,6 @@ public class ApplicationSettingsForm {
 
 	public ApplicationSettingsForm(ApplicationSettings settings) {
 		this.settings = settings.clone();
-		initializeModel();
 		addGoal.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

@@ -57,19 +57,25 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 			addPlugins(result, mavenActionGroups);
 
 			separator(result);
-			result.add(new CreateCustomGoalAction("New Goal..."));
+			result.add(getCreateCustomGoalAction());
 
 		}
 		return result.toArray(new AnAction[result.size()]);
 	}
 
-	private void addTestFile(List<AnAction> result) {
+	protected CreateCustomGoalAction getCreateCustomGoalAction() {
+		return new CreateCustomGoalAction("New Goal...");
+	}
+
+	protected void addTestFile(List<AnAction> result) {
 		result.add(new RunTestFileAction());
 	}
 
 	private void addPlugins(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
+		MavenActionGroup plugins = new MavenActionGroup("Plugins", true);
+		anActions.add(plugins);
 		for (MavenActionGroup mavenActionGroup : mavenActionGroups) {
-			anActions.add(mavenActionGroup);
+			plugins.add(mavenActionGroup);
 		}
 	}
 
@@ -84,7 +90,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private void addGoals(List<AnAction> anActions) {
 		for (Goal goal : getState().getGoals().getGoals()) {
-			anActions.add(createGoalRunAction(goal.getCommandLine()));
+			anActions.add(createGoalRunAction(goal.getCommandLine(), getRunIcon()));
 		}
 	}
 
@@ -96,7 +102,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
 		for (Goal goal : getState().getPluginAwareGoals().getGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
-				anActions.add(createGoalRunAction(goal.getCommandLine()));
+				anActions.add(createGoalRunAction(goal.getCommandLine(), getRunIcon()));
 			}
 		}
 	}
@@ -109,12 +115,20 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		if (mavenProject != null) {
 			for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
 				MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
-				plugin.getTemplatePresentation().setIcon(MavenIcons.PhasesClosed);
+				plugin.getTemplatePresentation().setIcon(getIcon());
 				addPluginGoals(project, mavenPlugin, plugin);
 				mavenActionGroups.add(plugin);
 			}
 		}
 		return mavenActionGroups;
+	}
+
+	protected Icon getRunIcon() {
+		return MavenIcons.Phase;
+	}
+
+	protected Icon getIcon() {
+		return MavenIcons.PhasesClosed;
 	}
 
 	private void addPluginGoals(Project project, MavenPlugin mavenPlugin, MavenActionGroup pluginGroup) {
@@ -123,12 +137,12 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		if (pluginInfo != null) {
 			for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 				pluginGoalsSet.add(mojo.getDisplayName());
-				pluginGroup.add(new RunGoalAction(mojo.getDisplayName(), MavenIcons.PluginGoal));
+				pluginGroup.add(createGoalRunAction(mojo.getDisplayName(), MavenIcons.PluginGoal));
 			}
 		}
 	}
 
-	protected RunGoalAction createGoalRunAction(String basicPhase) {
-		return new RunGoalAction(basicPhase, MavenIcons.Phase);
+	protected RunGoalAction createGoalRunAction(String basicPhase, final Icon phase) {
+		return new RunGoalAction(basicPhase, phase);
 	}
 }
