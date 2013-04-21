@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>1.1</version>
+	<version>1.2</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,8 +21,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-            1.1 - Fixed debugging Rerun<br>
-            1.0 - Debugging support<br>
+            1.2 - settings gui: deleting goal by pressing delete key<br>
+            1.1 - fixed debugging Rerun<br>
+            1.0 - debugging support<br>
 		 	0.7 - drag&drop in settings<br>
             0.6 - Run Test action can run single method<br>
             0.5<br>

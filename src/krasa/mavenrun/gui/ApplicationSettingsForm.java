@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -58,10 +60,26 @@ public class ApplicationSettingsForm {
 				}
 			}
 		});
-
 		deleteButton.addActionListener(deleteListener());
-		pluginAwareGoals.addFocusListener(getFocusListener());
-		goals.addFocusListener(getFocusListener());
+
+		final FocusAdapter focusListener = getFocusListener();
+		pluginAwareGoals.addFocusListener(focusListener);
+		goals.addFocusListener(focusListener);
+
+		final KeyAdapter keyAdapter = getDeleteKeyListener();
+		goals.addKeyListener(keyAdapter);
+		pluginAwareGoals.addKeyListener(keyAdapter);
+	}
+
+	private KeyAdapter getDeleteKeyListener() {
+		return new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == 127) {
+					deleteGoal();
+				}
+			}
+		};
 	}
 
 	public static Goal showDialog(final ApplicationSettings settings1) {
@@ -91,20 +109,24 @@ public class ApplicationSettingsForm {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (focusedComponent == goals) {
-					delete(goalsModel);
-				} else if (focusedComponent == pluginAwareGoals) {
-					delete(pluginsModel);
-				}
-			}
-
-			private void delete(DefaultListModel goals) {
-				Object[] selectedValues = focusedComponent.getSelectedValues();
-				for (Object goal : selectedValues) {
-					goals.removeElement(goal);
-				}
+				deleteGoal();
 			}
 		};
+	}
+
+	private void deleteGoal() {
+		if (focusedComponent == goals) {
+			delete(goalsModel);
+		} else if (focusedComponent == pluginAwareGoals) {
+			delete(pluginsModel);
+		}
+	}
+
+	private void delete(DefaultListModel goals) {
+		Object[] selectedValues = focusedComponent.getSelectedValues();
+		for (Object goal : selectedValues) {
+			goals.removeElement(goal);
+		}
 	}
 
 	private void createUIComponents() {
@@ -119,7 +141,7 @@ public class ApplicationSettingsForm {
 		jbList.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
+														  boolean cellHasFocus) {
 				final Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				Goal goal = (Goal) value;
 				setText(goal.getCommandLine());
