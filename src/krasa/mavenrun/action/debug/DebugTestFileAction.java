@@ -2,6 +2,9 @@ package krasa.mavenrun.action.debug;
 
 import java.util.List;
 
+import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.project.Project;
 import krasa.mavenrun.action.RunTestFileAction;
 import krasa.mavenrun.utils.MavenDebugConfigurationType;
 
@@ -31,7 +34,21 @@ public class DebugTestFileAction extends RunTestFileAction {
 	}
 
 	@Override
-	protected void run(DataContext context, MavenRunnerParameters params) {
-		MavenDebugConfigurationType.debugConfiguration(MavenActionUtil.getProject(context), params, null);
+	protected void run(final DataContext context, final MavenRunnerParameters params) {
+		runInternal(MavenActionUtil.getProject(context), params);
+	}
+
+	private void runInternal(final Project project, final MavenRunnerParameters params) {
+		MavenDebugConfigurationType.debugConfiguration(project, params, new ProgramRunner.Callback() {
+			@Override
+			public void processStarted(RunContentDescriptor descriptor) {
+				descriptor.setRestarter(new Runnable() {
+					@Override
+					public void run() {
+						DebugTestFileAction.this.runInternal(project, params);
+					}
+				});
+			}
+		});
 	}
 }

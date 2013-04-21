@@ -21,13 +21,13 @@ import com.intellij.openapi.util.JDOMExternalizable;
 public class MavenDebugConfigurationType {
 
 	public static void debugConfiguration(Project project, MavenRunnerParameters params,
-			@Nullable ProgramRunner.Callback callback) {
+										  @Nullable ProgramRunner.Callback callback) {
 		debugConfiguration(project, params, null, null, callback);
 	}
 
 	public static void debugConfiguration(Project project, @NotNull MavenRunnerParameters params,
-			@Nullable MavenGeneralSettings settings, @Nullable MavenRunnerSettings runnerSettings,
-			@Nullable ProgramRunner.Callback callback) {
+										  @Nullable MavenGeneralSettings settings, @Nullable MavenRunnerSettings runnerSettings,
+										  @Nullable ProgramRunner.Callback callback) {
 
 		RunnerAndConfigurationSettings configSettings = MavenRunConfigurationType.createRunnerAndConfigurationSettings(
 				settings, runnerSettings, params, project);
@@ -35,7 +35,6 @@ public class MavenDebugConfigurationType {
 		ProgramRunner runner = RunnerRegistry.getInstance().findRunnerById(DefaultDebugExecutor.EXECUTOR_ID);
 		ExecutionEnvironment env = new ExecutionEnvironment(runner, configSettings, project);
 		Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
-		JDOMExternalizable configurationData = runner.createConfigurationData(null);
 
 		try {
 			runner.execute(executor, env, callback);
