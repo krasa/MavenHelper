@@ -16,28 +16,27 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.JDOMExternalizable;
 
 public class MavenDebugConfigurationType {
 
 	public static void debugConfiguration(Project project, MavenRunnerParameters params,
-										  @Nullable ProgramRunner.Callback callback) {
+			@Nullable ProgramRunner.Callback callback) {
 		debugConfiguration(project, params, null, null, callback);
 	}
 
 	public static void debugConfiguration(Project project, @NotNull MavenRunnerParameters params,
-										  @Nullable MavenGeneralSettings settings, @Nullable MavenRunnerSettings runnerSettings,
-										  @Nullable ProgramRunner.Callback callback) {
+			@Nullable MavenGeneralSettings settings, @Nullable MavenRunnerSettings runnerSettings,
+			@Nullable ProgramRunner.Callback callback) {
 
 		RunnerAndConfigurationSettings configSettings = MavenRunConfigurationType.createRunnerAndConfigurationSettings(
 				settings, runnerSettings, params, project);
+		final Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
 
 		ProgramRunner runner = RunnerRegistry.getInstance().findRunnerById(DefaultDebugExecutor.EXECUTOR_ID);
-		ExecutionEnvironment env = new ExecutionEnvironment(runner, configSettings, project);
-		Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
+		ExecutionEnvironment env = new ExecutionEnvironment(executor, runner, configSettings, project);
 
 		try {
-			runner.execute(executor, env, callback);
+			runner.execute(env, callback);
 		} catch (ExecutionException e) {
 			MavenUtil.showError(project, "Failed to execute Maven goal", e);
 		}

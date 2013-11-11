@@ -1,5 +1,6 @@
 package krasa.mavenrun.action;
 
+import icons.MavenIcons;
 import krasa.mavenrun.ApplicationComponent;
 import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
-import icons.MavenIcons;
 
 public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	private boolean runGoal = true;
