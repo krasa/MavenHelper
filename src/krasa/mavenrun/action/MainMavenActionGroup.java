@@ -1,26 +1,6 @@
 package krasa.mavenrun.action;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.*;
-
-import krasa.mavenrun.ApplicationComponent;
-import krasa.mavenrun.model.ApplicationSettings;
-import krasa.mavenrun.model.Goal;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.model.MavenPlugin;
-import org.jetbrains.idea.maven.navigator.MavenProjectsNavigator;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
-import org.jetbrains.idea.maven.utils.MavenPluginInfo;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
-
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -28,6 +8,25 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import icons.MavenIcons;
+import krasa.mavenrun.ApplicationComponent;
+import krasa.mavenrun.model.ApplicationSettings;
+import krasa.mavenrun.model.Goal;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.model.MavenPlugin;
+import org.jetbrains.idea.maven.navigator.MavenProjectsNavigator;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.idea.maven.project.actions.ReimportProjectAction;
+import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
+import org.jetbrains.idea.maven.utils.MavenPluginInfo;
+import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
@@ -57,10 +56,20 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 			addPlugins(result, mavenActionGroups);
 
 			separator(result);
+			addReimport(result);
 			result.add(getCreateCustomGoalAction());
 
 		}
 		return result.toArray(new AnAction[result.size()]);
+	}
+
+	private void addReimport(List<AnAction> result) {
+		final ReimportProjectAction e = new MyReimportProjectAction();
+		e.getTemplatePresentation().setText("Reimport");
+		e.getTemplatePresentation().setIcon(AllIcons.Actions.Refresh);
+		e.getTemplatePresentation().setDescription("Reimport selected Maven projects");
+		result.add(e);
+
 	}
 
 	protected CreateCustomGoalAction getCreateCustomGoalAction() {
@@ -145,4 +154,5 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	protected RunGoalAction createGoalRunAction(String basicPhase, final Icon phase) {
 		return new RunGoalAction(basicPhase, phase);
 	}
+
 }
