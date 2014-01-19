@@ -1,14 +1,16 @@
 package krasa.mavenrun.action.debug;
 
-import java.util.List;
-
-import javax.swing.*;
-
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.project.Project;
 import krasa.mavenrun.action.CreateCustomGoalAction;
 import krasa.mavenrun.action.MainMavenActionGroup;
+import krasa.mavenrun.action.RunConfigurationAction;
 import krasa.mavenrun.action.RunGoalAction;
 
-import com.intellij.openapi.actionSystem.AnAction;
+import javax.swing.*;
+import java.util.List;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenDebugActionGroup extends MainMavenActionGroup {
@@ -37,4 +39,8 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 		return new DebugGoalAction(basicPhase, phase);
 	}
 
+	@Override
+	protected RunConfigurationAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+		return new DebugConfigurationAction(DefaultDebugExecutor.getDebugExecutorInstance(), true, project, cfg);
+	}
 }

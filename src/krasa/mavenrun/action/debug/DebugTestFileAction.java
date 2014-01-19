@@ -1,19 +1,16 @@
 package krasa.mavenrun.action.debug;
 
-import java.util.List;
-
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiJavaFile;
 import krasa.mavenrun.action.RunTestFileAction;
-import krasa.mavenrun.utils.MavenDebugConfigurationType;
-
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.psi.PsiJavaFile;
+import java.util.List;
 
 public class DebugTestFileAction extends RunTestFileAction {
 

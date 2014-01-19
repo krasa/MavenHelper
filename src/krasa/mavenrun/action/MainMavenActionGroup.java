@@ -1,18 +1,27 @@
 package krasa.mavenrun.action;
 
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.PathUtil;
+import gnu.trove.THashSet;
 import icons.MavenIcons;
 import krasa.mavenrun.ApplicationComponent;
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
+import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.navigator.MavenProjectsNavigator;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -30,6 +39,8 @@ import java.util.Set;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
+	static final Logger LOG = Logger.getInstance(MainMavenActionGroup.class);
+
 	private Set<String> pluginGoalsSet = new HashSet<String>();
 
 	public MainMavenActionGroup(String shortName, Icon icon) {
@@ -43,6 +54,8 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		List<AnAction> result = new ArrayList<AnAction>();
 		if (e != null && MavenActionUtil.getMavenProject(e.getDataContext()) != null) {
 			addTestFile(result);
+			separator(result);
+			addRunConfigurations(result, e);
 			separator(result);
 
 			addGoals(result);
@@ -60,7 +73,28 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 			result.add(getCreateCustomGoalAction());
 
 		}
-		return result.toArray(new AnAction[result.size()]);
+		final AnAction[] anActions = result.toArray(new AnAction[result.size()]);
+		return anActions;
+	}
+
+	private void addRunConfigurations(List<AnAction> result, AnActionEvent e) {
+		final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+		Set<RunnerAndConfigurationSettings> settings = new THashSet<RunnerAndConfigurationSettings>(
+				RunManager.getInstance(project).getConfigurationSettingsList(MavenRunConfigurationType.getInstance()));
+		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+
+		String directory = PathUtil.getCanonicalPath(mavenProject.getDirectory());
+
+		for (RunnerAndConfigurationSettings cfg : settings) {
+			MavenRunConfiguration mavenRunConfiguration = (MavenRunConfiguration) cfg.getConfiguration();
+			if (directory.equals(PathUtil.getCanonicalPath(mavenRunConfiguration.getRunnerParameters().getWorkingDirPath()))) {
+				result.add(getRunConfigurationAction(project, cfg));
+			}
+		}
+	}
+
+	protected RunConfigurationAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+		return new RunConfigurationAction(DefaultRunExecutor.getRunExecutorInstance(), true, project, cfg);
 	}
 
 	private void addReimport(List<AnAction> result) {

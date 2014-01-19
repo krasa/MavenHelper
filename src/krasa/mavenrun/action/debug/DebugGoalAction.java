@@ -1,18 +1,15 @@
 package krasa.mavenrun.action.debug;
 
-import javax.swing.*;
-
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import krasa.mavenrun.action.RunGoalAction;
 import krasa.mavenrun.model.Goal;
-import krasa.mavenrun.utils.MavenDebugConfigurationType;
-
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.openapi.actionSystem.DataContext;
+import javax.swing.*;
 
 public class DebugGoalAction extends RunGoalAction {
 

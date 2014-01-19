@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Run Helper</name>
-	<version>1.4</version>
+	<version>1.5</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,7 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-            1.4 - reimport<br>
+            1.5 - Run Configurations<br>
+            1.4 - Reimport<br>
             1.3 - IJ 13 Api change<br>
             1.2 - settings gui: deleting goal by pressing delete key<br>
             1.1 - fixed debugging Rerun<br>
