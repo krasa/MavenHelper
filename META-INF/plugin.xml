@@ -13,9 +13,11 @@
         Adds actions to run maven goals for module that contains the current file. <br>
         <br>    
         Usage:<br>
-        Right click in Editor or Project View Toolbar | Run Maven.<br>
-        Customize goals at Settings | Maven Run Plugin <br>
-        Define shortcuts at Settings | Keymap | Plug-ins | Maven Run Plugin <br>
+        Right click in Editor | Run Maven.<br>
+        Right click in Project View Toolbar | Run Maven.<br>
+        <br>
+        Customize goals: Settings | Maven Run Plugin <br>
+        Define shortcuts: Settings | Keymap | Plug-ins | Maven Run Plugin <br>
         
         <br>
       ]]></description>
