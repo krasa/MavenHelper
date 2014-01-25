@@ -1,8 +1,8 @@
 <idea-plugin version="2" url="https://github.com/krasa/MavenRunHelper">
 
 	<id>MavenRunHelper</id>
-	<name>Maven Run Helper</name>
-	<version>1.5</version>
+	<name>Maven Helper</name>
+	<version>1.6</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -11,35 +11,29 @@
 	<description><![CDATA[
 	    Successor of "Maven build-this-module" plugin.<br><br>
         Adds actions to run maven goals for module that contains the current file. <br>
+        Also provides easy way of finding conflicting dependencies(open pom file, click on 'Dependency Analyzer' tab). <br>
         <br>    
         Usage:<br>
         Right click in Editor | Run Maven.<br>
         Right click in Project View Toolbar | Run Maven.<br>
         <br>
-        Customize goals: Settings | Maven Run Plugin <br>
-        Define shortcuts: Settings | Keymap | Plug-ins | Maven Run Plugin <br>
-        
+        Customize goals: Settings | Maven Plugin <br>
+        Define shortcuts: Settings | Keymap | Plug-ins | Maven Plugin <br>
+    	<br>
+        Open pom file, click on 'Dependency Analyzer' tab<br>
+       
+	       
         <br>
       ]]></description>
 
 	<change-notes><![CDATA[
-            1.5 - Run Configurations<br>
-            1.4 - Reimport<br>
+            1.6 <br>
+            - Added Dependency Analyzer<br>
+            - Plugin renamed<br>
+            1.5 - added Run Configurations into context menu<br>
+            1.4 - added Reimport action into context menu<br>
             1.3 - IJ 13 Api change<br>
-            1.2 - settings gui: deleting goal by pressing delete key<br>
-            1.1 - fixed debugging Rerun<br>
-            1.0 - debugging support<br>
-		 	0.7 - drag&drop in settings<br>
-            0.6 - Run Test action can run single method<br>
-            0.5<br>
-            - new settings gui<br>
-            - new Test File action<br>
-            - domain model change<br>
-            0.4 - ability to define shortcuts and delete goals
-            <br>
-            0.3 - ability to define custom goals
-            <br>
-            0.2 - jetty:run and tomcatX:run added to main group, when there is a plugin for it
+            ...
 			]]>
 	</change-notes>
 
@@ -55,15 +49,16 @@
 	<project-components>
 	</project-components>
 
-	<actions>
-		<!--FOR DEV ONLY-->
-		<!--<action id="RefreshIconsAction" class="krasa.mavenrun.RefreshIconsAction" icon="MavenIcons.MavenLogo"  text="RefreshIconsAction" description="RefreshIconsAction">-->
-		<!--<add-to-group group-id="MainToolBar"  anchor="last"/>-->
-		<!--</action>-->
-	</actions>
+	<!--<actions>-->
+	<!--&lt;!&ndash;FOR DEV ONLY&ndash;&gt;-->
+	<!--<action id="OpenDependencyAnalyzerAction" class="krasa.mavenrun.analyzer.OpenDependencyAnalyzerAction" icon="MavenIcons.MavenLogo"  text="OpenDependencyAnalyzerAction" description="OpenDependencyAnalyzerAction">-->
+	<!--<add-to-group group-id="MainToolBar"  anchor="last"/>-->
+	<!--</action>-->
+	<!--</actions>-->
 
 	<extensions defaultExtensionNs="com.intellij">
 		<!-- Add your extensions here -->
+		<fileEditorProvider implementation="krasa.mavenrun.analyzer.MyFileEditorProvider"/>
 	</extensions>
 
 	<depends>org.jetbrains.idea.maven</depends>

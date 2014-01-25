@@ -144,7 +144,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	@Nls
 	public String getDisplayName() {
-		return "Maven Run Helper";
+		return "Maven Helper";
 	}
 
 	@Nullable

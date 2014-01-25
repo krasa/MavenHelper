@@ -141,7 +141,7 @@ public class ApplicationSettingsForm {
 		jbList.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-														  boolean cellHasFocus) {
+					boolean cellHasFocus) {
 				final Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				Goal goal = (Goal) value;
 				setText(goal.getCommandLine());
