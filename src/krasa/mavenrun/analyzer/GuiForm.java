@@ -56,6 +56,7 @@ public class GuiForm {
 	private JRadioButton conflictsRadioButton;
 	private JLabel noConflictsLabel;
 	private JButton refreshButton;
+	private JSplitPane splitPane;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel treeModel;
@@ -338,6 +339,7 @@ public class GuiForm {
 
 	public void selectNotify() {
 		initializeModel();
+		splitPane.setDividerLocation(0.5);
 	}
 
 }

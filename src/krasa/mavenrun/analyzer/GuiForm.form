@@ -46,18 +46,19 @@
           <text value="Refresh"/>
         </properties>
       </component>
-      <hspacer id="acc69">
-        <constraints>
-          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
-      <splitpane id="6c003">
+      <splitpane id="6c003" binding="splitPane">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <continuousLayout value="true"/>
+          <dividerLocation value="300"/>
+          <dividerSize value="2"/>
+          <enabled value="true"/>
+          <resizeWeight value="0.5"/>
+        </properties>
         <border type="none"/>
         <children>
           <scrollpane id="443d6">
@@ -88,6 +89,11 @@
           </scrollpane>
         </children>
       </splitpane>
+      <hspacer id="d9a04">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
     </children>
   </grid>
   <buttonGroups>
