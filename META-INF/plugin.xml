@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>1.6</version>
+	<version>1.7</version>
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -20,13 +20,15 @@
         Customize goals: Settings | Maven Plugin <br>
         Define shortcuts: Settings | Keymap | Plug-ins | Maven Plugin <br>
     	<br>
-        Open pom file, click on 'Dependency Analyzer' tab<br>
+        Open pom file, click on 'Dependency Analyzer' tab, right click in the tree for context actions.<br>
        
 	       
         <br>
       ]]></description>
 
 	<change-notes><![CDATA[
+            1.7 <br>
+            - Exclude action for Dependency Analyzer<br>
             1.6 <br>
             - Added Dependency Analyzer<br>
             - Plugin renamed<br>

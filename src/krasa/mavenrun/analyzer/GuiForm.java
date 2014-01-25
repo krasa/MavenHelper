@@ -16,16 +16,26 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.treeStructure.Tree;
@@ -36,6 +46,8 @@ import com.intellij.ui.treeStructure.Tree;
 public class GuiForm {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
 
+	private final Project project;
+	private final VirtualFile file;
 	private MavenProject mavenProject;
 	private JBList list;
 	private JTree tree;
@@ -49,7 +61,9 @@ public class GuiForm {
 	protected DefaultTreeModel treeModel;
 	protected DefaultMutableTreeNode treeRoot;
 
-	public GuiForm(MavenProject mavenProject) {
+	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
+		this.project = project;
+		this.file = file;
 		this.mavenProject = mavenProject;
 		final ActionListener l = new ActionListener() {
 			@Override
@@ -63,9 +77,36 @@ public class GuiForm {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				initializeModel();
-				treeRoot.removeAllChildren();
-				treeModel.reload();
 				rootPanel.requestFocus();
+			}
+		});
+		tree.addMouseListener(new PopupHandler() {
+			public void invokePopup(final Component comp, final int x, final int y) {
+				final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				final MyTreeNode myTreeNode = (MyTreeNode) selectedNode.getUserObject();
+				final MavenArtifactNode mavenArtifactNode = myTreeNode.getMavenArtifactNode();
+				if (myTreeNode.getMavenArtifactNode().getParent() == null) {
+					return;
+				}
+
+				final ActionManager actionManager = ActionManager.getInstance();
+				final ActionGroup actionGroup = new ActionGroup() {
+					@NotNull
+					@Override
+					public AnAction[] getChildren(@Nullable AnActionEvent e) {
+						return new AnAction[] { new ExcludeAction(project, mavenProject, mavenArtifactNode) {
+							@Override
+							public void dependencyExcluded() {
+								TreeNode nodeForRemoval = selectedNode;
+								while (nodeForRemoval.getParent() != null && nodeForRemoval.getParent() != treeRoot) {
+									nodeForRemoval = nodeForRemoval.getParent();
+								}
+								treeModel.removeNodeFromParent((MutableTreeNode) nodeForRemoval);
+							}
+						} };
+					}
+				};
+				actionManager.createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
 			}
 		});
 	}
@@ -127,9 +168,10 @@ public class GuiForm {
 			if (parent == null) {
 				return;
 			}
-			final DefaultMutableTreeNode parentNode = new DefaultMutableTreeNode(new MyTreeNode(parent));
-			newChild.add(parentNode);
-			addAllParents(parent, parentNode);
+			final DefaultMutableTreeNode parentDependencyNode = new DefaultMutableTreeNode(new MyTreeNode(parent));
+			newChild.add(parentDependencyNode);
+			parentDependencyNode.setParent(newChild);
+			addAllParents(parent, parentDependencyNode);
 		}
 
 	}
@@ -150,6 +192,10 @@ public class GuiForm {
 
 		public MavenArtifact getArtifact() {
 			return mavenArtifactNode.getArtifact();
+		}
+
+		public MavenArtifactNode getMavenArtifactNode() {
+			return mavenArtifactNode;
 		}
 
 		@Override
@@ -203,9 +249,18 @@ public class GuiForm {
 	}
 
 	private void initializeModel() {
+		final Object selectedValue = list.getSelectedValue();
+
 		final List<MavenArtifactNode> dependencyTree = mavenProject.getDependencyTree();
 		allArtifactsMap = createAllArtifactsMap(dependencyTree);
 		updateListModel(allArtifactsMap);
+
+		treeRoot.removeAllChildren();
+		treeModel.reload();
+
+		if (selectedValue != null) {
+			list.setSelectedValue(selectedValue, true);
+		}
 	}
 
 	private void updateListModel(Map<String, List<MavenArtifactNode>> allArtifactsMap) {
