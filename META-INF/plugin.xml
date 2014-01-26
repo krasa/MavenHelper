@@ -27,7 +27,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-            1.8 - Jump to Source action for Dependency Analyzer<br>
+            1.8 - Jump to Source action and nicer gui for Dependency Analyzer<br>
             1.7 - Exclude action for Dependency Analyzer<br>
             1.6 <br>
             - Added Dependency Analyzer<br>
