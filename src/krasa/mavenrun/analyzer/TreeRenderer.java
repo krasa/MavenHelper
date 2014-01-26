@@ -6,6 +6,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 
 import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 
 /**
  * @author Vojtech Krasa
@@ -24,9 +25,10 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		if (myTreeUserObject.showOnlyVersion) {
 			append(artifact.getVersion() + " (" + artifact.getScope() + ")", myTreeUserObject.attributes);
 		} else {
-			append(artifact.getGroupId() + ":", myTreeUserObject.attributes);
-			append(artifact.getArtifactId(), myTreeUserObject.boldAttributes);
-			append(":" + artifact.getVersion() + " (" + artifact.getScope() + ")", myTreeUserObject.attributes);
+			append(artifact.getGroupId() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+			append(artifact.getArtifactId(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+			append(":" + artifact.getVersion() + " (" + artifact.getScope() + ")",
+					SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
 		}
 

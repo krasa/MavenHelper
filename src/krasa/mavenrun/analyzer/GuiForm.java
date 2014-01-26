@@ -27,6 +27,8 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.ColoredListCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.treeStructure.Tree;
 
@@ -77,6 +79,16 @@ public class GuiForm {
 	private void createUIComponents() {
 		listDataModel = new DefaultListModel();
 		list = createJBList(listDataModel);
+		list.setCellRenderer(new ColoredListCellRenderer<MyListNode>() {
+			@Override
+			protected void customizeCellRenderer(JList list, MyListNode value, int index, boolean selected,
+					boolean hasFocus) {
+				final String[] split = value.key.split(":");
+				append(split[0] + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+
+			}
+		});
 		tree = new Tree();
 		treeRoot = new DefaultMutableTreeNode();
 		treeModel = new DefaultTreeModel(treeRoot);
