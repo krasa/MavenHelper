@@ -22,13 +22,20 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		MyTreeUserObject myTreeUserObject = (MyTreeUserObject) userObject;
 		final MavenArtifact artifact = myTreeUserObject.getArtifact();
 
-		if (myTreeUserObject.showOnlyVersion) {
-			append(artifact.getVersion() + " (" + artifact.getScope() + ")", myTreeUserObject.attributes);
+		String classifier = artifact.getClassifier();
+		if (classifier != null) {
+			classifier = classifier + " - ";
 		} else {
+			classifier = "";
+		}
+
+		if (myTreeUserObject.showOnlyVersion) {
+			append(artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", myTreeUserObject.attributes);
+	} else {
 			append(artifact.getGroupId() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 			append(artifact.getArtifactId(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-			append(":" + artifact.getVersion() + " (" + artifact.getScope() + ")",
-					SimpleTextAttributes.REGULAR_ATTRIBUTES);
+			append(":" + artifact.getVersion() + " (" + classifier + artifact.getScope() + ")",
+			SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
 		}
 
