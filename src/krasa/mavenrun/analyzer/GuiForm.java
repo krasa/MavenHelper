@@ -16,27 +16,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.treeStructure.Tree;
 
@@ -81,35 +71,7 @@ public class GuiForm {
 				rootPanel.requestFocus();
 			}
 		});
-		tree.addMouseListener(new PopupHandler() {
-			public void invokePopup(final Component comp, final int x, final int y) {
-				final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-				final MyTreeNode myTreeNode = (MyTreeNode) selectedNode.getUserObject();
-				final MavenArtifactNode mavenArtifactNode = myTreeNode.getMavenArtifactNode();
-				if (myTreeNode.getMavenArtifactNode().getParent() == null) {
-					return;
-				}
-
-				final ActionManager actionManager = ActionManager.getInstance();
-				final ActionGroup actionGroup = new ActionGroup() {
-					@NotNull
-					@Override
-					public AnAction[] getChildren(@Nullable AnActionEvent e) {
-						return new AnAction[] { new ExcludeAction(project, mavenProject, mavenArtifactNode) {
-							@Override
-							public void dependencyExcluded() {
-								TreeNode nodeForRemoval = selectedNode;
-								while (nodeForRemoval.getParent() != null && nodeForRemoval.getParent() != treeRoot) {
-									nodeForRemoval = nodeForRemoval.getParent();
-								}
-								treeModel.removeNodeFromParent((MutableTreeNode) nodeForRemoval);
-							}
-						} };
-					}
-				};
-				actionManager.createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
-			}
-		});
+		tree.addMouseListener(new TreePopupHandler(project, mavenProject, tree));
 	}
 
 	private void createUIComponents() {
@@ -123,7 +85,7 @@ public class GuiForm {
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		tree.expandPath(new TreePath(treeRoot.getPath()));
-		tree.setCellRenderer(new MyRenderer());
+		tree.setCellRenderer(new TreeRenderer());
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	}
 
@@ -133,23 +95,24 @@ public class GuiForm {
 			if (listDataModel.isEmpty() || list.getSelectedValue() == null) {
 				return;
 			}
+			treeRoot.removeAllChildren();
+
 			final MyListNode myListNode = (MyListNode) list.getSelectedValue();
 			final List<MavenArtifactNode> value = myListNode.value;
 
-			treeRoot.removeAllChildren();
-			String maxVersion = sortByVersion(value);
-			for (MavenArtifactNode mavenArtifactNode : value) {
-				SimpleTextAttributes attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
-				if (maxVersion.equals(mavenArtifactNode.getArtifact().getVersion())) {
-					attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-				}
-				final DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(new MyTreeNode(mavenArtifactNode,
-						attributes));
-				addAllParents(mavenArtifactNode, newChild);
-				treeRoot.add(newChild);
-			}
-			treeModel.nodeStructureChanged(treeRoot);
+			fillTree(value);
 			expandAll(tree, new TreePath(treeRoot.getPath()));
+		}
+
+		private void fillTree(List<MavenArtifactNode> mavenArtifactNodes) {
+			String maxVersion = sortByVersion(mavenArtifactNodes);
+			for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
+				final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(MyTreeUserObject.create(
+						mavenArtifactNode, maxVersion));
+				fill(mavenArtifactNode, newNode);
+				treeRoot.add(newNode);
+	}
+			treeModel.nodeStructureChanged(treeRoot);
 		}
 
 		private String sortByVersion(List<MavenArtifactNode> value) {
@@ -164,45 +127,17 @@ public class GuiForm {
 			return value.get(0).getArtifact().getVersion();
 		}
 
-		private void addAllParents(MavenArtifactNode mavenArtifactNode, DefaultMutableTreeNode newChild) {
+		private void fill(MavenArtifactNode mavenArtifactNode, DefaultMutableTreeNode node) {
 			final MavenArtifactNode parent = mavenArtifactNode.getParent();
 			if (parent == null) {
 				return;
 			}
-			final DefaultMutableTreeNode parentDependencyNode = new DefaultMutableTreeNode(new MyTreeNode(parent));
-			newChild.add(parentDependencyNode);
-			parentDependencyNode.setParent(newChild);
-			addAllParents(parent, parentDependencyNode);
+			final DefaultMutableTreeNode parentDependencyNode = new DefaultMutableTreeNode(new MyTreeUserObject(parent));
+			node.add(parentDependencyNode);
+			parentDependencyNode.setParent(node);
+			fill(parent, parentDependencyNode);
 		}
 
-	}
-
-	private class MyTreeNode {
-		private MavenArtifactNode mavenArtifactNode;
-		protected SimpleTextAttributes attributes;
-
-		public MyTreeNode(MavenArtifactNode mavenArtifactNode) {
-			this.mavenArtifactNode = mavenArtifactNode;
-			attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-		}
-
-		public MyTreeNode(MavenArtifactNode mavenArtifactNode, final SimpleTextAttributes regularAttributes) {
-			this.mavenArtifactNode = mavenArtifactNode;
-			attributes = regularAttributes;
-		}
-
-		public MavenArtifact getArtifact() {
-			return mavenArtifactNode.getArtifact();
-		}
-
-		public MavenArtifactNode getMavenArtifactNode() {
-			return mavenArtifactNode;
-		}
-
-		@Override
-		public String toString() {
-			return mavenArtifactNode.getArtifact().getArtifactId();
-		}
 	}
 
 	private void expandAll(JTree tree, TreePath parent) {
@@ -215,22 +150,6 @@ public class GuiForm {
 			}
 		}
 		tree.expandPath(parent);
-	}
-
-	private static class MyRenderer extends ColoredTreeCellRenderer {
-
-		public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
-				int row, boolean hasFocus) {
-			Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
-			if (!(userObject instanceof MyTreeNode))
-				return;
-
-			MyTreeNode myTreeNode = (MyTreeNode) userObject;
-
-			final MavenArtifact artifact = myTreeNode.getArtifact();
-			append(artifact.getDisplayStringSimple(), myTreeNode.attributes);
-		}
-
 	}
 
 	private JBList createJBList(DefaultListModel model) {
