@@ -43,11 +43,6 @@ class MyDragListener implements DragSourceListener, DragGestureListener {
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {
-		if (dsde.getDropSuccess()) {
-			System.out.println("Succeeded");
-		} else {
-			System.out.println("Failed");
-		}
 	}
 
 	public void dropActionChanged(DragSourceDragEvent dsde) {

@@ -46,8 +46,6 @@ class MyListDropHandler extends TransferHandler {
 		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
 		int dropTargetIndex = dl.getIndex();
 
-		System.out.println(index + " : " + dropTargetIndex);
-
 		DefaultListModel model = (DefaultListModel) list.getModel();
 		Object elementAt = model.getElementAt(index);
 
