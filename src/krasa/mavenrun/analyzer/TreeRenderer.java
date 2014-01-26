@@ -19,9 +19,17 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			return;
 
 		MyTreeUserObject myTreeUserObject = (MyTreeUserObject) userObject;
-
 		final MavenArtifact artifact = myTreeUserObject.getArtifact();
-		append(artifact.getDisplayStringSimple(), myTreeUserObject.attributes);
+
+		if (myTreeUserObject.showOnlyVersion) {
+			append(artifact.getVersion() + " (" + artifact.getScope() + ")", myTreeUserObject.attributes);
+		} else {
+			append(artifact.getGroupId() + ":", myTreeUserObject.attributes);
+			append(artifact.getArtifactId(), myTreeUserObject.boldAttributes);
+			append(":" + artifact.getVersion() + " (" + artifact.getScope() + ")", myTreeUserObject.attributes);
+
+		}
+
 	}
 
 }
