@@ -55,7 +55,7 @@
         <properties>
           <continuousLayout value="true"/>
           <dividerLocation value="300"/>
-          <dividerSize value="2"/>
+          <dividerSize value="5"/>
           <enabled value="true"/>
           <resizeWeight value="0.5"/>
         </properties>
