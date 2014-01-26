@@ -79,10 +79,11 @@ public class GuiForm {
 	private void createUIComponents() {
 		listDataModel = new DefaultListModel();
 		list = createJBList(listDataModel);
-		list.setCellRenderer(new ColoredListCellRenderer<MyListNode>() {
+		//no generics in IJ12
+		list.setCellRenderer(new ColoredListCellRenderer() {
 			@Override
-			protected void customizeCellRenderer(JList list, MyListNode value, int index, boolean selected,
-					boolean hasFocus) {
+			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
+				MyListNode value = (MyListNode) o;
 				final String[] split = value.key.split(":");
 				append(split[0] + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
@@ -123,7 +124,7 @@ public class GuiForm {
 						mavenArtifactNode, maxVersion));
 				fill(mavenArtifactNode, newNode);
 				treeRoot.add(newNode);
-	}
+			}
 			treeModel.nodeStructureChanged(treeRoot);
 		}
 

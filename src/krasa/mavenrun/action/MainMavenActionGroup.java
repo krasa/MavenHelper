@@ -1,23 +1,16 @@
 package krasa.mavenrun.action;
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.PathUtil;
-import gnu.trove.THashSet;
-import icons.MavenIcons;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.*;
+
 import krasa.mavenrun.ApplicationComponent;
 import krasa.mavenrun.model.ApplicationSettings;
 import krasa.mavenrun.model.Goal;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
@@ -31,11 +24,19 @@ import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenPluginInfo;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.PathUtil;
+import icons.MavenIcons;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
@@ -78,14 +79,14 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	private void addRunConfigurations(List<AnAction> result, AnActionEvent e) {
-		final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-		Set<RunnerAndConfigurationSettings> settings = new THashSet<RunnerAndConfigurationSettings>(
-				RunManager.getInstance(project).getConfigurationSettingsList(MavenRunConfigurationType.getInstance()));
+		final Project project = getEventProject(e);
+		final RunnerAndConfigurationSettings[] configurationSettings = RunManager.getInstance(project).getConfigurationSettings(
+				MavenRunConfigurationType.getInstance());
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 
 		String directory = PathUtil.getCanonicalPath(mavenProject.getDirectory());
 
-		for (RunnerAndConfigurationSettings cfg : settings) {
+		for (RunnerAndConfigurationSettings cfg : configurationSettings) {
 			MavenRunConfiguration mavenRunConfiguration = (MavenRunConfiguration) cfg.getConfiguration();
 			if (directory.equals(PathUtil.getCanonicalPath(mavenRunConfiguration.getRunnerParameters().getWorkingDirPath()))) {
 				result.add(getRunConfigurationAction(project, cfg));

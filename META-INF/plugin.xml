@@ -2,7 +2,8 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>1.8</version>
+	<version>1.8.13</version>
+	<!--<version>1.7.12</version>-->
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,7 +28,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-            1.8 - Jump to Source action and nicer gui for Dependency Analyzer<br>
+            1.7.12, 1.8 - Jump to Source action and nicer gui for Dependency Analyzer<br>
             1.7 - Exclude action for Dependency Analyzer<br>
             1.6 <br>
             - Added Dependency Analyzer<br>
@@ -40,6 +41,7 @@
 	</change-notes>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+	<!--<idea-version since-build="129.60" until-build="132.000"/>-->
 	<idea-version since-build="132.947"/>
 
 	<application-components>
