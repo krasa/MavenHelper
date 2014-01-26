@@ -34,7 +34,9 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	protected MavenArtifact getParentMavenArtifact() {
 		MavenArtifactNode oldestParent = mavenArtifactNode.getParent();
-
+		if (oldestParent == null) {
+			return mavenArtifactNode.getArtifact();
+		}
 		MavenArtifactNode parentNode = oldestParent.getParent();
 		while (parentNode != null) {
 			oldestParent = parentNode;
