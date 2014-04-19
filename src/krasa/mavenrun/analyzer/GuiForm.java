@@ -1,24 +1,13 @@
 package krasa.mavenrun.analyzer;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
@@ -27,8 +16,7 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.treeStructure.Tree;
 
@@ -49,10 +37,12 @@ public class GuiForm {
 	private JLabel noConflictsLabel;
 	private JButton refreshButton;
 	private JSplitPane splitPane;
+	private SearchTextField searchField;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel treeModel;
 	protected DefaultMutableTreeNode treeRoot;
+	protected ListSpeedSearch myListSpeedSearch;
 
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
@@ -74,12 +64,31 @@ public class GuiForm {
 			}
 		});
 		tree.addMouseListener(new TreePopupHandler(project, mavenProject, tree));
+		myListSpeedSearch = new ListSpeedSearch(list);
+		searchField.addDocumentListener(new DocumentAdapter() {
+			@Override
+			protected void textChanged(DocumentEvent documentEvent) {
+				filter();
+			}
+		});
+		searchField.getTextEditor().addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (searchField.getText() != null) {
+					searchField.addCurrentTextToHistory();
+				}
+			}
+		});
+	}
+
+	private void filter() {
+		updateListModel(allArtifactsMap);
 	}
 
 	private void createUIComponents() {
 		listDataModel = new DefaultListModel();
 		list = createJBList(listDataModel);
-		//no generics in IJ12
+		// no generics in IJ12
 		list.setCellRenderer(new ColoredListCellRenderer() {
 			@Override
 			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
@@ -197,18 +206,25 @@ public class GuiForm {
 	}
 
 	private void updateListModel(Map<String, List<MavenArtifactNode>> allArtifactsMap) {
+		final String searchFieldText = searchField.getText();
 		listDataModel.clear();
 		if (conflictsRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				final List<MavenArtifactNode> nodes = s.getValue();
+				boolean hasConflicts = false;
 				if (nodes.size() > 1 && hasConflicts(nodes)) {
-					listDataModel.addElement(new MyListNode(s));
+					hasConflicts = true;
+					if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
+						listDataModel.addElement(new MyListNode(s));
+					}
 				}
-				noConflictsLabel.setVisible(listDataModel.isEmpty());
+				noConflictsLabel.setVisible(!hasConflicts);
 			}
 		} else {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
-				listDataModel.addElement(new MyListNode(s));
+				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
+					listDataModel.addElement(new MyListNode(s));
+				}
 			}
 			noConflictsLabel.setVisible(false);
 		}
