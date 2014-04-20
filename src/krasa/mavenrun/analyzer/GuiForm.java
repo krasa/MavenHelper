@@ -25,19 +25,22 @@ import com.intellij.ui.treeStructure.Tree;
  */
 public class GuiForm {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
-
 	private final Project project;
 	private final VirtualFile file;
 	private MavenProject mavenProject;
 	private JBList list;
 	private JTree tree;
 	private JPanel rootPanel;
+
 	private JRadioButton allDependenciesRadioButton;
 	private JRadioButton conflictsRadioButton;
+	private JRadioButton allDependenciesAsTree;
+
 	private JLabel noConflictsLabel;
 	private JButton refreshButton;
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
+	private JScrollPane listScrollPane;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel treeModel;
@@ -51,11 +54,42 @@ public class GuiForm {
 		final ActionListener l = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				listScrollPane.setVisible(true);
+				splitPane.revalidate();
+				splitPane.resetToPreferredSizes();
+				splitPane.setDividerLocation(0.5d);
+				treeRoot.removeAllChildren();
+				treeModel.reload();
 				updateListModel(allArtifactsMap);
 			}
 		};
 		conflictsRadioButton.addActionListener(l);
 		allDependenciesRadioButton.addActionListener(l);
+		allDependenciesAsTree.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listScrollPane.setVisible(false);
+				splitPane.revalidate();
+				fillTree(treeRoot, mavenProject.getDependencyTree());
+				treeModel.nodeStructureChanged(treeRoot);
+				expandAll(tree, new TreePath(treeRoot.getPath()));
+			}
+
+			private void fillTree(final DefaultMutableTreeNode root, final List<MavenArtifactNode> mavenArtifactNodes) {
+				if (mavenArtifactNodes == null || mavenArtifactNodes.isEmpty()) {
+					return;
+				}
+				for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
+					String maxVersion = sortByVersion(allArtifactsMap.get(getAllArtifactsMapKey(mavenArtifactNode.getArtifact())));
+					final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(MyTreeUserObject.create(
+							mavenArtifactNode, maxVersion, false));
+					root.add(newNode);
+					fillTree(newNode, mavenArtifactNode.getDependencies());
+				}
+			}
+		});
+		allDependenciesAsTree.addActionListener(l);
+
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -130,23 +164,11 @@ public class GuiForm {
 			String maxVersion = sortByVersion(mavenArtifactNodes);
 			for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
 				final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(MyTreeUserObject.create(
-						mavenArtifactNode, maxVersion));
+						mavenArtifactNode, maxVersion, true));
 				fill(mavenArtifactNode, newNode);
 				treeRoot.add(newNode);
 			}
 			treeModel.nodeStructureChanged(treeRoot);
-		}
-
-		private String sortByVersion(List<MavenArtifactNode> value) {
-			Collections.sort(value, new Comparator<MavenArtifactNode>() {
-				@Override
-				public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
-					DefaultArtifactVersion version = new DefaultArtifactVersion(o1.getArtifact().getVersion());
-					DefaultArtifactVersion version1 = new DefaultArtifactVersion(o2.getArtifact().getVersion());
-					return version1.compareTo(version);
-				}
-			});
-			return value.get(0).getArtifact().getVersion();
 		}
 
 		private void fill(MavenArtifactNode mavenArtifactNode, DefaultMutableTreeNode node) {
@@ -160,6 +182,11 @@ public class GuiForm {
 			fill(parent, parentDependencyNode);
 		}
 
+	}
+
+	private String sortByVersion(List<MavenArtifactNode> value) {
+		Collections.sort(value, MAVEN_ARTIFACT_NODE_COMPARATOR);
+		return value.get(0).getArtifact().getVersion();
 	}
 
 	private void expandAll(JTree tree, TreePath parent) {
@@ -191,6 +218,9 @@ public class GuiForm {
 	}
 
 	private void initializeModel() {
+		if (allDependenciesAsTree.isSelected()) {
+			return;
+		}
 		final Object selectedValue = list.getSelectedValue();
 
 		final List<MavenArtifactNode> dependencyTree = mavenProject.getDependencyTree();
@@ -264,7 +294,7 @@ public class GuiForm {
 		for (MavenArtifactNode mavenArtifactNode : artifactNodes) {
 			final MavenArtifact artifact = mavenArtifactNode.getArtifact();
 
-			final String key = artifact.getGroupId() + ":" + artifact.getArtifactId();
+			final String key = getAllArtifactsMapKey(artifact);
 			final List<MavenArtifactNode> mavenArtifactNodes = map.get(key);
 			if (mavenArtifactNodes == null) {
 				final ArrayList<MavenArtifactNode> value = new ArrayList<MavenArtifactNode>(1);
@@ -275,6 +305,10 @@ public class GuiForm {
 			}
 			addAll(map, mavenArtifactNode.getDependencies(), i + 1);
 		}
+	}
+
+	private String getAllArtifactsMapKey(MavenArtifact artifact) {
+		return artifact.getGroupId() + ":" + artifact.getArtifactId();
 	}
 
 	public JComponent getRootComponent() {
@@ -289,5 +323,14 @@ public class GuiForm {
 		initializeModel();
 		splitPane.setDividerLocation(0.5);
 	}
+
+	public static final Comparator<MavenArtifactNode> MAVEN_ARTIFACT_NODE_COMPARATOR = new Comparator<MavenArtifactNode>() {
+		@Override
+		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
+			DefaultArtifactVersion version = new DefaultArtifactVersion(o1.getArtifact().getVersion());
+			DefaultArtifactVersion version1 = new DefaultArtifactVersion(o2.getArtifact().getVersion());
+			return version1.compareTo(version);
+		}
+	};
 
 }

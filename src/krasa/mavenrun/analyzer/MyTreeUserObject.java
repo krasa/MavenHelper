@@ -24,13 +24,13 @@ class MyTreeUserObject {
 		this.attributes = regularAttributes;
 	}
 
-	static MyTreeUserObject create(MavenArtifactNode mavenArtifactNode, String maxVersion) {
+	static MyTreeUserObject create(MavenArtifactNode mavenArtifactNode, String maxVersion, final boolean showOnlyVersion) {
 		SimpleTextAttributes attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 		if (maxVersion.equals(mavenArtifactNode.getArtifact().getVersion())) {
 			attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 		}
 		final MyTreeUserObject myTreeUserObject = new MyTreeUserObject(mavenArtifactNode, attributes);
-		myTreeUserObject.showOnlyVersion = true;
+		myTreeUserObject.showOnlyVersion = showOnlyVersion;
 		return myTreeUserObject;
 	}
 
