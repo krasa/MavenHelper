@@ -41,8 +41,8 @@
 	</change-notes>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-	<idea-version since-build="129.60"/>
-	<!--<idea-version since-build="132.947"/>-->
+	<idea-version since-build="129.60" until-build="132.000"/>
+
 
 	<application-components>
 		<component>
