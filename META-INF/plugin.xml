@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>1.9.13</version>
+	<version>2.0.13</version>
 	<!--<version>1.7.12</version>-->
 
 	<vendor url="https://github.com/krasa/MavenRunHelper" email="vojta.krasa@gmail.com">Vojtech
@@ -28,6 +28,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            2.0 - fixed "no conflicts" field<br>
             1.9 - added search field and speed search for Dependency Analyzer<br>
             1.7.12, 1.8 - Jump to Source action and nicer gui for Dependency Analyzer<br>
             1.7 - Exclude action for Dependency Analyzer<br>
