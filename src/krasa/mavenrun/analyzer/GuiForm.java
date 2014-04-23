@@ -211,15 +211,13 @@ public class GuiForm {
 		if (conflictsRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				final List<MavenArtifactNode> nodes = s.getValue();
-				boolean hasConflicts = false;
 				if (nodes.size() > 1 && hasConflicts(nodes)) {
-					hasConflicts = true;
 					if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
 						listDataModel.addElement(new MyListNode(s));
 					}
 				}
-				noConflictsLabel.setVisible(!hasConflicts);
 			}
+			noConflictsLabel.setVisible(listDataModel.isEmpty());
 		} else {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
