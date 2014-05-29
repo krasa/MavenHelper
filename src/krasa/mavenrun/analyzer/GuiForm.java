@@ -209,17 +209,15 @@ public class GuiForm {
 		final String searchFieldText = searchField.getText();
 		listDataModel.clear();
 		if (conflictsRadioButton.isSelected()) {
-			boolean hasConflicts = false;
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				final List<MavenArtifactNode> nodes = s.getValue();
 				if (nodes.size() > 1 && hasConflicts(nodes)) {
-					hasConflicts = true;
 					if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
 						listDataModel.addElement(new MyListNode(s));
 					}
 				}
 			}
-			noConflictsLabel.setVisible(!hasConflicts);
+			noConflictsLabel.setVisible(listDataModel.isEmpty());
 		} else {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
