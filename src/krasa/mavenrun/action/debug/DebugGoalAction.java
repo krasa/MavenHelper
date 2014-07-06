@@ -19,6 +19,9 @@ public class DebugGoalAction extends RunGoalAction {
 
 	public DebugGoalAction(Goal goal, Icon icon) {
 		super(goal, icon);
+		String description = "debug: " + goal.getCommandLine();
+		getTemplatePresentation().setText(description);
+		getTemplatePresentation().setDescription(description);
 	}
 
 	@Override

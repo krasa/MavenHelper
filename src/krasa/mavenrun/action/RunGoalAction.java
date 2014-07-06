@@ -36,8 +36,12 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	public RunGoalAction(Goal goal, Icon icon) {
-		super(goal.getCommandLine(), goal.getCommandLine(), icon);
+		super(getText(goal), getText(goal), icon);
 		this.goalsToRun = parse(goal.getCommandLine());
+	}
+
+	private static String getText(Goal goal) {
+		return "run: " + goal.getCommandLine();
 	}
 
 	public RunGoalAction(Goal goal) {
