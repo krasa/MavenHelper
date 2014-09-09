@@ -70,6 +70,11 @@
 			<add-to-group group-id="WindowMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
 		</action>
+		<action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenrun.action.QuickRunRootMavenGoalAction" text="Quick Run Root Maven Goal"
+				description="Quick Run Root Maven Goal">
+			<add-to-group group-id="WindowMenu" anchor="first"/>
+			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
+		</action>
 	</actions>
 
 	

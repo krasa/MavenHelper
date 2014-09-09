@@ -1,6 +1,5 @@
 package krasa.mavenrun.action;
 
-import com.intellij.openapi.actionSystem.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.model.MavenPlugin;
-import org.jetbrains.idea.maven.navigator.MavenProjectsNavigator;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.project.actions.ReimportProjectAction;
@@ -29,6 +27,7 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -59,18 +58,19 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	public  AnAction[] getActions(DataContext dataContext, Project project) {
+	public AnAction[] getActions(DataContext dataContext, Project project) {
 		List<AnAction> result = new ArrayList<AnAction>();
-		if ( MavenActionUtil.getMavenProject(dataContext) != null) {
+		MavenProject mavenProject = getMavenProject(dataContext);
+		if (mavenProject != null) {
 			addTestFile(result);
 			separator(result);
-			addRunConfigurations(result, project, dataContext);
+			addRunConfigurations(result, project, mavenProject);
 			separator(result);
 
 			addGoals(result);
 			separator(result);
 
-			List<MavenActionGroup> mavenActionGroups = getPlugins(dataContext, project);
+			List<MavenActionGroup> mavenActionGroups = getPlugins(project, mavenProject);
 
 			addPluginAwareActions(result, mavenActionGroups);
 			separator(result);
@@ -85,10 +85,13 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		return result.toArray(new AnAction[result.size()]);
 	}
 
-	private void addRunConfigurations(List<AnAction> result, Project project, DataContext dataContext) {
+	protected MavenProject getMavenProject(DataContext dataContext) {
+		return MavenActionUtil.getMavenProject(dataContext);
+	}
+
+	private void addRunConfigurations(List<AnAction> result, Project project, final MavenProject mavenProject) {
 		final RunnerAndConfigurationSettings[] configurationSettings = RunManager.getInstance(project).getConfigurationSettings(
 				MavenRunConfigurationType.getInstance());
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
 
 		String directory = PathUtil.getCanonicalPath(mavenProject.getDirectory());
 
@@ -157,17 +160,13 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	private List<MavenActionGroup> getPlugins(DataContext dataContext, Project project) {
+	private List<MavenActionGroup> getPlugins(Project project, MavenProject mavenProject) {
 		List<MavenActionGroup> mavenActionGroups = new ArrayList<MavenActionGroup>();
-		MavenProjectsNavigator.getInstance(project).getState();
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
-		if (mavenProject != null) {
-			for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
-				MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
-				plugin.getTemplatePresentation().setIcon(getIcon());
-				addPluginGoals(project, mavenPlugin, plugin);
-				mavenActionGroups.add(plugin);
-			}
+		for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
+			MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
+			plugin.getTemplatePresentation().setIcon(getIcon());
+			addPluginGoals(project, mavenPlugin, plugin);
+			mavenActionGroups.add(plugin);
 		}
 		return mavenActionGroups;
 	}
