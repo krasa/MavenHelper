@@ -10,7 +10,7 @@ import krasa.mavenrun.model.Goal;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
-import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -63,8 +63,9 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {
 			final DataContext context = e.getDataContext();
+			MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goalsToRun,
-					MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
+					projectsManager.getExplicitProfiles());
 			run(context, params);
 		}
 	}
