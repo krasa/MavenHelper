@@ -1,5 +1,7 @@
 package krasa.mavenrun.action;
 
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,6 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.BaseRunConfigurationAction;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -87,7 +83,13 @@ public class RunTestFileAction extends DumbAwareAction {
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
-		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+        if (DumbService.isDumb(getEventProject(e))) {
+            Presentation p = e.getPresentation();
+            p.setVisible(false);
+            return;
+        }
+        
+        final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
 		RunnerAndConfigurationSettings configuration = context.getConfiguration();
 
 		boolean isTest = configuration != null;
