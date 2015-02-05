@@ -1,18 +1,25 @@
 package krasa.mavenrun.analyzer;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.*;
 
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.server.MavenServerManager;
 
+import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,6 +42,7 @@ public class GuiForm {
 	private JRadioButton allDependenciesRadioButton;
 	private JRadioButton conflictsRadioButton;
 	private JLabel noConflictsLabel;
+	private JTextPane noConflictsWarningLabel;
 	private JButton refreshButton;
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
@@ -208,6 +216,8 @@ public class GuiForm {
 	private void updateListModel(Map<String, List<MavenArtifactNode>> allArtifactsMap) {
 		final String searchFieldText = searchField.getText();
 		listDataModel.clear();
+		boolean conflictsWarning = false;
+		boolean showNoConflictsLabel = false;
 		if (conflictsRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				final List<MavenArtifactNode> nodes = s.getValue();
@@ -217,15 +227,23 @@ public class GuiForm {
 					}
 				}
 			}
-			noConflictsLabel.setVisible(listDataModel.isEmpty());
+			showNoConflictsLabel = listDataModel.isEmpty();
+			if (showNoConflictsLabel && ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion() >= 139) {
+				MavenServerManager server = MavenServerManager.getInstance();
+				boolean useMaven2 = server.isUseMaven2();
+				boolean contains = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
+				conflictsWarning = !contains && !useMaven2;
+			}
 		} else {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
 					listDataModel.addElement(new MyListNode(s));
 				}
 			}
-			noConflictsLabel.setVisible(false);
+			showNoConflictsLabel = false;
 		}
+		noConflictsWarningLabel.setVisible(conflictsWarning);
+		noConflictsLabel.setVisible(showNoConflictsLabel);
 	}
 
 	private boolean hasConflicts(List<MavenArtifactNode> nodes) {
