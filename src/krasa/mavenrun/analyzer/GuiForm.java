@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.DefaultCaret;
 import javax.swing.tree.*;
 
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -31,7 +32,15 @@ import com.intellij.ui.treeStructure.Tree;
  * @author Vojtech Krasa
  */
 public class GuiForm {
-	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
+    private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
+
+    public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
+      + "\n"
+      + "If your project is Maven2 compatible, you could try one of the following:\n"
+      + "\n"
+      + "-you could try to add -Dmaven3.use.compat.resolver option to File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | VM options for importer\n"
+      + "\n"
+      + "-or turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting";
 
 	private final Project project;
 	private final VirtualFile file;
@@ -46,13 +55,13 @@ public class GuiForm {
 	private JButton refreshButton;
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
-	protected DefaultListModel listDataModel;
+    private JScrollPane noConflictsWarningLabelScrollPane;
+    protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel treeModel;
 	protected DefaultMutableTreeNode treeRoot;
 	protected ListSpeedSearch myListSpeedSearch;
-
-	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
+    public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
 		this.mavenProject = mavenProject;
@@ -87,7 +96,8 @@ public class GuiForm {
 				}
 			}
 		});
-	}
+        noConflictsWarningLabel.setBackground(null);
+    }
 
 	private void filter() {
 		updateListModel(allArtifactsMap);
@@ -228,11 +238,14 @@ public class GuiForm {
 				}
 			}
 			showNoConflictsLabel = listDataModel.isEmpty();
-			if (showNoConflictsLabel && ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion() >= 139) {
+            int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
+            if (showNoConflictsLabel && baselineVersion >= 139) {
 				MavenServerManager server = MavenServerManager.getInstance();
 				boolean useMaven2 = server.isUseMaven2();
-				boolean contains = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
-				conflictsWarning = !contains && !useMaven2;
+				boolean contains139 = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
+                boolean contains140 = server.getMavenEmbedderVMOptions().contains("-Didea.maven3.use.compat.resolver");
+                boolean containsProperty = (baselineVersion == 139 && contains139) || (baselineVersion >= 140 && contains140);
+                conflictsWarning = !containsProperty && !useMaven2;
 			}
 		} else {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
@@ -242,9 +255,23 @@ public class GuiForm {
 			}
 			showNoConflictsLabel = false;
 		}
-		noConflictsWarningLabel.setVisible(conflictsWarning);
-		noConflictsLabel.setVisible(showNoConflictsLabel);
-	}
+        if (conflictsWarning) {
+            int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
+            if (baselineVersion >= 140) {
+                noConflictsWarningLabel.setText(WARNING.replace("-Dmaven3.use.compat.resolver", "-Didea.maven3.use.compat.resolver"));
+            } else {
+                noConflictsWarningLabel.setText(WARNING);
+            }
+            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+             public void run() {
+                 noConflictsWarningLabelScrollPane.getVerticalScrollBar().setValue(0);
+             }
+         });
+        } 
+        
+        noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
+        noConflictsLabel.setVisible(showNoConflictsLabel);
+    }
 
 	private boolean hasConflicts(List<MavenArtifactNode> nodes) {
 		String version = null;

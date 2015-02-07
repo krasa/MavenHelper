@@ -29,7 +29,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-            <br>2.3 - exception fix for IJ 140.2110
+            <br>2.3
+            <br> - exception fix for IJ 140.2110
+            <br> - check for <a href="https://youtrack.jetbrains.com/issue/IDEA-133331">IDEA-133331</a>
             <br>2.2 - recompiled for IJ 138.1503
             <br>2.1 - added quick switch action "Quick Run Maven Goal" - CTRL + ALT + R
             <br>2.0 - fixed "no conflicts" field
