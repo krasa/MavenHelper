@@ -5,7 +5,7 @@ import javax.swing.*;
 import krasa.mavenrun.action.MainMavenActionGroup;
 import krasa.mavenrun.action.RunGoalAction;
 import krasa.mavenrun.action.debug.DebugGoalAction;
-import krasa.mavenrun.action.debug.DebugIcons;
+import krasa.mavenrun.action.debug.Debug;
 import krasa.mavenrun.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
@@ -39,7 +39,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
-		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, DebugIcons.PluginGoal), RUN_MAVEN);
+		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
 		registerActions();
 	}

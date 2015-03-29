@@ -26,7 +26,7 @@ public class DebugGoalAction extends RunGoalAction {
 
 	@Override
 	protected void run(final DataContext context, final MavenRunnerParameters params) {
-		params.getGoals().add("-DforkMode=never");
+		params.getGoals().addAll(Debug.DEBUG_FORK_MODE);
 		runInternal(MavenActionUtil.getProject(context), params);
 	}
 

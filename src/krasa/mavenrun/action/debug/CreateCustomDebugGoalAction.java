@@ -20,7 +20,7 @@ public class CreateCustomDebugGoalAction extends CreateCustomGoalAction {
 
 	@Override
 	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return new DebugGoalAction(goal, DebugIcons.PluginGoal);
+		return new DebugGoalAction(goal, Debug.ICON);
 	}
 
 }

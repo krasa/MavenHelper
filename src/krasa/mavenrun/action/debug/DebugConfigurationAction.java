@@ -45,6 +45,6 @@ public class DebugConfigurationAction extends RunConfigurationAction {
 
 	private void addForkMode(RunnerAndConfigurationSettings configSettings) {
 		MavenRunConfiguration mavenRunConfiguration = (MavenRunConfiguration) configSettings.getConfiguration();
-		mavenRunConfiguration.getRunnerParameters().getGoals().add("-DforkMode=never");
+		mavenRunConfiguration.getRunnerParameters().getGoals().addAll(Debug.DEBUG_FORK_MODE);
 	}
 }

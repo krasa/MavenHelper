@@ -31,7 +31,7 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 
 	@Override
 	protected Icon getRunIcon() {
-		return DebugIcons.PluginGoal;
+		return Debug.ICON;
 	}
 
 	@Override

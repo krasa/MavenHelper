@@ -6,16 +6,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiJavaFile;
+import java.util.*;
 import krasa.mavenrun.action.RunTestFileAction;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import java.util.List;
-
 public class DebugTestFileAction extends RunTestFileAction {
 
-	public DebugTestFileAction() {
-		super("Debug file", "Debug current File with Maven", DebugIcons.PluginGoal);
+    public DebugTestFileAction() {
+		super("Debug file", "Debug current File with Maven", Debug.ICON);
 	}
 
 	@Override
@@ -26,7 +25,7 @@ public class DebugTestFileAction extends RunTestFileAction {
 	@Override
 	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
 		List<String> goals = super.getGoals(e, psiFile);
-		goals.add("-DforkMode=never");
+		goals.addAll(Debug.DEBUG_FORK_MODE);
 		return goals;
 	}
 
