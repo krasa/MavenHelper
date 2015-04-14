@@ -1,13 +1,12 @@
 package krasa.mavenrun.action;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -18,6 +17,9 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.BaseRunConfigurationAction;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -57,11 +59,28 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
+		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+		Element pluginConfiguration = mavenProject.getPluginConfiguration("org.apache.maven.plugins",
+				"maven-surefire-plugin");
+		boolean skipTests = false;
+		if (pluginConfiguration != null) {
+			Element skip;
+			if ((skip = pluginConfiguration.getChild("skip")) != null) {
+				skipTests = Boolean.parseBoolean(skip.getText());
+			} else if ((skip = pluginConfiguration.getChild("skipTests")) != null) {
+				skipTests = Boolean.parseBoolean(skip.getText());
+			}
+		}
 		List<String> goals = new ArrayList<String>();
-		// goals.add("test");
+
 		goals.add("-Dtest=" + getTestArgument(e, psiFile));
-		goals.add("test-compile");
-		goals.add("surefire:test");
+		if (skipTests) { 
+			goals.add("integration-test");
+		} else {
+			goals.add("test-compile");
+			goals.add("surefire:test");
+		}
+
 		return goals;
 	}
 
@@ -83,13 +102,13 @@ public class RunTestFileAction extends DumbAwareAction {
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
-        if (DumbService.isDumb(getEventProject(e))) {
-            Presentation p = e.getPresentation();
-            p.setVisible(false);
-            return;
-        }
-        
-        final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+		if (DumbService.isDumb(getEventProject(e))) {
+			Presentation p = e.getPresentation();
+			p.setVisible(false);
+			return;
+		}
+
+		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
 		RunnerAndConfigurationSettings configuration = context.getConfiguration();
 
 		boolean isTest = configuration != null;
