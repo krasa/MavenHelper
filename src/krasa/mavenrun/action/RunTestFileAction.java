@@ -5,11 +5,16 @@ import java.util.List;
 
 import javax.swing.*;
 
+import krasa.mavenrun.analyzer.ComparableVersion;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
+import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
@@ -18,6 +23,7 @@ import com.intellij.execution.actions.BaseRunConfigurationAction;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.Messages;
@@ -27,6 +33,7 @@ import com.intellij.psi.PsiJavaFile;
 import icons.MavenIcons;
 
 public class RunTestFileAction extends DumbAwareAction {
+	private final Logger LOG = Logger.getInstance("#" + getClass().getCanonicalName());
 
 	public RunTestFileAction() {
 		super("Test file", "Run current File with Maven", MavenIcons.MavenLogo);
@@ -42,7 +49,8 @@ public class RunTestFileAction extends DumbAwareAction {
 
 			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 			if (psiFile instanceof PsiJavaFile) {
-				List<String> goals = getGoals(e, (PsiJavaFile) psiFile);
+				List<String> goals = getGoals(e, (PsiJavaFile) psiFile,
+						MavenActionUtil.getMavenProject(e.getDataContext()));
 
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
@@ -58,8 +66,95 @@ public class RunTestFileAction extends DumbAwareAction {
 		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
 	}
 
-	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject) {
+		List<String> goals = new ArrayList<String>();
+		boolean skipTests = isSkipTests(mavenProject);
+		goals.add("-DfailIfNoTests=true");
+		//so many possibilities...
+		if (hasFailSafe(mavenProject) && (skipTests || isExcludedFromSurefire(psiFile, mavenProject))) {
+			goals.add("test-compile");
+			addFailSafeParameters(e, psiFile, mavenProject, goals);
+			goals.add("failsafe:integration-test");
+//		} else if (skipTests) { //todo fail or verify?
+//			goals.add("-Dtest=" + getTestArgument(e, psiFile));
+//			addFailSafeParameters(e, psiFile, mavenProject, goals);
+//			goals.add("verify");
+		} else {
+			goals.add("-Dtest=" + getTestArgument(e, psiFile));
+			goals.add("test-compile");
+			goals.add("surefire:test");
+		}
+
+		return goals;
+	}
+
+	private boolean hasFailSafe(MavenProject mavenProject) {
+		return getFailsafe(mavenProject) !=null;
+	}
+
+	private void addFailSafeParameters(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject,
+			List<String> goals) {
+		MavenPlugin mavenProjectPlugin = getFailsafe(mavenProject);
+		if (mavenProjectPlugin != null) {
+			ComparableVersion version = new ComparableVersion(mavenProjectPlugin.getVersion());
+			ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
+			if (minimumForMethodTest.compareTo(version) == 1) {
+				goals.add("-Dit.test=" + getTestArgumentWithoutMethod(e, psiFile));
+			} else {
+				goals.add("-Dit.test=" + getTestArgument(e, psiFile));
+			}
+		}
+	}
+
+	private MavenPlugin getFailsafe(MavenProject mavenProject) {
+		return mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
+	}
+
+	private boolean isExcludedFromSurefire(PsiJavaFile psiFile, MavenProject mavenProject) {
+		boolean excluded = false;
+		try {
+			Element pluginConfiguration = mavenProject.getPluginConfiguration("org.apache.maven.plugins",
+					"maven-surefire-plugin");
+			excluded = false;
+			String fullName = null;
+			if (pluginConfiguration != null) {
+				Element excludes = pluginConfiguration.getChild("excludes");
+				if (excludes != null) {
+					List<Element> exclude = excludes.getChildren("exclude");
+					for (Element element : exclude) {
+						if (fullName == null) {
+							fullName = getPsiFilePath(psiFile);
+						}
+						excluded = matchClassRegexPatter(fullName, element.getText());
+						if (excluded) {
+							break;
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOG.warn(e);
+		}
+		return excluded;
+	}
+
+	protected static boolean matchClassRegexPatter(String testClassFile, String classPattern) {
+		return MatchPatterns.from(classPattern).matches(testClassFile, true);
+	}
+
+	@NotNull
+	private String getPsiFilePath(PsiJavaFile psiFile) {
+		String packageName = psiFile.getPackageName();
+		String fullName;
+		if (packageName.isEmpty()) {
+			fullName = psiFile.getName();
+		} else {
+			fullName = packageName.replace(".", "/") + "/" + psiFile.getVirtualFile().getName();
+		}
+		return fullName;
+	}
+
+	private boolean isSkipTests(MavenProject mavenProject) {
 		Element pluginConfiguration = mavenProject.getPluginConfiguration("org.apache.maven.plugins",
 				"maven-surefire-plugin");
 		boolean skipTests = false;
@@ -71,17 +166,7 @@ public class RunTestFileAction extends DumbAwareAction {
 				skipTests = Boolean.parseBoolean(skip.getText());
 			}
 		}
-		List<String> goals = new ArrayList<String>();
-
-		goals.add("-Dtest=" + getTestArgument(e, psiFile));
-		if (skipTests) { 
-			goals.add("integration-test");
-		} else {
-			goals.add("test-compile");
-			goals.add("surefire:test");
-		}
-
-		return goals;
+		return skipTests;
 	}
 
 	protected String getTestArgument(AnActionEvent e, PsiJavaFile psiFile) {
@@ -97,6 +182,10 @@ public class RunTestFileAction extends DumbAwareAction {
 			result = classAndMethod;
 		}
 		return result;
+	}
+
+	protected String getTestArgumentWithoutMethod(AnActionEvent e, PsiJavaFile psiFile) {
+		return StringUtils.substringBefore(getTestArgument(e, psiFile), "#");
 	}
 
 	@Override
