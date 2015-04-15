@@ -69,7 +69,6 @@ public class RunTestFileAction extends DumbAwareAction {
 	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject) {
 		List<String> goals = new ArrayList<String>();
 		boolean skipTests = isSkipTests(mavenProject);
-		goals.add("-DfailIfNoTests=true");
 		// so many possibilities...
 		if (skipTests || isExcludedFromSurefire(psiFile, mavenProject)) {
 			MavenPlugin failsafePlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
