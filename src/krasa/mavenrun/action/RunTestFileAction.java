@@ -72,10 +72,15 @@ public class RunTestFileAction extends DumbAwareAction {
 		goals.add("-DfailIfNoTests=true");
 		// so many possibilities...
 		if (skipTests || isExcludedFromSurefire(psiFile, mavenProject)) {
-			addFailSafeParameters(e, psiFile, mavenProject, goals);
+			MavenPlugin failsafePlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
+			if (failsafePlugin != null) {
+                addFailSafeParameters(e, psiFile, goals, failsafePlugin);
+            } else {
+                addSurefireParameters(e, psiFile, goals);
+            }
 			goals.add("verify");
 		} else {
-			addSurefureParameters(e, psiFile, goals);
+			addSurefireParameters(e, psiFile, goals);
 			goals.add("test-compile");
 			goals.add("surefire:test");
 		}
@@ -83,22 +88,18 @@ public class RunTestFileAction extends DumbAwareAction {
 		return goals;
 	}
 
-	private void addSurefureParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals) {
+	private void addSurefireParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals) {
 		goals.add("-Dtest=" + getTestArgument(e, psiFile));
 	}
 
-	private void addFailSafeParameters(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject,
-			List<String> goals) {
-		MavenPlugin mavenProjectPlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
-		if (mavenProjectPlugin != null) {
-			ComparableVersion version = new ComparableVersion(mavenProjectPlugin.getVersion());
-			ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
-			if (minimumForMethodTest.compareTo(version) == 1) {
-				goals.add("-Dit.test=" + getTestArgumentWithoutMethod(e, psiFile));
-			} else {
-				goals.add("-Dit.test=" + getTestArgument(e, psiFile));
-			}
-		}
+	private void addFailSafeParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals, MavenPlugin mavenProjectPlugin) {
+		ComparableVersion version = new ComparableVersion(mavenProjectPlugin.getVersion());
+		ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
+		if (minimumForMethodTest.compareTo(version) == 1) {
+            goals.add("-Dit.test=" + getTestArgumentWithoutMethod(e, psiFile));
+        } else {
+            goals.add("-Dit.test=" + getTestArgument(e, psiFile));
+        }
 	}
 
 	private boolean isExcludedFromSurefire(PsiJavaFile psiFile, MavenProject mavenProject) {
