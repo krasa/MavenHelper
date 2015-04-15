@@ -13,7 +13,7 @@
 		Provides:<br>
 		<ul>
         <li>actions to run/debug the current test file
-	    <br>&nbsp;&nbsp;-if maven-surefire-plugin is configured to skip tests, 'verify' goal will be used - which can trigger maven-failsafe-plugin or maven-surefire-plugin if configured accordingly, different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a> 
+	    <br>&nbsp;&nbsp;-if maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a> 
         </li><li>actions to run/debug maven goals for a module that contains the current file
         </li><li>easy way to find and exclude conflicting dependencies
         </ul>
