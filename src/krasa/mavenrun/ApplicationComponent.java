@@ -4,8 +4,10 @@ import javax.swing.*;
 
 import krasa.mavenrun.action.MainMavenActionGroup;
 import krasa.mavenrun.action.RunGoalAction;
-import krasa.mavenrun.action.debug.DebugGoalAction;
+import krasa.mavenrun.action.RunTestFileAction;
 import krasa.mavenrun.action.debug.Debug;
+import krasa.mavenrun.action.debug.DebugGoalAction;
+import krasa.mavenrun.action.debug.DebugTestFileAction;
 import krasa.mavenrun.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenrun.gui.ApplicationSettingsForm;
 import krasa.mavenrun.model.ApplicationSettings;
@@ -16,11 +18,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.Constraints;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -52,6 +50,8 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 			actionId = getDebugActionId(goal);
 			registerAction(instance, actionId, new DebugGoalAction(goal, MavenIcons.PluginGoal));
 		}
+		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction());
+		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());
 	}
 
 	private void unRegisterActions() {
@@ -62,17 +62,17 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		}
 	}
 
-	public void registerAction(Goal o, final RunGoalAction runGoalAction) {
+	public void registerAction(Goal o, RunGoalAction runGoalAction) {
 		ActionManager instance = ActionManager.getInstance();
 		registerAction(instance, getActionId(o), runGoalAction);
 	}
 
-	private void registerAction(ActionManager instance, final String actionId1, final RunGoalAction runGoalAction) {
+	private void registerAction(ActionManager instance, String actionId1, AnAction runGoalAction) {
 		unRegisterAction(instance, actionId1);
 		instance.registerAction(actionId1, runGoalAction, PluginId.getId("MavenRunHelper"));
 	}
 
-	private void unRegisterAction(ActionManager instance, final String actionId) {
+	private void unRegisterAction(ActionManager instance, String actionId) {
 		instance.unregisterAction(actionId);
 	}
 
@@ -85,7 +85,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	}
 
-	private void addActionGroup(ActionGroup actionGroup, final String runMaven) {
+	private void addActionGroup(ActionGroup actionGroup, String runMaven) {
 		DefaultActionGroup editorPopupMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"EditorPopupMenu.Run");
 		DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
@@ -102,12 +102,12 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
-			final String runMaven) {
+			String runMaven) {
 		clear(editorPopupMenu, RUN_MAVEN);
 		clear(projectViewPopupMenuRunGroup, runMaven);
 	}
 
-	private void clear(DefaultActionGroup editorPopupMenu, final String runMaven) {
+	private void clear(DefaultActionGroup editorPopupMenu, String runMaven) {
 		AnAction[] childActionsOrStubs = editorPopupMenu.getChildActionsOrStubs();
 		for (AnAction childActionsOrStub : childActionsOrStubs) {
 			if (runMaven.equals(childActionsOrStub.getTemplatePresentation().getText())) {
