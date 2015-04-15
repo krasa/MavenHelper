@@ -1,14 +1,10 @@
 package krasa.mavenrun.gui;
 
-import static com.intellij.openapi.ui.Messages.*;
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.util.EventListener;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -171,9 +167,9 @@ public class ApplicationSettingsForm {
 	}
 
 	private void removeListeners(final DefaultListModel listModel) {
-		ListDataListener[] listDataListeners = listModel.getListeners(MyListDataListener.class);
-		for (ListDataListener listDataListener : listDataListeners) {
-			listModel.removeListDataListener(listDataListener);
+		EventListener[] listeners = listModel.getListeners(MyListDataListener.class);
+		for (EventListener listDataListener : listeners) {
+			listModel.removeListDataListener((ListDataListener) listDataListener);
 		}
 	}
 
