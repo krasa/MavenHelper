@@ -70,17 +70,12 @@ public class RunTestFileAction extends DumbAwareAction {
 		List<String> goals = new ArrayList<String>();
 		boolean skipTests = isSkipTests(mavenProject);
 		goals.add("-DfailIfNoTests=true");
-		//so many possibilities...
-		if (hasFailSafe(mavenProject) && (skipTests || isExcludedFromSurefire(psiFile, mavenProject))) {
-			goals.add("test-compile");
+		// so many possibilities...
+		if (skipTests || isExcludedFromSurefire(psiFile, mavenProject)) {
 			addFailSafeParameters(e, psiFile, mavenProject, goals);
-			goals.add("failsafe:integration-test");
-//		} else if (skipTests) { //todo fail or verify?
-//			goals.add("-Dtest=" + getTestArgument(e, psiFile));
-//			addFailSafeParameters(e, psiFile, mavenProject, goals);
-//			goals.add("verify");
+			goals.add("verify");
 		} else {
-			goals.add("-Dtest=" + getTestArgument(e, psiFile));
+			addSurefureParameters(e, psiFile, goals);
 			goals.add("test-compile");
 			goals.add("surefire:test");
 		}
@@ -88,13 +83,13 @@ public class RunTestFileAction extends DumbAwareAction {
 		return goals;
 	}
 
-	private boolean hasFailSafe(MavenProject mavenProject) {
-		return getFailsafe(mavenProject) !=null;
+	private void addSurefureParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals) {
+		goals.add("-Dtest=" + getTestArgument(e, psiFile));
 	}
 
 	private void addFailSafeParameters(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject,
 			List<String> goals) {
-		MavenPlugin mavenProjectPlugin = getFailsafe(mavenProject);
+		MavenPlugin mavenProjectPlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
 		if (mavenProjectPlugin != null) {
 			ComparableVersion version = new ComparableVersion(mavenProjectPlugin.getVersion());
 			ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
@@ -104,10 +99,6 @@ public class RunTestFileAction extends DumbAwareAction {
 				goals.add("-Dit.test=" + getTestArgument(e, psiFile));
 			}
 		}
-	}
-
-	private MavenPlugin getFailsafe(MavenProject mavenProject) {
-		return mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
 	}
 
 	private boolean isExcludedFromSurefire(PsiJavaFile psiFile, MavenProject mavenProject) {
