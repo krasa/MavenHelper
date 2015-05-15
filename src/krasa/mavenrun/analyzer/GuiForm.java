@@ -12,12 +12,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.DefaultCaret;
 import javax.swing.tree.*;
 
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.server.MavenServerManager;
 
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
@@ -35,12 +35,9 @@ public class GuiForm {
     private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
 
     public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
-      + "\n"
       + "If your project is Maven2 compatible, you could try one of the following:\n"
-      + "\n"
-      + "-you could try to add -Dmaven3.use.compat.resolver option to File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | VM options for importer\n"
-      + "\n"
-      + "-or turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting";
+      + "-press Apply Fix button to alter Maven VM options for importer\n"
+      + "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting";
 
 	private final Project project;
 	private final VirtualFile file;
@@ -56,7 +53,8 @@ public class GuiForm {
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
     private JScrollPane noConflictsWarningLabelScrollPane;
-    protected DefaultListModel listDataModel;
+	private JButton applyMavenVmOptionsFixButton;
+	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel treeModel;
 	protected DefaultMutableTreeNode treeRoot;
@@ -97,7 +95,24 @@ public class GuiForm {
 			}
 		});
         noConflictsWarningLabel.setBackground(null);
-    }
+		applyMavenVmOptionsFixButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
+				int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
+				if (baselineVersion >= 140) {
+					mavenEmbedderVMOptions += " -Didea.maven3.use.compat.resolver";
+				} else {
+					mavenEmbedderVMOptions += " -Dmaven3.use.compat.resolver";
+				}
+				MavenServerManager.getInstance().setMavenEmbedderVMOptions(mavenEmbedderVMOptions);
+				final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
+				projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+				refreshButton.getActionListeners()[0].actionPerformed(e);
+			}
+		});
+		noConflictsWarningLabel.setText(WARNING);
+	}
 
 	private void filter() {
 		updateListModel(allArtifactsMap);
@@ -256,12 +271,6 @@ public class GuiForm {
 			showNoConflictsLabel = false;
 		}
         if (conflictsWarning) {
-            int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
-            if (baselineVersion >= 140) {
-                noConflictsWarningLabel.setText(WARNING.replace("-Dmaven3.use.compat.resolver", "-Didea.maven3.use.compat.resolver"));
-            } else {
-                noConflictsWarningLabel.setText(WARNING);
-            }
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
              public void run() {
                  noConflictsWarningLabelScrollPane.getVerticalScrollBar().setValue(0);
@@ -270,6 +279,7 @@ public class GuiForm {
         } 
         
         noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
+		applyMavenVmOptionsFixButton.setVisible(conflictsWarning);
         noConflictsLabel.setVisible(showNoConflictsLabel);
     }
 
