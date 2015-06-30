@@ -8,8 +8,6 @@ import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
@@ -39,16 +37,6 @@ public class DebugTestFileAction extends RunTestFileAction {
 	}
 
 	private void runInternal(final Project project, final MavenRunnerParameters params) {
-		MavenDebugConfigurationType.debugConfiguration(project, params, new ProgramRunner.Callback() {
-			@Override
-			public void processStarted(RunContentDescriptor descriptor) {
-				descriptor.setRestarter(new Runnable() {
-					@Override
-					public void run() {
-						DebugTestFileAction.this.runInternal(project, params);
-					}
-				});
-			}
-		});
+		MavenDebugConfigurationType.debugConfiguration(project, params, null);
 	}
 }

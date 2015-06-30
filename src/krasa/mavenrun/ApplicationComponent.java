@@ -17,13 +17,19 @@ import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.tasks.MavenKeymapExtension;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPoint;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.keymap.KeymapExtension;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
@@ -31,6 +37,8 @@ import icons.MavenIcons;
 @State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent, Configurable,
 		PersistentStateComponent<ApplicationSettings> {
+	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
+	
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
 	private ApplicationSettingsForm form;
@@ -40,6 +48,24 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
 		registerActions();
+		disableMavenKeymapExtension();
+	}
+
+	protected void disableMavenKeymapExtension() {
+		if (settings.isDisableMavenKeymapExtension()) {
+			try {
+				ExtensionsArea area = Extensions.getArea(null);
+				ExtensionPoint<KeymapExtension> ep = area.getExtensionPoint(MavenKeymapExtension.EXTENSION_POINT_NAME);
+				for (KeymapExtension keymapExtension : ep.getExtensions()) {
+                    if (keymapExtension instanceof MavenKeymapExtension) {
+                        LOG.info("IDEA-138533 workaround, unregistering " + keymapExtension.getClass().getCanonicalName());
+                        ep.unregisterExtension(keymapExtension);
+                    }
+                }
+			} catch (Exception e) {
+				LOG.error(e);
+			}
+		}
 	}
 
 	private void registerActions() {
@@ -166,6 +192,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		unRegisterActions();
 		settings = form.getSettings().clone();
 		registerActions();
+		disableMavenKeymapExtension();
 	}
 
 	public void reset() {

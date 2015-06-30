@@ -33,11 +33,13 @@ public class ApplicationSettingsForm {
 	private JList pluginAwareGoals;
 	private JButton addGoal;
 	private JButton addPluginAware;
+	private JCheckBox disableMavenKeymapExtensionCheckBox;
+	private JLabel requiresRestart;
 
 	protected JBList focusedComponent;
 
-	public ApplicationSettingsForm(ApplicationSettings settings) {
-		this.settings = settings.clone();
+	public ApplicationSettingsForm(ApplicationSettings original) {
+		this.settings = original.clone();
 		addGoal.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -65,6 +67,15 @@ public class ApplicationSettingsForm {
 		final KeyAdapter keyAdapter = getDeleteKeyListener();
 		goals.addKeyListener(keyAdapter);
 		pluginAwareGoals.addKeyListener(keyAdapter);
+		disableMavenKeymapExtensionCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean disabled = ApplicationSettingsForm.this.settings.isDisableMavenKeymapExtension();
+				boolean notSelected = !disableMavenKeymapExtensionCheckBox.isSelected();
+				requiresRestart.setVisible(disabled && notSelected);
+			}
+		});
+		requiresRestart.setVisible(false);
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -179,6 +190,7 @@ public class ApplicationSettingsForm {
 	}
 
 	public ApplicationSettings getSettings() {
+		getData(settings);
 		return settings;
 	}
 
@@ -187,12 +199,25 @@ public class ApplicationSettingsForm {
 	}
 
 	public boolean isSettingsModified(ApplicationSettings settings) {
-		return !this.settings.equals(settings);
+		return !this.settings.equals(settings) || isModified(settings);
 	}
 
 	public void importFrom(ApplicationSettings settings) {
 		this.settings = settings.clone();
 		initializeModel();
+		setData(settings);
 	}
 
+	public void setData(ApplicationSettings data) {
+		disableMavenKeymapExtensionCheckBox.setSelected(data.isDisableMavenKeymapExtension());
+	}
+
+	public void getData(ApplicationSettings data) {
+		data.setDisableMavenKeymapExtension(disableMavenKeymapExtensionCheckBox.isSelected());
+	}
+
+	public boolean isModified(ApplicationSettings data) {
+		if (disableMavenKeymapExtensionCheckBox.isSelected() != data.isDisableMavenKeymapExtension()) return true;
+		return false;
+	}
 }

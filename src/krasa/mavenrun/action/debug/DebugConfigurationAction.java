@@ -1,14 +1,14 @@
 package krasa.mavenrun.action.debug;
 
+import krasa.mavenrun.action.RunConfigurationAction;
+
+import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
+
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
-import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import krasa.mavenrun.action.RunConfigurationAction;
-import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 
 /**
  * @author Vojtech Krasa
@@ -25,17 +25,7 @@ public class DebugConfigurationAction extends RunConfigurationAction {
 		final RunnerAndConfigurationSettings configurationSettings = clone(mySettings);
 		addForkMode(configurationSettings);
 
-		MavenDebugConfigurationType.debugConfiguration(myProject, new ProgramRunner.Callback() {
-			@Override
-			public void processStarted(RunContentDescriptor descriptor) {
-				descriptor.setRestarter(new Runnable() {
-					@Override
-					public void run() {
-						DebugConfigurationAction.this.actionPerformed(event);
-					}
-				});
-			}
-		}, configurationSettings, myExecutor);
+		MavenDebugConfigurationType.debugConfiguration(myProject, null, configurationSettings, myExecutor);
 	}
 
 	private RunnerAndConfigurationSettings clone(RunnerAndConfigurationSettings configSettings) {

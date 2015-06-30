@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>2.6.138.1503</version>
+	<version>2.7.138.1503</version>
 	<!--<version>1.7.12</version>-->
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
@@ -16,6 +16,7 @@
         <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a> 
         </li><li>actions to run/debug maven goals for a module that contains the current file
         </li><li>easy way to find and exclude conflicting dependencies
+        </li><li>workaround for <a href="https://youtrack.jetbrains.com/issue/IDEA-138533">IDEA-138533</a>  - Maven integration cause freeze of settings dialog if you have a lot of maven modules  (you can turn it on in Settings | (Other Settings) | Maven Helper)
         </ul>
         <br>    
         Usage:<br>
@@ -35,6 +36,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>2.7 
+            <br> - workaround for: <a href="https://youtrack.jetbrains.com/issue/IDEA-138533">IDEA-138533</a> - Maven integration cause freeze of settings dialog if you have a lot of maven modules  (you can turn it on in Settings | (Other Settings) | Maven Helper)
+            <br> - IJ 15 compatibility
             <br>2.6
             <br> - button for fixing IDEA-133331 
             <br>2.5
