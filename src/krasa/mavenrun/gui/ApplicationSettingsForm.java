@@ -33,8 +33,6 @@ public class ApplicationSettingsForm {
 	private JList pluginAwareGoals;
 	private JButton addGoal;
 	private JButton addPluginAware;
-	private JCheckBox disableMavenKeymapExtensionCheckBox;
-	private JLabel requiresRestart;
 
 	protected JBList focusedComponent;
 
@@ -67,15 +65,6 @@ public class ApplicationSettingsForm {
 		final KeyAdapter keyAdapter = getDeleteKeyListener();
 		goals.addKeyListener(keyAdapter);
 		pluginAwareGoals.addKeyListener(keyAdapter);
-		disableMavenKeymapExtensionCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				boolean disabled = ApplicationSettingsForm.this.settings.isDisableMavenKeymapExtension();
-				boolean notSelected = !disableMavenKeymapExtensionCheckBox.isSelected();
-				requiresRestart.setVisible(disabled && notSelected);
-			}
-		});
-		requiresRestart.setVisible(false);
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -209,15 +198,12 @@ public class ApplicationSettingsForm {
 	}
 
 	public void setData(ApplicationSettings data) {
-		disableMavenKeymapExtensionCheckBox.setSelected(data.isDisableMavenKeymapExtension());
 	}
 
 	public void getData(ApplicationSettings data) {
-		data.setDisableMavenKeymapExtension(disableMavenKeymapExtensionCheckBox.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
-		if (disableMavenKeymapExtensionCheckBox.isSelected() != data.isDisableMavenKeymapExtension()) return true;
 		return false;
 	}
 }

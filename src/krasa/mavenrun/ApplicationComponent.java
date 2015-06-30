@@ -48,24 +48,6 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
 		registerActions();
-		disableMavenKeymapExtension();
-	}
-
-	protected void disableMavenKeymapExtension() {
-		if (settings.isDisableMavenKeymapExtension()) {
-			try {
-				ExtensionsArea area = Extensions.getArea(null);
-				ExtensionPoint<KeymapExtension> ep = area.getExtensionPoint(MavenKeymapExtension.EXTENSION_POINT_NAME);
-				for (KeymapExtension keymapExtension : ep.getExtensions()) {
-                    if (keymapExtension instanceof MavenKeymapExtension) {
-                        LOG.info("IDEA-138533 workaround, unregistering " + keymapExtension.getClass().getCanonicalName());
-                        ep.unregisterExtension(keymapExtension);
-                    }
-                }
-			} catch (Exception e) {
-				LOG.error(e);
-			}
-		}
 	}
 
 	private void registerActions() {
@@ -125,7 +107,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 			DefaultActionGroup projectViewPopupMenuRunGroup) {
 		editorPopupMenu.add(actionGroup, Constraints.FIRST);
 		projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
-	}
+	}  
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
 			String runMaven) {
@@ -192,7 +174,6 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		unRegisterActions();
 		settings = form.getSettings().clone();
 		registerActions();
-		disableMavenKeymapExtension();
 	}
 
 	public void reset() {

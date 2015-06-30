@@ -15,16 +15,6 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	int version = 0;
 	private Goals goals = new Goals();
 	private Goals pluginAwareGoals = new Goals();
-	/** https://youtrack.jetbrains.com/issue/IDEA-138533 */
-	private boolean disableMavenKeymapExtension = false;
-
-	public boolean isDisableMavenKeymapExtension() {
-		return disableMavenKeymapExtension;
-	}
-
-	public void setDisableMavenKeymapExtension(boolean disableMavenKeymapExtension) {
-		this.disableMavenKeymapExtension = disableMavenKeymapExtension;
-	}
 
 	public int getVersion() {
 		return version;
