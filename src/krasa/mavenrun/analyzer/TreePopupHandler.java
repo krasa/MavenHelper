@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import krasa.mavenrun.analyzer.action.ExcludeAction;
+import krasa.mavenrun.analyzer.action.ExcludeDependencyAction;
 import krasa.mavenrun.analyzer.action.JumpToSourceAction;
 
 import org.jetbrains.annotations.NotNull;
@@ -75,18 +75,18 @@ class TreePopupHandler extends PopupHandler {
 						new JumpToSourceAction(project, mavenProject, mavenArtifactNode) };
 			}
 
-			private ExcludeAction getExcludeAction() {
-				return new ExcludeAction(project, mavenProject, mavenArtifactNode) {
+			private ExcludeDependencyAction getExcludeAction() {
+				return new ExcludeDependencyAction(project, mavenProject, mavenArtifactNode) {
 					@Override
 					public void dependencyExcluded() {
-						removeNodes();
+						removeTreeNodes();
 					}
 
 					/**
 					 * imagine pom: root -> d1 ; d1 -> d2 ; d1 -> d3 ; d2 -> d3. After d3 is excluded; must remove d1
 					 * and also d2 from the tree. But when d2 is excluded, remove only d2.
 					 */
-					private void removeNodes() {
+					private void removeTreeNodes() {
 						// when d2 is excluded, remove d3 for d2, but not d3 for d1
 						if (selectedNode.getParent() != treeRoot) {
 							removeNodeNearestToRoot(selectedNode);
@@ -121,31 +121,31 @@ class TreePopupHandler extends PopupHandler {
 						return result;
 					}
 
+					private void visitAllNodes(DefaultMutableTreeNode node, MyTreeUserObject lookedUpObject,
+							ArrayList<DefaultMutableTreeNode> result) {
+
+						if (node.getChildCount() > 0) {
+							for (Enumeration e = node.children(); e.hasMoreElements();) {
+								DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+								visitAllNodes(n, lookedUpObject, result);
+							}
+						} else {
+							// only leafs
+							process(node, lookedUpObject, result);
+						}
+					}
+
+					private void process(DefaultMutableTreeNode node, MyTreeUserObject lookedUpObject,
+							ArrayList<DefaultMutableTreeNode> result) {
+						final MyTreeUserObject userObject = (MyTreeUserObject) node.getUserObject();
+						if (userObject != null && lookedUpObject.getArtifact().equals(userObject.getArtifact())) {
+							result.add(node);
+						}
+					}
 				};
 			}
 		};
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
 	}
 
-	private void visitAllNodes(DefaultMutableTreeNode node, MyTreeUserObject lookedUpObject,
-			ArrayList<DefaultMutableTreeNode> result) {
-
-		if (node.getChildCount() > 0) {
-			for (Enumeration e = node.children(); e.hasMoreElements();) {
-				DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
-				visitAllNodes(n, lookedUpObject, result);
-			}
-		} else {
-			// only leafs
-			process(node, lookedUpObject, result);
-		}
-	}
-
-	private void process(DefaultMutableTreeNode node, MyTreeUserObject lookedUpObject,
-			ArrayList<DefaultMutableTreeNode> result) {
-		final MyTreeUserObject userObject = (MyTreeUserObject) node.getUserObject();
-		if (userObject != null && lookedUpObject.getArtifact().equals(userObject.getArtifact())) {
-			result.add(node);
-		}
-	}
 }

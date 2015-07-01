@@ -12,10 +12,16 @@ public class MyListNode {
 
 	protected final String key;
 	protected final List<MavenArtifactNode> value;
+	protected String maxVersion;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
 		key = s.getKey();
 		value = s.getValue();
+		maxVersion = GuiForm.sortByVersion(value);
+	}
+
+	public String getMaxVersion() {
+		return maxVersion;
 	}
 
 	@Override

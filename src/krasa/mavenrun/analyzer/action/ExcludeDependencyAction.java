@@ -1,10 +1,6 @@
 package krasa.mavenrun.analyzer.action;
 
-import org.jetbrains.idea.maven.dom.model.MavenDomDependencies;
-import org.jetbrains.idea.maven.dom.model.MavenDomDependency;
-import org.jetbrains.idea.maven.dom.model.MavenDomExclusion;
-import org.jetbrains.idea.maven.dom.model.MavenDomExclusions;
-import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
+import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -21,9 +17,9 @@ import com.intellij.util.xml.DomFileElement;
 /**
  * @author Vojtech Krasa
  */
-public class ExcludeAction extends BaseAction {
+public class ExcludeDependencyAction extends BaseAction {
 
-	public ExcludeAction(Project project, MavenProject mavenProject, MavenArtifactNode myTreeNode) {
+	public ExcludeDependencyAction(Project project, MavenProject mavenProject, MavenArtifactNode myTreeNode) {
 		super(project, mavenProject, myTreeNode, "Exclude");
 	}
 
@@ -81,7 +77,7 @@ public class ExcludeAction extends BaseAction {
 					}
 				});
 			}
-		}, "Exclude", null);
+		}, "Exclude", "MavenRunHelper");
 	}
 
 	public void dependencyExcluded() {

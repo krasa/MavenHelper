@@ -1,5 +1,6 @@
 package krasa.mavenrun.analyzer;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 
@@ -8,12 +9,14 @@ import com.intellij.ui.SimpleTextAttributes;
 /**
  * @author Vojtech Krasa
  */
-class MyTreeUserObject {
+public class MyTreeUserObject {
 
 	private MavenArtifactNode mavenArtifactNode;
 	protected SimpleTextAttributes attributes;
 
 	boolean showOnlyVersion = false;
+	boolean highlight;
+
 	public MyTreeUserObject(MavenArtifactNode mavenArtifactNode) {
 		this.mavenArtifactNode = mavenArtifactNode;
 		this.attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
@@ -24,14 +27,12 @@ class MyTreeUserObject {
 		this.attributes = regularAttributes;
 	}
 
-	static MyTreeUserObject create(MavenArtifactNode mavenArtifactNode, String maxVersion) {
+	static MyTreeUserObject create(MavenArtifactNode mavenArtifactNode, @NotNull String maxVersion) {
 		SimpleTextAttributes attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 		if (maxVersion.equals(mavenArtifactNode.getArtifact().getVersion())) {
 			attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 		}
-		final MyTreeUserObject myTreeUserObject = new MyTreeUserObject(mavenArtifactNode, attributes);
-		myTreeUserObject.showOnlyVersion = true;
-		return myTreeUserObject;
+		return new MyTreeUserObject(mavenArtifactNode, attributes);
 	}
 
 	public MavenArtifact getArtifact() {
@@ -40,6 +41,10 @@ class MyTreeUserObject {
 
 	public MavenArtifactNode getMavenArtifactNode() {
 		return mavenArtifactNode;
+	}
+
+	public boolean isHighlight() {
+		return highlight;
 	}
 
 	@Override

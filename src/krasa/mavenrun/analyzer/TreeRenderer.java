@@ -31,12 +31,16 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 		if (myTreeUserObject.showOnlyVersion) {
 			append(artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", myTreeUserObject.attributes);
-	} else {
-			append(artifact.getGroupId() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-			append(artifact.getArtifactId(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-			append(":" + artifact.getVersion() + " (" + classifier + artifact.getScope() + ")",
-			SimpleTextAttributes.REGULAR_ATTRIBUTES);
-
+		} else {
+			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+			SimpleTextAttributes boldAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
+			if (!"compile".equals(myTreeUserObject.getArtifact().getScope())) {
+				attributes = SimpleTextAttributes.GRAYED_ATTRIBUTES;
+				boldAttributes = SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES;
+			}
+			append(artifact.getGroupId() + " : ", attributes);
+			append(artifact.getArtifactId(), boldAttributes);
+			append(" : " + artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", attributes);
 		}
 
 	}
