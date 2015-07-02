@@ -17,7 +17,6 @@ import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.tasks.MavenKeymapExtension;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,11 +24,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.keymap.KeymapExtension;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
@@ -38,7 +33,7 @@ import icons.MavenIcons;
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent, Configurable,
 		PersistentStateComponent<ApplicationSettings> {
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
-	
+
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
 	private ApplicationSettingsForm form;
@@ -107,7 +102,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 			DefaultActionGroup projectViewPopupMenuRunGroup) {
 		editorPopupMenu.add(actionGroup, Constraints.FIRST);
 		projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
-	}  
+	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
 			String runMaven) {

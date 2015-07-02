@@ -23,6 +23,11 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.server.MavenServerManager;
 
+import com.intellij.ide.CommonActionsManager;
+import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -66,8 +71,9 @@ public class GuiForm {
 	private SearchTextField searchField;
 	private JButton applyMavenVmOptionsFixButton;
 	private JPanel leftPanelWrapper;
-	private JTree leftPanelTree;
+	private JTree leftTree;
 	private JCheckBox showGroupId;
+	private JPanel buttonsPanel;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel rightTreeModel;
@@ -135,7 +141,7 @@ public class GuiForm {
 			}
 		});
 		noConflictsWarningLabel.setText(WARNING);
-		leftPanelTree.addTreeSelectionListener(new LeftTreeSelectionListener());
+		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
 		rightTreeRoot = new DefaultMutableTreeNode();
@@ -149,12 +155,12 @@ public class GuiForm {
 
 		leftTreeRoot = new DefaultMutableTreeNode();
 		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
-		leftPanelTree.setModel(leftTreeModel);
-		leftPanelTree.setRootVisible(false);
-		leftPanelTree.setShowsRootHandles(true);
-		leftPanelTree.expandPath(new TreePath(leftTreeRoot.getPath()));
-		leftPanelTree.setCellRenderer(new TreeRenderer(showGroupId));
-		leftPanelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		leftTree.setModel(leftTreeModel);
+		leftTree.setRootVisible(false);
+		leftTree.setShowsRootHandles(true);
+		leftTree.expandPath(new TreePath(leftTreeRoot.getPath()));
+		leftTree.setCellRenderer(new TreeRenderer(showGroupId));
+		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		showGroupId.addActionListener(new ActionListener() {
 			@Override
@@ -164,6 +170,14 @@ public class GuiForm {
 				TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
 			}
 		});
+
+		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
+		DefaultActionGroup actionGroup = new DefaultActionGroup();
+		actionGroup.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, leftTree));
+		actionGroup.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, leftTree));
+		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons",
+				actionGroup, true);
+		buttonsPanel.add(actionToolbar.getComponent(), "1");
 	}
 
 	private void createUIComponents() {
@@ -186,7 +200,7 @@ public class GuiForm {
 			}
 		});
 		rightTree = new MyHighlightingTree();
-		leftPanelTree = new MyHighlightingTree();
+		leftTree = new MyHighlightingTree();
 	}
 
 	public static String sortByVersion(List<MavenArtifactNode> value) {
@@ -308,7 +322,7 @@ public class GuiForm {
 		} else { // tree
 			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText);
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
-			TreeUtils.expandAll(leftPanelTree);
+			TreeUtils.expandAll(leftTree);
 
 			showNoConflictsLabel = false;
 			leftPanelLayout.show(leftPanelWrapper, "allAsTree");
@@ -322,7 +336,7 @@ public class GuiForm {
 			});
 			leftPanelLayout.show(leftPanelWrapper, "noConflictsWarningLabel");
 		}
-
+		buttonsPanel.setVisible(allDependenciesAsTreeRadioButton.isSelected());
 		noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
 		applyMavenVmOptionsFixButton.setVisible(conflictsWarning);
 		noConflictsLabel.setVisible(showNoConflictsLabel);
