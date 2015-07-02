@@ -76,10 +76,10 @@ public class GuiForm {
 	private JPanel buttonsPanel;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
-	protected DefaultTreeModel rightTreeModel;
-	protected DefaultTreeModel leftTreeModel;
-	protected DefaultMutableTreeNode rightTreeRoot;
-	protected DefaultMutableTreeNode leftTreeRoot;
+	protected final DefaultTreeModel rightTreeModel;
+	protected final DefaultTreeModel leftTreeModel;
+	protected final DefaultMutableTreeNode rightTreeRoot;
+	protected final DefaultMutableTreeNode leftTreeRoot;
 	protected ListSpeedSearch myListSpeedSearch;
 	protected List<MavenArtifactNode> dependencyTree;
 	protected CardLayout leftPanelLayout;
@@ -105,9 +105,7 @@ public class GuiForm {
 				rootPanel.requestFocus();
 			}
 		});
-		rightTree.addMouseListener(new TreePopupHandler(project, mavenProject, rightTree));
-		// todo fix excluding
-		// leftPanelTree.addMouseListener(new TreePopupHandler(project, mavenProject, leftPanelTree));
+
 		myListSpeedSearch = new ListSpeedSearch(leftPanelList);
 		searchField.addDocumentListener(new DocumentAdapter() {
 			@Override
@@ -144,6 +142,7 @@ public class GuiForm {
 		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
+		rightTree.addMouseListener(new RightTreePopupHandler(project, mavenProject, rightTree));
 		rightTreeRoot = new DefaultMutableTreeNode();
 		rightTreeModel = new DefaultTreeModel(rightTreeRoot);
 		rightTree.setModel(rightTreeModel);
@@ -153,6 +152,7 @@ public class GuiForm {
 		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
+		leftTree.addMouseListener(new LeftTreePopupHandler(project, mavenProject, leftTree));
 		leftTreeRoot = new DefaultMutableTreeNode();
 		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
 		leftTree.setModel(leftTreeModel);

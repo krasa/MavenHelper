@@ -24,14 +24,14 @@ import com.intellij.ui.PopupHandler;
 /**
  * @author Vojtech Krasa
  */
-class TreePopupHandler extends PopupHandler {
+class RightTreePopupHandler extends PopupHandler {
 	private final Project project;
 	private final MavenProject mavenProject;
 	protected final DefaultTreeModel treeModel;
 	protected final DefaultMutableTreeNode treeRoot;
 	protected final JTree tree;
 
-	public TreePopupHandler(Project project, MavenProject mavenProject, JTree tree) {
+	public RightTreePopupHandler(Project project, MavenProject mavenProject, JTree tree) {
 		this.project = project;
 		this.mavenProject = mavenProject;
 		this.tree = tree;
