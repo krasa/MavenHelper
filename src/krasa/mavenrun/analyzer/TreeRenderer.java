@@ -13,6 +13,12 @@ import com.intellij.ui.SimpleTextAttributes;
  */
 public class TreeRenderer extends ColoredTreeCellRenderer {
 
+	private JCheckBox showGroupId;
+
+	public TreeRenderer(JCheckBox showGroupId) {
+		this.showGroupId = showGroupId;
+	}
+
 	public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 			int row, boolean hasFocus) {
 		Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
@@ -38,7 +44,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 				attributes = SimpleTextAttributes.GRAYED_ATTRIBUTES;
 				boldAttributes = SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES;
 			}
-			append(artifact.getGroupId() + " : ", attributes);
+			if (showGroupId.isSelected()) {
+				append(artifact.getGroupId() + " : ", attributes);
+			}
 			append(artifact.getArtifactId(), boldAttributes);
 			append(" : " + artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", attributes);
 		}

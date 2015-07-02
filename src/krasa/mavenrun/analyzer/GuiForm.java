@@ -10,7 +10,10 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.treeStructure.Tree;
 
 /**
  * @author Vojtech Krasa
@@ -57,14 +59,15 @@ public class GuiForm {
 	private JRadioButton allDependenciesAsTreeRadioButton;
 
 	private JLabel noConflictsLabel;
+	private JScrollPane noConflictsWarningLabelScrollPane;
 	private JTextPane noConflictsWarningLabel;
 	private JButton refreshButton;
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
-	private JScrollPane noConflictsWarningLabelScrollPane;
 	private JButton applyMavenVmOptionsFixButton;
 	private JPanel leftPanelWrapper;
 	private JTree leftPanelTree;
+	private JCheckBox showGroupId;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected DefaultTreeModel rightTreeModel;
@@ -73,20 +76,21 @@ public class GuiForm {
 	protected DefaultMutableTreeNode leftTreeRoot;
 	protected ListSpeedSearch myListSpeedSearch;
 	protected List<MavenArtifactNode> dependencyTree;
+	protected CardLayout leftPanelLayout;
 
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
 		this.mavenProject = mavenProject;
-		final ActionListener l = new ActionListener() {
+		final ActionListener radioButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateLeftPanelModel();
+				updateLeftPanel();
 			}
 		};
-		conflictsRadioButton.addActionListener(l);
-		allDependenciesAsListRadioButton.addActionListener(l);
-		allDependenciesAsTreeRadioButton.addActionListener(l);
+		conflictsRadioButton.addActionListener(radioButtonListener);
+		allDependenciesAsListRadioButton.addActionListener(radioButtonListener);
+		allDependenciesAsTreeRadioButton.addActionListener(radioButtonListener);
 
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
@@ -102,7 +106,7 @@ public class GuiForm {
 		searchField.addDocumentListener(new DocumentAdapter() {
 			@Override
 			protected void textChanged(DocumentEvent documentEvent) {
-				filter();
+				updateLeftPanel();
 			}
 		});
 		searchField.getTextEditor().addFocusListener(new FocusAdapter() {
@@ -132,6 +136,57 @@ public class GuiForm {
 		});
 		noConflictsWarningLabel.setText(WARNING);
 		leftPanelTree.addTreeSelectionListener(new LeftTreeSelectionListener());
+		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
+
+		rightTreeRoot = new DefaultMutableTreeNode();
+		rightTreeModel = new DefaultTreeModel(rightTreeRoot);
+		rightTree.setModel(rightTreeModel);
+		rightTree.setRootVisible(false);
+		rightTree.setShowsRootHandles(true);
+		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
+		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
+		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+		leftTreeRoot = new DefaultMutableTreeNode();
+		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
+		leftPanelTree.setModel(leftTreeModel);
+		leftPanelTree.setRootVisible(false);
+		leftPanelTree.setShowsRootHandles(true);
+		leftPanelTree.expandPath(new TreePath(leftTreeRoot.getPath()));
+		leftPanelTree.setCellRenderer(new TreeRenderer(showGroupId));
+		leftPanelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+		showGroupId.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				leftPanelList.repaint();
+				TreeUtils.nodesChanged(GuiForm.this.rightTreeModel);
+				TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
+			}
+		});
+	}
+
+	private void createUIComponents() {
+		listDataModel = new DefaultListModel();
+		leftPanelList = new JBList(listDataModel);
+		leftPanelList.addListSelectionListener(new MyListSelectionListener());
+		// no generics in IJ12
+		leftPanelList.setCellRenderer(new ColoredListCellRenderer() {
+			@Override
+			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
+				MyListNode value = (MyListNode) o;
+				String maxVersion = value.getMaxVersion();
+				final String[] split = value.key.split(":");
+				if (showGroupId.isSelected()) {
+					append(split[0] + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+				}
+				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+				append(" : " + maxVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+
+			}
+		});
+		rightTree = new MyHighlightingTree();
+		leftPanelTree = new MyHighlightingTree();
 	}
 
 	public static String sortByVersion(List<MavenArtifactNode> value) {
@@ -144,47 +199,6 @@ public class GuiForm {
 			}
 		});
 		return value.get(0).getArtifact().getVersion();
-	}
-
-	private void filter() {
-		updateLeftPanelModel();
-	}
-
-	private void createUIComponents() {
-		listDataModel = new DefaultListModel();
-		leftPanelList = createJBList(listDataModel);
-		// no generics in IJ12
-		leftPanelList.setCellRenderer(new ColoredListCellRenderer() {
-			@Override
-			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
-				MyListNode value = (MyListNode) o;
-				String maxVersion = value.getMaxVersion();
-				final String[] split = value.key.split(":");
-				append(split[0] + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-				append(" : " + maxVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-
-			}
-		});
-		rightTree = new Tree();
-		rightTreeRoot = new DefaultMutableTreeNode();
-		rightTreeModel = new DefaultTreeModel(rightTreeRoot);
-		rightTree.setModel(rightTreeModel);
-		rightTree.setRootVisible(false);
-		rightTree.setShowsRootHandles(true);
-		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
-		rightTree.setCellRenderer(new TreeRenderer());
-		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-		leftPanelTree = new MyHighlightingTree();
-		leftTreeRoot = new DefaultMutableTreeNode();
-		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
-		leftPanelTree.setModel(leftTreeModel);
-		leftPanelTree.setRootVisible(false);
-		leftPanelTree.setShowsRootHandles(true);
-		leftPanelTree.expandPath(new TreePath(leftTreeRoot.getPath()));
-		leftPanelTree.setCellRenderer(new TreeRenderer());
-		leftPanelTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	}
 
 	private class LeftTreeSelectionListener implements TreeSelectionListener {
@@ -213,7 +227,6 @@ public class GuiForm {
 			List<MavenArtifactNode> artifacts = myListNode.value;
 			fillRightTree(artifacts, myListNode.getMaxVersion());
 		}
-
 	}
 
 	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String maxVersion) {
@@ -226,7 +239,7 @@ public class GuiForm {
 			rightTreeRoot.add(newNode);
 		}
 		rightTreeModel.nodeStructureChanged(rightTreeRoot);
-		expandAll(rightTree, new TreePath(rightTreeRoot.getPath()));
+		TreeUtils.expandAll(rightTree);
 	}
 
 	private void fillRightTree(MavenArtifactNode mavenArtifactNode, DefaultMutableTreeNode node) {
@@ -240,40 +253,12 @@ public class GuiForm {
 		fillRightTree(parent, parentDependencyNode);
 	}
 
-	private void expandAll(JTree tree, TreePath parent) {
-		TreeNode node = (TreeNode) parent.getLastPathComponent();
-		if (node.getChildCount() >= 0) {
-			for (Enumeration e = node.children(); e.hasMoreElements();) {
-				TreeNode n = (TreeNode) e.nextElement();
-				TreePath path = parent.pathByAddingChild(n);
-				expandAll(tree, path);
-			}
-		}
-		tree.expandPath(parent);
-	}
-
-	private JBList createJBList(DefaultListModel model) {
-		JBList jbList = new JBList(model);
-		jbList.setCellRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				final Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				MyListNode listNode = (MyListNode) value;
-				setText(listNode.toString());
-				return comp;
-			}
-		});
-		jbList.addListSelectionListener(new MyListSelectionListener());
-		return jbList;
-	}
-
 	private void initializeModel() {
 		final Object selectedValue = leftPanelList.getSelectedValue();
 
 		dependencyTree = mavenProject.getDependencyTree();
 		allArtifactsMap = createAllArtifactsMap(dependencyTree);
-		updateLeftPanelModel();
+		updateLeftPanel();
 
 		rightTreeRoot.removeAllChildren();
 		rightTreeModel.reload();
@@ -284,10 +269,11 @@ public class GuiForm {
 		}
 	}
 
-	private void updateLeftPanelModel() {
-		final String searchFieldText = searchField.getText();
+	private void updateLeftPanel() {
 		listDataModel.clear();
 		leftTreeRoot.removeAllChildren();
+
+		final String searchFieldText = searchField.getText();
 		boolean conflictsWarning = false;
 		boolean showNoConflictsLabel = false;
 		if (conflictsRadioButton.isSelected()) {
@@ -310,9 +296,7 @@ public class GuiForm {
 						|| (baselineVersion >= 140 && contains140);
 				conflictsWarning = !containsProperty && !useMaven2;
 			}
-
-			leftPanelTree.getParent().getParent().setVisible(false);
-			leftPanelList.getParent().getParent().setVisible(true);
+			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
@@ -320,16 +304,14 @@ public class GuiForm {
 				}
 			}
 			showNoConflictsLabel = false;
-			leftPanelTree.getParent().getParent().setVisible(false);
-			leftPanelList.getParent().getParent().setVisible(true);
+			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else { // tree
 			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText);
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
-			expandAll(leftPanelTree, new TreePath(leftTreeRoot.getPath()));
+			TreeUtils.expandAll(leftPanelTree);
 
 			showNoConflictsLabel = false;
-			leftPanelTree.getParent().getParent().setVisible(true);
-			leftPanelList.getParent().getParent().setVisible(false);
+			leftPanelLayout.show(leftPanelWrapper, "allAsTree");
 		}
 
 		if (conflictsWarning) {
@@ -338,6 +320,7 @@ public class GuiForm {
 					noConflictsWarningLabelScrollPane.getVerticalScrollBar().setValue(0);
 				}
 			});
+			leftPanelLayout.show(leftPanelWrapper, "noConflictsWarningLabel");
 		}
 
 		noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
@@ -347,13 +330,14 @@ public class GuiForm {
 
 	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree,
 			String searchFieldText) {
+		boolean search = StringUtils.isNotBlank(searchFieldText);
 		Collections.sort(dependencyTree, BY_ARTICATF_ID);
 		boolean containsFilteredItem = false;
+
 		for (MavenArtifactNode mavenArtifactNode : dependencyTree) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode, attributes);
-			if (StringUtils.isNotBlank(searchFieldText)
-					&& mavenArtifactNode.getArtifact().toString().contains(searchFieldText)) {
+			if (search && contains(searchFieldText, mavenArtifactNode)) {
 				containsFilteredItem = true;
 				treeUserObject.highlight = true;
 			}
@@ -361,7 +345,7 @@ public class GuiForm {
 			containsFilteredItem |= fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
 
 			if (parent == leftTreeRoot) {
-				if (!containsFilteredItem && StringUtils.isNotBlank(searchFieldText)) {
+				if (search && !containsFilteredItem) {
 					// do not add
 				} else {
 					parent.add(newNode);
@@ -373,6 +357,12 @@ public class GuiForm {
 		}
 
 		return containsFilteredItem;
+	}
+
+	private boolean contains(String searchFieldText, MavenArtifactNode mavenArtifactNode) {
+		MavenArtifact artifact = mavenArtifactNode.getArtifact();
+		String displayStringSimple = artifact.getDisplayStringSimple();
+		return displayStringSimple.contains(searchFieldText);
 	}
 
 	private boolean hasConflicts(List<MavenArtifactNode> nodes) {
