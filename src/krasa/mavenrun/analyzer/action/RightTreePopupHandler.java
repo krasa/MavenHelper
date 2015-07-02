@@ -74,11 +74,11 @@ public class RightTreePopupHandler extends PopupHandler {
 			private void removeTreeNodes() {
 				// imagine conflict for d3
 				// root
-				// ?? d1
-				// ? ?? d2
-				// ? ? ?? d3
-				// ? ?? d3
-				// ?? ... something else containing d3
+				// L d1
+				// | L d2
+				// | | L d3
+				// | L d3
+				// L ... something else containing d3
 				// After d3 is excluded; must remove d2 and also d1 from the tree. But when d2 is excluded, remove only
 				// d2.
 

@@ -66,11 +66,11 @@ public class LeftTreePopupHandler extends PopupHandler {
 				@Override
 				public void dependencyExcluded() {//
 					// root
-					// ?? d1
-					// ? ?? d2
-					// ? ? ?? d3
-					// ? ?? d3
-					// ?? ...
+					// | d1
+					// | L d2
+					// | | L d3
+					// | L d3
+					// L ...
 					// After d3 is excluded; remove d3 in the whole subtree.
 					// getModel().removeNodeFromParent(selectedNode);
 
