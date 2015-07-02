@@ -1,7 +1,6 @@
 package krasa.mavenrun.analyzer.action;
 
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
 import org.jetbrains.idea.maven.project.MavenProject;
 
 import com.intellij.notification.Notification;
@@ -11,7 +10,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.xml.XmlFile;
 
 /**
  * @author Vojtech Krasa
@@ -24,21 +22,19 @@ public class JumpToSourceAction extends BaseAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		final XmlFile xmlFile = getXmlFile();
-		final Navigatable navigatable = MavenNavigationUtil.createNavigatableForDependency(project,
-				xmlFile.getVirtualFile(), getParentMavenArtifact());
+		final Navigatable navigatable = getNavigatable(mavenArtifactNode);
 		if (navigatable != null && navigatable.canNavigate()) {
 			navigatable.navigate(true);
-			return;
+		} else {
+			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
+					"Parent dependency not found, strange...", NotificationType.WARNING);
+			ApplicationManager.getApplication().invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					Notifications.Bus.notify(notification, project);
+				}
+			});
 		}
-		final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
-				"Parent dependency not found, it is probably in parent pom", NotificationType.WARNING);
-		ApplicationManager.getApplication().invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				Notifications.Bus.notify(notification, project);
-			}
-		});
 	}
 
 }

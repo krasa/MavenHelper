@@ -15,6 +15,9 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import krasa.mavenrun.analyzer.action.LeftTreePopupHandler;
+import krasa.mavenrun.analyzer.action.RightTreePopupHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -139,10 +142,8 @@ public class GuiForm {
 			}
 		});
 		noConflictsWarningLabel.setText(WARNING);
-		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
-		rightTree.addMouseListener(new RightTreePopupHandler(project, mavenProject, rightTree));
 		rightTreeRoot = new DefaultMutableTreeNode();
 		rightTreeModel = new DefaultTreeModel(rightTreeRoot);
 		rightTree.setModel(rightTreeModel);
@@ -151,8 +152,9 @@ public class GuiForm {
 		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
 		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		rightTree.addMouseListener(new RightTreePopupHandler(project, mavenProject, rightTree));
 
-		leftTree.addMouseListener(new LeftTreePopupHandler(project, mavenProject, leftTree));
+		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftTreeRoot = new DefaultMutableTreeNode();
 		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
 		leftTree.setModel(leftTreeModel);
@@ -161,6 +163,7 @@ public class GuiForm {
 		leftTree.expandPath(new TreePath(leftTreeRoot.getPath()));
 		leftTree.setCellRenderer(new TreeRenderer(showGroupId));
 		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		leftTree.addMouseListener(new LeftTreePopupHandler(project, mavenProject, leftTree));
 
 		showGroupId.addActionListener(new ActionListener() {
 			@Override
@@ -225,7 +228,9 @@ public class GuiForm {
 
 				final String key = getArtifactKey(userObject.getArtifact());
 				List<MavenArtifactNode> mavenArtifactNodes = allArtifactsMap.get(key);
-				fillRightTree(mavenArtifactNodes, sortByVersion(mavenArtifactNodes));
+				if (mavenArtifactNodes != null) {// can be null while refreshing
+					fillRightTree(mavenArtifactNodes, sortByVersion(mavenArtifactNodes));
+				}
 			}
 		}
 	}
@@ -440,8 +445,10 @@ public class GuiForm {
 	}
 
 	public void selectNotify() {
-		initializeModel();
-		splitPane.setDividerLocation(0.5);
+		if (dependencyTree == null) {
+			initializeModel();
+			splitPane.setDividerLocation(0.5);
+		}
 	}
 
 }

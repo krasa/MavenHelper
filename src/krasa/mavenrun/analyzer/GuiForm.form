@@ -51,12 +51,12 @@
               <splitpane id="6c003" binding="splitPane">
                 <constraints>
                   <grid row="5" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="200" height="200"/>
+                    <preferred-size width="400" height="400"/>
                   </grid>
                 </constraints>
                 <properties>
                   <continuousLayout value="true"/>
-                  <dividerLocation value="464"/>
+                  <dividerLocation value="400"/>
                   <dividerSize value="5"/>
                   <enabled value="true"/>
                   <resizeWeight value="0.5"/>

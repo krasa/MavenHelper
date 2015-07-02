@@ -4,10 +4,15 @@ import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomShortArtifactCoordinates;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenId;
+import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
@@ -32,27 +37,55 @@ public abstract class BaseAction extends DumbAwareAction {
 		mavenArtifactNode = myTreeNode;
 	}
 
-	protected MavenArtifact getParentMavenArtifact() {
+	protected MavenArtifactNode getOldestParentMavenArtifact() {
 		MavenArtifactNode oldestParent = mavenArtifactNode.getParent();
 		if (oldestParent == null) {
-			return mavenArtifactNode.getArtifact();
+			return mavenArtifactNode;
 		}
 		MavenArtifactNode parentNode = oldestParent.getParent();
 		while (parentNode != null) {
 			oldestParent = parentNode;
 			parentNode = oldestParent.getParent();
 		}
-		return oldestParent.getArtifact();
+		return oldestParent;
 	}
 
-	protected DomFileElement getDomFileElement() {
-		final XmlFile xmlFile = getXmlFile();
-		return DomManager.getDomManager(project).getFileElement(xmlFile, MavenDomProjectModel.class);
+	protected DomFileElement getDomFileElement(MavenArtifactNode mavenArtifactNode) {
+		XmlFile xmlFile = getXmlFile(mavenArtifactNode);
+		return xmlFile == null ? null : DomManager.getDomManager(project).getFileElement(xmlFile,
+				MavenDomProjectModel.class);
 	}
 
-	protected XmlFile getXmlFile() {
-		PsiFile psiFile = PsiManager.getInstance(project).findFile(mavenProject.getFile());
-		return (XmlFile) psiFile;
+	protected XmlFile getXmlFile(MavenArtifactNode artifact) {
+		VirtualFile virtualFile = getVirtualFile(artifact);
+		if (virtualFile != null) {
+			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+			return (XmlFile) psiFile;
+		}
+		return null;
+	}
+
+	/** org.jetbrains.idea.maven.navigator.MavenProjectsStructure.DependencyNode#getNavigatable() */
+	public Navigatable getNavigatable(MavenArtifactNode myArtifactNode) {
+		final VirtualFile file = getVirtualFile(myArtifactNode);
+		return file == null ? null : MavenNavigationUtil.createNavigatableForDependency(project, file,
+				myArtifactNode.getArtifact());
+	}
+
+	private VirtualFile getVirtualFile(MavenArtifactNode myArtifactNode) {
+		final MavenArtifactNode parent = myArtifactNode.getParent();
+		final VirtualFile file;
+		if (parent == null) {
+			file = mavenProject.getFile();
+		} else {
+			// final MavenId id = parent.getArtifact().getMavenId(); //this doesn't work for snapshots
+			MavenArtifact artifact = parent.getArtifact();
+			final MavenId id = new MavenId(artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion());
+
+			final MavenProject pr = MavenProjectsManager.getInstance(project).findProject(id);
+			file = pr == null ? MavenNavigationUtil.getArtifactFile(project, id) : pr.getFile();
+		}
+		return file;
 	}
 
 	protected boolean isSameDependency(MavenArtifact parent, MavenDomShortArtifactCoordinates mavenDomDependency) {

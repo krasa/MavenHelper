@@ -1,4 +1,4 @@
-package krasa.mavenrun.analyzer;
+package krasa.mavenrun.analyzer.action;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,8 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import krasa.mavenrun.analyzer.action.ExcludeDependencyAction;
-import krasa.mavenrun.analyzer.action.JumpToSourceAction;
+import krasa.mavenrun.analyzer.MyTreeUserObject;
 
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -24,21 +23,26 @@ import com.intellij.ui.PopupHandler;
 /**
  * @author Vojtech Krasa
  */
-class RightTreePopupHandler extends PopupHandler {
+public class RightTreePopupHandler extends PopupHandler {
 	private final Project project;
 	private final MavenProject mavenProject;
-	protected final DefaultTreeModel treeModel;
-	protected final DefaultMutableTreeNode treeRoot;
 	protected final JTree tree;
 
 	public RightTreePopupHandler(Project project, MavenProject mavenProject, JTree tree) {
 		this.project = project;
 		this.mavenProject = mavenProject;
 		this.tree = tree;
-		this.treeModel = (DefaultTreeModel) tree.getModel();
-		treeRoot = (DefaultMutableTreeNode) treeModel.getRoot();
 	}
 
+	private DefaultMutableTreeNode getRoot() {
+		return (DefaultMutableTreeNode) getModel().getRoot();
+	}
+
+	private DefaultTreeModel getModel() {
+		return (DefaultTreeModel) tree.getModel();
+	}
+
+	@SuppressWarnings("Duplicates")
 	public void invokePopup(final Component comp, final int x, final int y) {
 		final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		if (selectedNode == null) {
@@ -46,22 +50,17 @@ class RightTreePopupHandler extends PopupHandler {
 		}
 		final MyTreeUserObject myTreeUserObject = (MyTreeUserObject) selectedNode.getUserObject();
 		final MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
+		DefaultActionGroup actionGroup = new DefaultActionGroup();
+
 		if (myTreeUserObject.getMavenArtifactNode().getParent() == null) {
-			final DefaultActionGroup actionGroup = new DefaultActionGroup(new JumpToSourceAction(project, mavenProject,
-					mavenArtifactNode));
-			ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
+			actionGroup.add(new JumpToSourceAction(project, mavenProject, mavenArtifactNode));
 		} else {
-			showExcludableActionGroup(comp, x, y, selectedNode, mavenArtifactNode);
+			actionGroup.add(new JumpToSourceAction(project, mavenProject, mavenArtifactNode));
+			actionGroup.add(getExcludeAction(selectedNode, mavenArtifactNode));
 		}
 
-	}
-
-	private void showExcludableActionGroup(Component comp, int x, int y, final DefaultMutableTreeNode selectedNode,
-			final MavenArtifactNode mavenArtifactNode) {
-		ExcludeDependencyAction excludeAction = getExcludeAction(selectedNode, mavenArtifactNode);
-		JumpToSourceAction jumpToSourceAction = new JumpToSourceAction(project, mavenProject, mavenArtifactNode);
-		DefaultActionGroup actionGroup = new DefaultActionGroup(excludeAction, jumpToSourceAction);
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
+
 	}
 
 	private ExcludeDependencyAction getExcludeAction(final DefaultMutableTreeNode selectedNode,
@@ -72,13 +71,19 @@ class RightTreePopupHandler extends PopupHandler {
 				removeTreeNodes();
 			}
 
-			/**
-			 * imagine pom: root -> d1 ; d1 -> d2 ; d1 -> d3 ; d2 -> d3. After d3 is excluded; must remove d1 and also
-			 * d2 from the tree. But when d2 is excluded, remove only d2.
-			 */
 			private void removeTreeNodes() {
+				// imagine conflict for d3
+				// root
+				// ?? d1
+				// ? ?? d2
+				// ? ? ?? d3
+				// ? ?? d3
+				// ?? ... something else containing d3
+				// After d3 is excluded; must remove d2 and also d1 from the tree. But when d2 is excluded, remove only
+				// d2.
+
 				// when d2 is excluded, remove d3 for d2, but not d3 for d1
-				if (selectedNode.getParent() != treeRoot) {
+				if (selectedNode.getParent() != getRoot()) {
 					removeNodeNearestToRoot(selectedNode);
 					return;
 				}
@@ -99,15 +104,15 @@ class RightTreePopupHandler extends PopupHandler {
 			private void removeNodeNearestToRoot(DefaultMutableTreeNode nodeForRemoval) {
 				TreeNode nodeForRemovalNearestToRoot = nodeForRemoval;
 				while (nodeForRemovalNearestToRoot.getParent() != null
-						&& nodeForRemovalNearestToRoot.getParent() != treeRoot) {
+						&& nodeForRemovalNearestToRoot.getParent() != getRoot()) {
 					nodeForRemovalNearestToRoot = nodeForRemovalNearestToRoot.getParent();
 				}
-				treeModel.removeNodeFromParent((MutableTreeNode) nodeForRemovalNearestToRoot);
+				getModel().removeNodeFromParent((MutableTreeNode) nodeForRemovalNearestToRoot);
 			}
 
 			private java.util.List<DefaultMutableTreeNode> findAllLeafs(MyTreeUserObject userObject) {
 				final ArrayList<DefaultMutableTreeNode> result = new ArrayList<DefaultMutableTreeNode>();
-				visitAllNodes(treeRoot, userObject, result);
+				visitAllNodes(getRoot(), userObject, result);
 				return result;
 			}
 

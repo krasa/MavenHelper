@@ -1,7 +1,8 @@
 package krasa.mavenrun.analyzer.action;
 
-import org.jetbrains.idea.maven.dom.model.*;
-import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.dom.model.MavenDomDependencies;
+import org.jetbrains.idea.maven.dom.model.MavenDomDependency;
+import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 
@@ -17,17 +18,14 @@ import com.intellij.util.xml.DomFileElement;
 /**
  * @author Vojtech Krasa
  */
-public abstract class ExcludeDependencyAction extends BaseAction {
+public class RemoveDependencyAction extends BaseAction {
 
-	public ExcludeDependencyAction(Project project, MavenProject mavenProject, MavenArtifactNode myTreeNode) {
-		super(project, mavenProject, myTreeNode, "Exclude");
+	public RemoveDependencyAction(Project project, MavenProject mavenProject, MavenArtifactNode myTreeNode) {
+		super(project, mavenProject, myTreeNode, "Remove");
 	}
 
 	private void exclude() {
-		final MavenArtifact artifactToExclude = mavenArtifactNode.getArtifact();
-		final MavenArtifactNode oldestParent = getOldestParentMavenArtifact();
-
-		DomFileElement domFileElement = getDomFileElement(oldestParent);
+		DomFileElement domFileElement = getDomFileElement(mavenArtifactNode);
 
 		if (domFileElement != null) {
 			final MavenDomProjectModel rootElement = (MavenDomProjectModel) domFileElement.getRootElement();
@@ -35,16 +33,10 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 			boolean found = false;
 
 			for (MavenDomDependency mavenDomDependency : dependencies.getDependencies()) {
-				if (isSameDependency(oldestParent.getArtifact(), mavenDomDependency)) {
+				if (isSameDependency(mavenArtifactNode.getArtifact(), mavenDomDependency)) {
 					found = true;
-					final MavenDomExclusions exclusions = mavenDomDependency.getExclusions();
-					for (MavenDomExclusion mavenDomExclusion : exclusions.getExclusions()) {
-						if (isSameDependency(artifactToExclude, mavenDomExclusion)) {
-							return;
-						}
-					}
-					createExclusion(artifactToExclude, exclusions);
-					dependencyExcluded();
+					mavenDomDependency.undefine();
+					dependencyDeleted();
 				}
 			}
 			if (!found) {
@@ -57,23 +49,7 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 					}
 				});
 			}
-		} else {
-			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
-					"Pom file not found", NotificationType.WARNING);
-			ApplicationManager.getApplication().invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					Notifications.Bus.notify(notification, project);
-				}
-			});
 		}
-
-	}
-
-	private void createExclusion(MavenArtifact artifactToExclude, MavenDomExclusions exclusions) {
-		MavenDomExclusion exclusion = exclusions.addExclusion();
-		exclusion.getGroupId().setValue(artifactToExclude.getGroupId());
-		exclusion.getArtifactId().setValue(artifactToExclude.getArtifactId());
 	}
 
 	@Override
@@ -87,8 +63,10 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 					}
 				});
 			}
-		}, "Exclude", "MavenRunHelper");
+		}, "Remove", "MavenRunHelper");
 	}
 
-	public abstract void dependencyExcluded();
+	public void dependencyDeleted() {
+
+	}
 }
