@@ -36,7 +36,7 @@
 
 	<change-notes><![CDATA[
             <br>2.8 
-            <br> - new dependencies tree
+            <br> - Dependency Analyzer improvements: new All Dependencies Tree, improved excluding and jumping into source
             <br>2.7 
             <br> - IJ 15 compatibility
             <br>2.6
