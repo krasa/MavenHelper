@@ -46,8 +46,9 @@ public class GuiForm {
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
 			+ "If your project is Maven2 compatible, you could try one of the following:\n"
-			+ "-press Apply Fix button to alter Maven VM options for importer\n"
-			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting";
+			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
+			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n"
+			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)";
 	protected static final Comparator<MavenArtifactNode> BY_ARTICATF_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
