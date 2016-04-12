@@ -30,13 +30,12 @@ import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
 
 @State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
-public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent, Configurable,
+public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
 		PersistentStateComponent<ApplicationSettings> {
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
 
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
-	private ApplicationSettingsForm form;
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
@@ -45,7 +44,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		registerActions();
 	}
 
-	private void registerActions() {
+	public void registerActions() {
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			String actionId = getActionId(goal);
@@ -57,7 +56,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());
 	}
 
-	private void unRegisterActions() {
+	public void unRegisterActions() {
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			unRegisterAction(instance, getActionId(goal));
@@ -145,41 +144,6 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		}
 	}
 
-	@Nls
-	public String getDisplayName() {
-		return "Maven Helper";
-	}
-
-	@Nullable
-	public String getHelpTopic() {
-		return null;
-	}
-
-	@Nullable
-	public JComponent createComponent() {
-		form = new ApplicationSettingsForm(getState());
-		return form.getRootComponent();
-	}
-
-	public boolean isModified() {
-		return form.isSettingsModified(settings);
-	}
-
-	public void apply() throws ConfigurationException {
-		unRegisterActions();
-		settings = form.getSettings().clone();
-		registerActions();
-	}
-
-	public void reset() {
-		if (form != null) {
-			form.importFrom(settings);
-		}
-	}
-
-	public void disposeUIResources() {
-		form = null;
-	}
 
 	public static ApplicationComponent getInstance() {
 		return ApplicationManager.getApplication().getComponent(ApplicationComponent.class);
