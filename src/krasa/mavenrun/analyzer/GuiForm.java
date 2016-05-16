@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 
@@ -117,14 +118,21 @@ public class GuiForm {
 				updateLeftPanel();
 			}
 		});
-		searchField.getTextEditor().addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (searchField.getText() != null) {
-					searchField.addCurrentTextToHistory();
+		try {
+			Method searchField = this.searchField.getClass().getMethod("getTextEditor");
+			JTextField invoke = (JTextField) searchField.invoke(this.searchField);
+			invoke.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					if (GuiForm.this.searchField.getText() != null) {
+						GuiForm.this.searchField.addCurrentTextToHistory();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
 		noConflictsWarningLabel.setBackground(null);
 		applyMavenVmOptionsFixButton.addActionListener(new ActionListener() {
 			@Override

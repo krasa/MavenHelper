@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>2.9.138.1503</version>
+	<version>3.0.138.1503</version>
 	<!--<version>1.7.12</version>-->
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
@@ -35,8 +35,10 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>3.0
+            <br> - IntelliJ 2016.2 EAP compatibility
             <br>2.9 
-            <br> - IJ 2016 compatibility
+            <br> - IntelliJ 2016 compatibility
             <br>2.8 
             <br> - Dependency Analyzer improvements: new All Dependencies Tree, improved excluding and jumping into source
             <br>2.7 
