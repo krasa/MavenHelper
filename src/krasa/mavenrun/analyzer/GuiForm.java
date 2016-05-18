@@ -325,7 +325,7 @@ public class GuiForm {
 						|| (baselineVersion >= 140 && contains140);
 				conflictsWarning = !containsProperty && !useMaven2;
 
-				if (conflictsWarning && VersionComparatorUtil.compare(build.asStringWithoutProductCodeAndSnapshot(), "145.258") >= 0) {
+				if (conflictsWarning && VersionComparatorUtil.compare(build.asStringWithoutProductCode(), "145.258") >= 0) {
 					boolean oldMaven = VersionComparatorUtil.compare(MavenServerManager.getInstance().getCurrentMavenVersion(), "3.1.1") < 0;
 					conflictsWarning = conflictsWarning && oldMaven;
 				}
