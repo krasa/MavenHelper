@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>3.0.138.1503</version>
+	<version>3.1.138.1503</version>
 	<!--<version>1.7.12</version>-->
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
@@ -35,6 +35,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>3.1
+            <br> - fixed false positive of warning message
             <br>3.0
             <br> - IntelliJ 2016.2 EAP compatibility
             <br>2.9 

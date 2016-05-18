@@ -1,5 +1,34 @@
 package krasa.mavenrun.analyzer;
 
+import com.intellij.ide.CommonActionsManager;
+import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
+import com.intellij.openapi.application.ex.ApplicationInfoEx;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.BuildNumber;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.*;
+import com.intellij.ui.components.JBList;
+import com.intellij.util.text.VersionComparatorUtil;
+import krasa.mavenrun.analyzer.action.LeftTreePopupHandler;
+import krasa.mavenrun.analyzer.action.RightTreePopupHandler;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.idea.maven.server.MavenServerManager;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,36 +38,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import krasa.mavenrun.analyzer.action.LeftTreePopupHandler;
-import krasa.mavenrun.analyzer.action.RightTreePopupHandler;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.server.MavenServerManager;
-
-import com.intellij.ide.CommonActionsManager;
-import com.intellij.ide.DefaultTreeExpander;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
-import com.intellij.openapi.application.ex.ApplicationInfoEx;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.*;
-import com.intellij.ui.components.JBList;
-
 /**
  * @author Vojtech Krasa
  */
@@ -47,9 +46,10 @@ public class GuiForm {
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
 			+ "If your project is Maven2 compatible, you could try one of the following:\n"
+			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
 			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
 			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n"
-			+ "-use IJ 2016.1+ and configure it to use external Maven 3.3.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)";
+			;
 	protected static final Comparator<MavenArtifactNode> BY_ARTICATF_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
@@ -314,7 +314,8 @@ public class GuiForm {
 				}
 			}
 			showNoConflictsLabel = listDataModel.isEmpty();
-			int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
+			BuildNumber build = ApplicationInfoEx.getInstanceEx().getBuild();
+			int baselineVersion = build.getBaselineVersion();
 			if (showNoConflictsLabel && baselineVersion >= 139) {
 				MavenServerManager server = MavenServerManager.getInstance();
 				boolean useMaven2 = server.isUseMaven2();
@@ -323,6 +324,11 @@ public class GuiForm {
 				boolean containsProperty = (baselineVersion == 139 && contains139)
 						|| (baselineVersion >= 140 && contains140);
 				conflictsWarning = !containsProperty && !useMaven2;
+
+				if (conflictsWarning && VersionComparatorUtil.compare(build.asStringWithoutProductCodeAndSnapshot(), "145.258") >= 0) {
+					boolean oldMaven = VersionComparatorUtil.compare(MavenServerManager.getInstance().getCurrentMavenVersion(), "3.1.1") < 0;
+					conflictsWarning = conflictsWarning && oldMaven;
+				}
 			}
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
