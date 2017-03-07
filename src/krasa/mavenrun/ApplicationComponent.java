@@ -28,7 +28,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
 
 	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Maven Helper",
-		NotificationDisplayType.BALLOON, true);
+		NotificationDisplayType.STICKY_BALLOON, true);
 	
 	
 	public static final String RUN_MAVEN = "Run Maven";
