@@ -2,9 +2,14 @@ package krasa.mavenrun.analyzer;
 
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -13,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.text.VersionComparatorUtil;
+import krasa.mavenrun.ApplicationComponent;
 import krasa.mavenrun.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenrun.analyzer.action.RightTreePopupHandler;
 import org.apache.commons.lang.StringUtils;
@@ -89,6 +95,8 @@ public class GuiForm {
 	protected List<MavenArtifactNode> dependencyTree;
 	protected CardLayout leftPanelLayout;
 
+	private boolean notificationShown;
+
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
@@ -132,7 +140,7 @@ public class GuiForm {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		noConflictsWarningLabel.setBackground(null);
 		applyMavenVmOptionsFixButton.addActionListener(new ActionListener() {
 			@Override
@@ -188,7 +196,7 @@ public class GuiForm {
 		actionGroup.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, leftTree));
 		actionGroup.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, leftTree));
 		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons",
-				actionGroup, true);
+			actionGroup, true);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
 	}
 
@@ -303,6 +311,7 @@ public class GuiForm {
 
 		final String searchFieldText = searchField.getText();
 		boolean conflictsWarning = false;
+
 		boolean showNoConflictsLabel = false;
 		if (conflictsRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
@@ -316,20 +325,48 @@ public class GuiForm {
 			showNoConflictsLabel = listDataModel.isEmpty();
 			BuildNumber build = ApplicationInfoEx.getInstanceEx().getBuild();
 			int baselineVersion = build.getBaselineVersion();
+			MavenServerManager server = MavenServerManager.getInstance();
+			boolean useMaven2 = server.isUseMaven2();
+			boolean containsCompatResolver139 = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
+			boolean containsCompatResolver140 = server.getMavenEmbedderVMOptions().contains("-Didea.maven3.use.compat.resolver");
+			boolean newIDE = VersionComparatorUtil.compare(build.asStringWithoutProductCode(), "145.258") >= 0;
+			boolean newMaven = VersionComparatorUtil.compare(server.getCurrentMavenVersion(), "3.1.1") >= 0;
+
 			if (showNoConflictsLabel && baselineVersion >= 139) {
-				MavenServerManager server = MavenServerManager.getInstance();
-				boolean useMaven2 = server.isUseMaven2();
-				boolean contains139 = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
-				boolean contains140 = server.getMavenEmbedderVMOptions().contains("-Didea.maven3.use.compat.resolver");
-				boolean containsProperty = (baselineVersion == 139 && contains139)
-						|| (baselineVersion >= 140 && contains140);
+				boolean containsProperty = (baselineVersion == 139 && containsCompatResolver139)
+					|| (baselineVersion >= 140 && containsCompatResolver140);
 				conflictsWarning = !containsProperty && !useMaven2;
 
-				if (conflictsWarning && VersionComparatorUtil.compare(build.asStringWithoutProductCode(), "145.258") >= 0) {
-					boolean oldMaven = VersionComparatorUtil.compare(MavenServerManager.getInstance().getCurrentMavenVersion(), "3.1.1") < 0;
-					conflictsWarning = conflictsWarning && oldMaven;
+				if (conflictsWarning && newIDE) {
+					conflictsWarning = conflictsWarning && !newMaven;
 				}
 			}
+
+			if (!conflictsWarning && newIDE && newMaven && containsCompatResolver140) {
+				if (!notificationShown) {
+					notificationShown = true;
+					final Notification notification = ApplicationComponent.NOTIFICATION.createNotification(
+						"Fix your Maven VM options for importer", "<html>Your settings causes problems in multi-module Maven projects.<br> " +
+							" <a href=\"fix\">Remove -Didea.maven3.use.compat.resolver</a> ", NotificationType.WARNING, new NotificationListener() {
+							@Override
+							public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
+								notification.expire();
+								String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
+								MavenServerManager.getInstance().setMavenEmbedderVMOptions(mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
+								final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
+								projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+							}
+						});
+					ApplicationManager.getApplication().invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							Notifications.Bus.notify(notification, project);
+						}
+					});
+				}
+			}
+			
+			
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
@@ -363,7 +400,7 @@ public class GuiForm {
 	}
 
 	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree,
-			String searchFieldText) {
+								 String searchFieldText) {
 		boolean search = StringUtils.isNotBlank(searchFieldText);
 		Collections.sort(dependencyTree, BY_ARTICATF_ID);
 		boolean containsFilteredItem = false;

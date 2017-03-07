@@ -1,23 +1,7 @@
 package krasa.mavenrun;
 
-import javax.swing.*;
-
-import krasa.mavenrun.action.MainMavenActionGroup;
-import krasa.mavenrun.action.RunGoalAction;
-import krasa.mavenrun.action.RunTestFileAction;
-import krasa.mavenrun.action.debug.Debug;
-import krasa.mavenrun.action.debug.DebugGoalAction;
-import krasa.mavenrun.action.debug.DebugTestFileAction;
-import krasa.mavenrun.action.debug.MainMavenDebugActionGroup;
-import krasa.mavenrun.gui.ApplicationSettingsForm;
-import krasa.mavenrun.model.ApplicationSettings;
-import krasa.mavenrun.model.Goal;
-
-import org.apache.commons.lang.WordUtils;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -25,15 +9,28 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import icons.MavenIcons;
+import krasa.mavenrun.action.MainMavenActionGroup;
+import krasa.mavenrun.action.RunGoalAction;
+import krasa.mavenrun.action.RunTestFileAction;
+import krasa.mavenrun.action.debug.Debug;
+import krasa.mavenrun.action.debug.DebugGoalAction;
+import krasa.mavenrun.action.debug.DebugTestFileAction;
+import krasa.mavenrun.action.debug.MainMavenDebugActionGroup;
+import krasa.mavenrun.model.ApplicationSettings;
+import krasa.mavenrun.model.Goal;
+import org.apache.commons.lang.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 @State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
 		PersistentStateComponent<ApplicationSettings> {
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
 
+	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Maven Helper",
+		NotificationDisplayType.BALLOON, true);
+	
+	
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
