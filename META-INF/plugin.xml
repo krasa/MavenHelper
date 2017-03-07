@@ -10,6 +10,7 @@
 	</vendor>
 
 	<description><![CDATA[
+	    A must have plugin for working with Maven.<br>
 		Provides:<br>
 		<ul>
         <li>actions to run/debug the current test file. 
