@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenArtifactState;
 
 /**
  * @author Vojtech Krasa
@@ -23,6 +24,18 @@ public class MyListNode {
 	public String getMaxVersion() {
 		return maxVersion;
 	}
+
+	public String getRightVersion(){
+	    if(value != null && !value.isEmpty()) {
+            for (MavenArtifactNode mavenArtifactNode : value) {
+                if (mavenArtifactNode.getState() == MavenArtifactState.ADDED) {
+                    maxVersion = mavenArtifactNode.getArtifact().getVersion();
+                    break;
+                }
+            }
+        }
+        return maxVersion;
+    }
 
 	@Override
 	public String toString() {

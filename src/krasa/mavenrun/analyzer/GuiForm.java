@@ -209,13 +209,13 @@ public class GuiForm {
 			@Override
 			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
 				MyListNode value = (MyListNode) o;
-				String maxVersion = value.getMaxVersion();
+				String rightVersion = value.getRightVersion();
 				final String[] split = value.key.split(":");
 				if (showGroupId.isSelected()) {
 					append(split[0] + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 				}
 				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-				append(" : " + maxVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+				append(" : " + rightVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
 			}
 		});
@@ -261,14 +261,14 @@ public class GuiForm {
 
 			final MyListNode myListNode = (MyListNode) leftPanelList.getSelectedValue();
 			List<MavenArtifactNode> artifacts = myListNode.value;
-			fillRightTree(artifacts, myListNode.getMaxVersion());
+			fillRightTree(artifacts, myListNode.getRightVersion());
 		}
 	}
 
-	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String maxVersion) {
+	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String rightVersion) {
 		rightTreeRoot.removeAllChildren();
 		for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
-			MyTreeUserObject userObject = MyTreeUserObject.create(mavenArtifactNode, maxVersion);
+			MyTreeUserObject userObject = MyTreeUserObject.create(mavenArtifactNode, rightVersion);
 			userObject.showOnlyVersion = true;
 			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
 			fillRightTree(mavenArtifactNode, newNode);
