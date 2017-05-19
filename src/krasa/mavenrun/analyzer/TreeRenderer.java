@@ -7,6 +7,8 @@ import org.jetbrains.idea.maven.model.MavenArtifact;
 
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenArtifactState;
 
 /**
  * @author Vojtech Krasa
@@ -35,8 +37,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			classifier = "";
 		}
 
-		if (myTreeUserObject.showOnlyVersion) {
-			append(artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", myTreeUserObject.attributes);
+        String curVersion = artifact.getVersion();
+        if (myTreeUserObject.showOnlyVersion) {
+			append(curVersion + " [" + classifier + artifact.getScope() + "]", myTreeUserObject.attributes);
 		} else {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 			SimpleTextAttributes boldAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
@@ -48,7 +51,14 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 				append(artifact.getGroupId() + " : ", attributes);
 			}
 			append(artifact.getArtifactId(), boldAttributes);
-			append(" : " + artifact.getVersion() + " (" + classifier + artifact.getScope() + ")", attributes);
+            MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
+            if(mavenArtifactNode.getState() == MavenArtifactState.CONFLICT
+                    && (mavenArtifactNode.getRelatedArtifact() == null || !curVersion.equals(mavenArtifactNode.getRelatedArtifact().getVersion()))){
+                String realVersion = mavenArtifactNode.getRelatedArtifact().getVersion();
+                append(" : " + curVersion +" (omitted for conflict with"+ realVersion +")" + " [" + classifier + artifact.getScope() + "]", attributes);
+            } else {
+                append(" : " + curVersion + " [" + classifier + artifact.getScope() + "]", attributes);
+            }
 		}
 
 	}
