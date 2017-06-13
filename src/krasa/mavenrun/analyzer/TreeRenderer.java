@@ -16,11 +16,11 @@ import java.awt.*;
  */
 public class TreeRenderer extends ColoredTreeCellRenderer {
 
-	private JCheckBox showGroupId;
-	private SimpleTextAttributes errorBoldAttributes;
+	private final JCheckBox showGroupId;
+	private final SimpleTextAttributes errorBoldAttributes;
 
-	private SimpleTextAttributes testAttributes;
-	private SimpleTextAttributes testBoldAttributes;
+	private final SimpleTextAttributes testAttributes;
+	private final SimpleTextAttributes testBoldAttributes;
 
 	private final SimpleTextAttributes providedAttributes;
 	private final SimpleTextAttributes providedBoldAttributes;
