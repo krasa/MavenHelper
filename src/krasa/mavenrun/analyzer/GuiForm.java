@@ -51,11 +51,10 @@ public class GuiForm {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
-			+ "If your project is Maven2 compatible, you could try one of the following:\n"
-			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
-			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
-			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n"
-			;
+		+ "If your project is Maven2 compatible, you could try one of the following:\n"
+		+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
+		+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
+		+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
 	protected static final Comparator<MavenArtifactNode> BY_ARTICATF_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
@@ -70,8 +69,8 @@ public class GuiForm {
 	private JTree rightTree;
 	private JPanel rootPanel;
 
-	private JRadioButton allDependenciesAsListRadioButton;
 	private JRadioButton conflictsRadioButton;
+	private JRadioButton allDependenciesAsListRadioButton;
 	private JRadioButton allDependenciesAsTreeRadioButton;
 
 	private JLabel noConflictsLabel;
@@ -96,6 +95,8 @@ public class GuiForm {
 	protected CardLayout leftPanelLayout;
 
 	private boolean notificationShown;
+
+	private final SimpleTextAttributes errorBoldAttributes;
 
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
@@ -198,6 +199,7 @@ public class GuiForm {
 		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons",
 			actionGroup, true);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
+		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 	}
 
 	private void createUIComponents() {
@@ -209,13 +211,22 @@ public class GuiForm {
 			@Override
 			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
 				MyListNode value = (MyListNode) o;
-				String maxVersion = value.getMaxVersion();
+				String rightVersion = value.getRightVersion();
 				final String[] split = value.key.split(":");
-				if (showGroupId.isSelected()) {
-					append(split[0] + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+				boolean conflict = value.isConflict();
+
+				SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+				SimpleTextAttributes boldAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
+				if (conflict && allDependenciesAsListRadioButton.isSelected()) {
+					attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
+					boldAttributes = errorBoldAttributes;
 				}
-				append(split[1], SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-				append(" : " + maxVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+
+				if (showGroupId.isSelected()) {
+					append(split[0] + " : ", attributes);
+				}
+				append(split[1], boldAttributes);
+				append(" : " + rightVersion, attributes);
 
 			}
 		});
@@ -261,14 +272,14 @@ public class GuiForm {
 
 			final MyListNode myListNode = (MyListNode) leftPanelList.getSelectedValue();
 			List<MavenArtifactNode> artifacts = myListNode.value;
-			fillRightTree(artifacts, myListNode.getMaxVersion());
+			fillRightTree(artifacts, myListNode.getRightVersion());
 		}
 	}
 
-	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String maxVersion) {
+	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String rightVersion) {
 		rightTreeRoot.removeAllChildren();
 		for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
-			MyTreeUserObject userObject = MyTreeUserObject.create(mavenArtifactNode, maxVersion);
+			MyTreeUserObject userObject = MyTreeUserObject.create(mavenArtifactNode, rightVersion);
 			userObject.showOnlyVersion = true;
 			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
 			fillRightTree(mavenArtifactNode, newNode);
@@ -365,8 +376,8 @@ public class GuiForm {
 					});
 				}
 			}
-			
-			
+
+
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {

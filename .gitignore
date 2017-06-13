@@ -1,0 +1,15 @@
+# Created by .ignore support plugin (hsz.mobi)
+### java template
+.svn/
+.idea/
+.settings/
+target/
+out/
+.classpath
+.project
+.mymetadata
+*.iml
+.DS_Store
+rebel.xml
+*.ipr
+*.iws
