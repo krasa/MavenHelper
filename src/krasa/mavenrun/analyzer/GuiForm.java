@@ -2,6 +2,7 @@ package krasa.mavenrun.analyzer;
 
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -61,6 +62,7 @@ public class GuiForm {
 			return o1.getArtifact().getArtifactId().compareTo(o2.getArtifact().getArtifactId());
 		}
 	};
+	private static final String LAST_RADIO_BUTTON = "MavenHelper.lastRadioButton";
 
 	private final Project project;
 	private final VirtualFile file;
@@ -106,6 +108,14 @@ public class GuiForm {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				updateLeftPanel();
+
+				String value = null;
+				if (allDependenciesAsListRadioButton.isSelected()) {
+					value = "list";
+				} else if (allDependenciesAsTreeRadioButton.isSelected()) {
+					value = "tree";
+				}
+				PropertiesComponent.getInstance().setValue(LAST_RADIO_BUTTON, value);
 			}
 		};
 		conflictsRadioButton.addActionListener(radioButtonListener);
@@ -200,6 +210,15 @@ public class GuiForm {
 			actionGroup, true);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
 		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+
+		String lastRadioButton = PropertiesComponent.getInstance().getValue(LAST_RADIO_BUTTON);
+		if ("tree".equals(lastRadioButton)) {
+			allDependenciesAsTreeRadioButton.setSelected(true);
+		} else if ("list".equals(lastRadioButton)) {
+			allDependenciesAsListRadioButton.setSelected(true);
+		} else {
+			conflictsRadioButton.setSelected(true);
+		}
 	}
 
 	private void createUIComponents() {
@@ -417,8 +436,7 @@ public class GuiForm {
 		boolean containsFilteredItem = false;
 
 		for (MavenArtifactNode mavenArtifactNode : dependencyTree) {
-			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode, attributes);
+			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 			if (search && contains(searchFieldText, mavenArtifactNode)) {
 				containsFilteredItem = true;
 				treeUserObject.highlight = true;
