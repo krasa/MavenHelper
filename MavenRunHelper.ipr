@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
       <entry name="!?*.form" />
@@ -13,30 +11,29 @@
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
-    <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-    </annotationProcessing>
   </component>
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
-  <component name="EclipseCodeFormatter">
-    <option name="defaultSettings" value="true" />
-    <option name="formatter" value="ECLIPSE" />
-    <option name="id" value="1340799126271" />
-    <option name="name" value="default" />
-    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../_T-Mobile/org.eclipse.jdt.core.prefs" />
+  <component name="EclipseCodeFormatterProjectSettings">
+    <option name="selectedGlobalProfile">
+      <Settings>
+        <option name="formatter" value="ECLIPSE" />
+        <option name="id" value="1462535080417" />
+        <option name="importOrderConfigFilePath" value="$PROJECT_DIR$/../EclipseCodeFormatter4/test/resources/eclipse.importorder" />
+        <option name="name" value="default" />
+        <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../../format.xml" />
+        <option name="pathToEclipse" value="C:\Users\Meo\.p2\pool" />
+        <option name="selectedJavaProfile" value="Ales" />
+      </Settings>
+    </option>
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
-  <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-  </component>
-  <component name="GradleSettings">
-    <option name="gradleHome" value="G:/_tmobile/gradle-1.0" />
-    <option name="linkedProjectPath" value="C:\workspace\_projekty\portal-master\build.gradle" />
-    <option name="preferLocalInstallationToWrapper" value="true" />
+  <component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+      <option name="myName" value="Project Default" />
+    </profile>
+    <version value="1.0" />
   </component>
   <component name="IntelliCalc">
     <mode value="0" />
@@ -177,8 +174,19 @@
       <module fileurl="file://$PROJECT_DIR$/MavenRunHelper.iml" filepath="$PROJECT_DIR$/MavenRunHelper.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-129.17" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" project-jdk-name="IntelliJ NEW" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="PublishConfigData">
+    <serverData>
+      <paths name="aa">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
@@ -404,4 +412,3 @@
     </option>
   </component>
 </project>
-

@@ -82,7 +82,7 @@
 
 	<application-components>
 		<component>
-			<implementation-class>krasa.mavenrun.ApplicationComponent</implementation-class>
+			<implementation-class>krasa.mavenhelper.ApplicationComponent</implementation-class>
 		</component>
 	</application-components>
 
@@ -91,12 +91,12 @@
 
 	<actions>
 		<!-- Add your actions here -->
-		<action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenrun.action.QuickRunMavenGoalAction" text="Quick Run Maven Goal"
+		<action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction" text="Quick Run Maven Goal"
 				description="Quick Run Maven Goal">
 			<add-to-group group-id="WindowMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
 		</action>
-		<action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenrun.action.QuickRunRootMavenGoalAction" text="Quick Run Root Maven Goal"
+		<action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction" text="Quick Run Root Maven Goal"
 				description="Quick Run Root Maven Goal">
 			<add-to-group group-id="WindowMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
@@ -107,8 +107,8 @@
 	
 	<extensions defaultExtensionNs="com.intellij">
 		<!-- Add your extensions here -->
-		<fileEditorProvider implementation="krasa.mavenrun.analyzer.MyFileEditorProvider"/>
-		<applicationConfigurable instance="krasa.mavenrun.MyConfigurable" id="MavenRunHelper" displayName="Maven Helper"  />
+		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
+		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper" displayName="Maven Helper"  />
 	</extensions>
 
 	<depends>org.jetbrains.idea.maven</depends>
