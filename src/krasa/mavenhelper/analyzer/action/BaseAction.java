@@ -52,12 +52,11 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	protected DomFileElement getDomFileElement(MavenArtifactNode mavenArtifactNode) {
 		XmlFile xmlFile = getXmlFile(mavenArtifactNode);
-		return xmlFile == null ? null : DomManager.getDomManager(project).getFileElement(xmlFile,
-				MavenDomProjectModel.class);
+		return xmlFile == null ? null : DomManager.getDomManager(project).getFileElement(xmlFile, MavenDomProjectModel.class);
 	}
 
 	protected XmlFile getXmlFile(MavenArtifactNode artifact) {
-		VirtualFile virtualFile = getVirtualFile(artifact);
+		VirtualFile virtualFile = getVirtualFile(artifact, project, mavenProject);
 		if (virtualFile != null) {
 			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 			return (XmlFile) psiFile;
@@ -66,13 +65,12 @@ public abstract class BaseAction extends DumbAwareAction {
 	}
 
 	/** org.jetbrains.idea.maven.navigator.MavenProjectsStructure.DependencyNode#getNavigatable() */
-	public Navigatable getNavigatable(MavenArtifactNode myArtifactNode) {
-		final VirtualFile file = getVirtualFile(myArtifactNode);
-		return file == null ? null : MavenNavigationUtil.createNavigatableForDependency(project, file,
-				myArtifactNode.getArtifact());
+	public static Navigatable getNavigatable(MavenArtifactNode myArtifactNode, Project project, MavenProject mavenProject) {
+		final VirtualFile file = getVirtualFile(myArtifactNode, project, mavenProject);
+		return file == null ? null : MavenNavigationUtil.createNavigatableForDependency(project, file, myArtifactNode.getArtifact());
 	}
 
-	private VirtualFile getVirtualFile(MavenArtifactNode myArtifactNode) {
+	private static VirtualFile getVirtualFile(MavenArtifactNode myArtifactNode, Project project, MavenProject mavenProject) {
 		final MavenArtifactNode parent = myArtifactNode.getParent();
 		final VirtualFile file;
 		if (parent == null) {
@@ -95,8 +93,7 @@ public abstract class BaseAction extends DumbAwareAction {
 	}
 
 	protected boolean isSameDependency(MavenArtifact parent, GenericDomValue artifactID, GenericDomValue<String> groupId) {
-		return artifactID != null && groupId != null && parent.getArtifactId().equals(artifactID.getValue())
-				&& parent.getGroupId().equals(groupId.getValue());
+		return artifactID != null && groupId != null && parent.getArtifactId().equals(artifactID.getValue()) && parent.getGroupId().equals(groupId.getValue());
 	}
 
 }

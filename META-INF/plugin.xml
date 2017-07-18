@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-    <version>3.3.138.1503.0</version>
+    <version>3.4.138.1503.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -36,6 +36,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>3.4
+            <br> - added a shortcut for Jump To Source
             <br>3.3
             <br> - Improved displaying of version conflicts - colors, the right version according to Maven rules (Thanks to <a href="https://github.com/fengyie007">fengyie007</a>)
             <br> - Moved buttons

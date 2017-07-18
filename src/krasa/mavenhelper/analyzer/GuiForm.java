@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.text.VersionComparatorUtil;
+
 import krasa.mavenhelper.ApplicationComponent;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
@@ -52,10 +53,10 @@ public class GuiForm {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
-		+ "If your project is Maven2 compatible, you could try one of the following:\n"
-		+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
-		+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
-		+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
+			+ "If your project is Maven2 compatible, you could try one of the following:\n"
+			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
+			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
+			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
 	protected static final Comparator<MavenArtifactNode> BY_ARTICATF_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
@@ -206,8 +207,7 @@ public class GuiForm {
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, leftTree));
 		actionGroup.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, leftTree));
-		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons",
-			actionGroup, true);
+		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons", actionGroup, true);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
 		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 
@@ -249,8 +249,8 @@ public class GuiForm {
 
 			}
 		});
-		rightTree = new MyHighlightingTree();
-		leftTree = new MyHighlightingTree();
+		rightTree = new MyHighlightingTree(project, mavenProject);
+		leftTree = new MyHighlightingTree(project, mavenProject);
 	}
 
 	public static String sortByVersion(List<MavenArtifactNode> value) {
@@ -363,8 +363,7 @@ public class GuiForm {
 			boolean newMaven = VersionComparatorUtil.compare(server.getCurrentMavenVersion(), "3.1.1") >= 0;
 
 			if (showNoConflictsLabel && baselineVersion >= 139) {
-				boolean containsProperty = (baselineVersion == 139 && containsCompatResolver139)
-					|| (baselineVersion >= 140 && containsCompatResolver140);
+				boolean containsProperty = (baselineVersion == 139 && containsCompatResolver139) || (baselineVersion >= 140 && containsCompatResolver140);
 				conflictsWarning = !containsProperty && !useMaven2;
 
 				if (conflictsWarning && newIDE) {
@@ -378,15 +377,16 @@ public class GuiForm {
 					final Notification notification = ApplicationComponent.NOTIFICATION.createNotification(
 						"Fix your Maven VM options for importer", "<html>Your settings causes problems in multi-module Maven projects.<br> " +
 							" <a href=\"fix\">Remove -Didea.maven3.use.compat.resolver</a> ", NotificationType.WARNING, new NotificationListener() {
-							@Override
-							public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
-								notification.expire();
-								String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
-								MavenServerManager.getInstance().setMavenEmbedderVMOptions(mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
-								final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
-								projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
-							}
-						});
+								@Override
+								public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
+									notification.expire();
+									String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
+									MavenServerManager.getInstance().setMavenEmbedderVMOptions(
+											mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
+									final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
+									projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+								}
+							});
 					ApplicationManager.getApplication().invokeLater(new Runnable() {
 						@Override
 						public void run() {
@@ -395,7 +395,6 @@ public class GuiForm {
 					});
 				}
 			}
-
 
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
@@ -429,8 +428,7 @@ public class GuiForm {
 		noConflictsLabel.setVisible(showNoConflictsLabel);
 	}
 
-	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree,
-								 String searchFieldText) {
+	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree, String searchFieldText) {
 		boolean search = StringUtils.isNotBlank(searchFieldText);
 		Collections.sort(dependencyTree, BY_ARTICATF_ID);
 		boolean containsFilteredItem = false;
