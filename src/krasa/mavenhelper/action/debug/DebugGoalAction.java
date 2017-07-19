@@ -2,26 +2,34 @@ package krasa.mavenhelper.action.debug;
 
 import javax.swing.*;
 
-import krasa.mavenhelper.action.RunGoalAction;
-import krasa.mavenhelper.model.Goal;
-
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 
+import krasa.mavenhelper.action.RunGoalAction;
+import krasa.mavenhelper.model.Goal;
+
 public class DebugGoalAction extends RunGoalAction {
 
-	public DebugGoalAction(String goal, Icon icon) {
-		super(goal, icon);
+	private DebugGoalAction(Goal goal, String text, Icon icon) {
+		super(goal, text, icon);
 	}
 
-	public DebugGoalAction(Goal goal, Icon icon) {
-		super(goal, icon);
-		String description = "debug: " + goal.getCommandLine();
-		getTemplatePresentation().setText(description);
-		getTemplatePresentation().setDescription(description);
+	public static DebugGoalAction createDebug(Goal goal, Icon icon, boolean popupAction) {
+		if (popupAction) {
+			String text = getText(goal);
+			return new DebugGoalAction(goal, text, icon);
+		} else {
+			return new DebugGoalAction(goal, goal.getCommandLine(), icon);
+		}
+	}
+
+	@NotNull
+	private static String getText(Goal goal) {
+		return "debug: " + goal.getCommandLine();
 	}
 
 	@Override

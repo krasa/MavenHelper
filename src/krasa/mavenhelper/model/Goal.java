@@ -1,12 +1,14 @@
 package krasa.mavenhelper.model;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Goal extends DomainObject {
 	private String commandLine;
 
 	public Goal() {
 	}
 
-	public Goal(String s) {
+	public Goal(@NotNull String s) {
 		commandLine = s.trim();
 	}
 

@@ -1,6 +1,5 @@
 package krasa.mavenhelper.action;
 
-import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
@@ -8,7 +7,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 
-public class QuickRunRootMavenGoalAction extends QuickSwitchSchemeAction implements DumbAware {
+public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction implements DumbAware {
 
 	private final Logger LOG = Logger.getInstance("#" + getClass().getCanonicalName());
 

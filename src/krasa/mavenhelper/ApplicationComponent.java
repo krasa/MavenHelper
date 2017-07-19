@@ -1,5 +1,8 @@
 package krasa.mavenhelper;
 
+import org.apache.commons.lang.WordUtils;
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.actionSystem.*;
@@ -9,6 +12,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
+
 import icons.MavenIcons;
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.RunGoalAction;
@@ -19,8 +23,6 @@ import krasa.mavenhelper.action.debug.DebugTestFileAction;
 import krasa.mavenhelper.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.WordUtils;
-import org.jetbrains.annotations.NotNull;
 
 @State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
@@ -45,9 +47,9 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			String actionId = getActionId(goal);
-			registerAction(instance, actionId, new RunGoalAction(goal, MavenIcons.PluginGoal));
+			registerAction(instance, actionId, RunGoalAction.create(goal, MavenIcons.PluginGoal, false));
 			actionId = getDebugActionId(goal);
-			registerAction(instance, actionId, new DebugGoalAction(goal, MavenIcons.PluginGoal));
+			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MavenIcons.PluginGoal, false));
 		}
 		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction());
 		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());

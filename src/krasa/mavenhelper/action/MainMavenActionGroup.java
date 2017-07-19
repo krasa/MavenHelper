@@ -7,10 +7,6 @@ import java.util.Set;
 
 import javax.swing.*;
 
-import krasa.mavenhelper.ApplicationComponent;
-import krasa.mavenhelper.model.ApplicationSettings;
-import krasa.mavenhelper.model.Goal;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
@@ -32,7 +28,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
+
 import icons.MavenIcons;
+import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
@@ -143,7 +143,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private void addGoals(List<AnAction> anActions) {
 		for (Goal goal : getState().getGoals().getGoals()) {
-			anActions.add(createGoalRunAction(goal.getCommandLine(), getRunIcon()));
+			anActions.add(createGoalRunAction(goal, getRunIcon()));
 		}
 	}
 
@@ -155,7 +155,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
 		for (Goal goal : getState().getPluginAwareGoals().getGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
-				anActions.add(createGoalRunAction(goal.getCommandLine(), getRunIcon()));
+				anActions.add(createGoalRunAction(goal, getRunIcon()));
 			}
 		}
 	}
@@ -185,13 +185,13 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		if (pluginInfo != null) {
 			for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 				pluginGoalsSet.add(mojo.getDisplayName());
-				pluginGroup.add(createGoalRunAction(mojo.getDisplayName(), MavenIcons.PluginGoal));
+				pluginGroup.add(createGoalRunAction(new Goal(mojo.getDisplayName()), MavenIcons.PluginGoal));
 			}
 		}
 	}
 
-	protected RunGoalAction createGoalRunAction(String basicPhase, final Icon phase) {
-		return new RunGoalAction(basicPhase, phase);
+	protected RunGoalAction createGoalRunAction(Goal basicPhase, final Icon phase) {
+		return RunGoalAction.create(basicPhase, phase, true);
 	}
 
 }

@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-    <version>3.4.138.1503.0</version>
+	<version>3.5.138.1503.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -12,8 +12,8 @@
 	    A must have plugin for working with Maven.<br><br>
 		Provides:<br>
 		<ul>
-		<li>easy way to find and exclude conflicting dependencies</li>
-        <li>actions to run/debug maven goals for a module that contains the current file</li>
+		<li>easy way for finding and excluding conflicting dependencies</li>
+        <li>actions to run/debug maven goals for a module that contains the current file or on the root module</li>
         <li>actions to run/debug the current test file. 
         <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
         </li> 
@@ -22,10 +22,11 @@
         Usage:<br>
 		<ul>
         <li>Right click in Editor | Run Maven<br>
-        </li><li>Right click in Project View Toolbar | Run Maven<br>
-        </li><li>CTRL + ALT + R - "Quick Run Maven Goal" action<br>
+        </li><li>Right click in Project View Toolbar | (Run|Debug) Maven<br>
+        </li><li>CTRL + ALT + R - "Quick Run Maven Goal" action (you can use Delete key in the popup)<br>
+        </li><li>CTRL + SHIFT + ALT + R - for running goals on the root module (you can use Delete key in the popup)<br>
         <br>
-        </li><li>Customize goals: Settings | (Other Settings) | Maven Helper <br>
+        </li><li>Customize goals: Settings | Other Settings | Maven Helper <br>
         </li><li>Define shortcuts: Settings | Keymap | Plug-ins | Maven Helper <br>
     	<br>
         </li><li>Open pom file, click on 'Dependency Analyzer' tab, right click in the tree for context actions.<br>
@@ -36,6 +37,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>3.5
+            <br> - added Delete key shortcut for popups
             <br>3.4
             <br> - added a shortcut for Jump To Source
             <br>3.3

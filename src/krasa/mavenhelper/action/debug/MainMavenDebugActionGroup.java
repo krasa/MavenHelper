@@ -1,16 +1,19 @@
 package krasa.mavenhelper.action.debug;
 
+import java.util.List;
+
+import javax.swing.*;
+
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
+
 import krasa.mavenhelper.action.CreateCustomGoalAction;
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.RunConfigurationAction;
 import krasa.mavenhelper.action.RunGoalAction;
-
-import javax.swing.*;
-import java.util.List;
+import krasa.mavenhelper.model.Goal;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenDebugActionGroup extends MainMavenActionGroup {
@@ -35,8 +38,8 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 	}
 
 	@Override
-	protected RunGoalAction createGoalRunAction(String basicPhase, final Icon phase) {
-		return new DebugGoalAction(basicPhase, phase);
+	protected RunGoalAction createGoalRunAction(Goal basicPhase, final Icon phase) {
+		return DebugGoalAction.createDebug(basicPhase, phase, true);
 	}
 
 	@Override

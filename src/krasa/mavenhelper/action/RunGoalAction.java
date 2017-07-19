@@ -5,12 +5,11 @@ import java.util.List;
 
 import javax.swing.*;
 
-import krasa.mavenhelper.model.Goal;
-
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
-import org.jetbrains.idea.maven.project.*;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -19,33 +18,33 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
 
+import krasa.mavenhelper.model.Goal;
+
 public class RunGoalAction extends AnAction implements DumbAware {
 
-	protected List<String> goalsToRun;
+	private final Goal goal;
+	private final List<String> goalsToRun;
 
-	public RunGoalAction() {
-	}
-
-	public RunGoalAction(String goal) {
-		this.goalsToRun = parse(goal);
-	}
-
-	public RunGoalAction(String goal, Icon icon) {
-		super(goal, goal, icon);
-		this.goalsToRun = parse(goal);
-	}
-
-	public RunGoalAction(Goal goal, Icon icon) {
-		super(getText(goal), getText(goal), icon);
+	protected RunGoalAction(Goal goal, String text, Icon icon) {
+		super(text, text, icon);
 		this.goalsToRun = parse(goal.getCommandLine());
+		this.goal = goal;
+	}
+
+	public static RunGoalAction create(Goal goal, Icon icon, boolean popupAction) {
+		if (popupAction) {
+			return new RunGoalAction(goal, goal.getCommandLine(), icon);
+		} else {
+			return new RunGoalAction(goal, getText(goal), icon);
+		}
+	}
+
+	public Goal getGoal() {
+		return goal;
 	}
 
 	private static String getText(Goal goal) {
 		return "run: " + goal.getCommandLine();
-	}
-
-	public RunGoalAction(Goal goal) {
-		this.goalsToRun = parse(goal.getCommandLine());
 	}
 
 	protected List<String> parse(String goal) {

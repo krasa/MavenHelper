@@ -91,4 +91,11 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		return goalsAsStrings.toArray(new String[goalsAsStrings.size()]);
 	}
 
+	public boolean removeGoal(Goal goal) {
+		boolean remove = goals.remove(goal);
+		if (!remove) {
+			remove = pluginAwareGoals.remove(goal);
+		}
+		return remove;
+	}
 }
