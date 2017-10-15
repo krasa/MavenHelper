@@ -8,16 +8,9 @@ import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.EventListener;
 
 import static com.intellij.openapi.ui.Messages.getQuestionIcon;
@@ -37,7 +30,7 @@ public class ApplicationSettingsForm {
 	private JList pluginAwareGoals;
 	private JButton addGoal;
 	private JButton addPluginAware;
-	private JCheckBox findNearbyPom;
+	private JCheckBox useIgnoredPoms;
 
 	protected JBList focusedComponent;
 
@@ -71,7 +64,7 @@ public class ApplicationSettingsForm {
 		goals.addKeyListener(keyAdapter);
 		pluginAwareGoals.addKeyListener(keyAdapter);
 
-		findNearbyPom.setSelected(this.settings.isFindNearbyPom());
+		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -205,15 +198,15 @@ public class ApplicationSettingsForm {
 	}
 
 	public void setData(ApplicationSettings data) {
-		findNearbyPom.setSelected(data.isFindNearbyPom());
+		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
 	}
 
 	public void getData(ApplicationSettings data) {
-		data.setFindNearbyPom(findNearbyPom.isSelected());
+		data.setUseIgnoredPoms(useIgnoredPoms.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
-		if (findNearbyPom.isSelected() != data.isFindNearbyPom()) return true;
+		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
 		return false;
 	}
 }

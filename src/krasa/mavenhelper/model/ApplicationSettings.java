@@ -12,16 +12,16 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	public static final int ACTUAL_VERSION = 1;
 
 	int version = 0;
-	private boolean findNearbyPom = false;
+	private boolean useIgnoredPoms = false;
 	private Goals goals = new Goals();
 	private Goals pluginAwareGoals = new Goals();
 
-	public boolean isFindNearbyPom() {
-		return findNearbyPom;
+	public boolean isUseIgnoredPoms() {
+		return useIgnoredPoms;
 	}
 
-	public void setFindNearbyPom(boolean findNearbyPom) {
-		this.findNearbyPom = findNearbyPom;
+	public void setUseIgnoredPoms(boolean useIgnoredPoms) {
+		this.useIgnoredPoms = useIgnoredPoms;
 	}
 
 	public int getVersion() {
@@ -65,7 +65,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		goals.add(new Goal("clean install"));
 		applicationSettings.setGoals(goals);
 		applicationSettings.setVersion(ACTUAL_VERSION);
-		applicationSettings.setFindNearbyPom(false);
+		applicationSettings.setUseIgnoredPoms(false);
 		return applicationSettings;
 	}
 
