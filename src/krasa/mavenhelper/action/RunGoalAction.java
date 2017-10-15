@@ -1,11 +1,8 @@
 package krasa.mavenhelper.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.vfs.VirtualFile;
 import krasa.mavenhelper.ApplicationComponent;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -24,7 +21,6 @@ import java.util.List;
 
 public class RunGoalAction extends AnAction implements DumbAware {
 
-	private File focusFile;
 	private final Goal goal;
 	private final List<String> goalsToRun;
 
@@ -66,8 +62,10 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		ApplicationSettings state = instance.getState();
 
 		String pomDir = null;
-		if (state != null && state.isFindNearbyPom()) {
-			pomDir = getNearbyPOMDir(focusFile);
+		if (state.isFindNearbyPom()) {
+			VirtualFile data = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+			File focusedFile = new File(data.getPath());
+			pomDir = getNearbyPOMDir(focusedFile);
 		} else {
 			MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 			if (mavenProject != null) {
@@ -104,7 +102,6 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		Presentation p = e.getPresentation();
 		p.setEnabled(isAvailable(e));
 		p.setVisible(isVisible(e));
-		focusFile = new File(CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext()).getPath());
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {
