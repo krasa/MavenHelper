@@ -64,8 +64,10 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		String pomDir = null;
 		if (state.isFindNearbyPom()) {
 			VirtualFile data = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
-			File focusedFile = new File(data.getPath());
-			pomDir = getNearbyPOMDir(focusedFile);
+			if (data != null) {
+				File focusedFile = new File(data.getPath());
+				pomDir = getNearbyPOMDir(focusedFile);
+			}
 		} else {
 			MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 			if (mavenProject != null) {
