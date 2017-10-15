@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>3.5.138.1503.0</version>
+    <version>3.6.138.1503.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -37,6 +37,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>3.6
+            <br> - Option in settings for running goals on non-imported poms
             <br>3.5
             <br> - added Delete key shortcut for popups
             <br>3.4
