@@ -1,22 +1,19 @@
 package krasa.mavenhelper.gui;
 
-import static com.intellij.openapi.ui.Messages.getQuestionIcon;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.NonEmptyInputValidator;
+import com.intellij.ui.components.JBList;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
+import org.apache.commons.lang.StringUtils;
 
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventListener;
 
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-
-import krasa.mavenhelper.model.ApplicationSettings;
-import krasa.mavenhelper.model.Goal;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.NonEmptyInputValidator;
-import com.intellij.ui.components.JBList;
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 /**
  * @author Vojtech Krasa
@@ -33,6 +30,7 @@ public class ApplicationSettingsForm {
 	private JList pluginAwareGoals;
 	private JButton addGoal;
 	private JButton addPluginAware;
+	private JCheckBox useIgnoredPoms;
 
 	protected JBList focusedComponent;
 
@@ -65,6 +63,8 @@ public class ApplicationSettingsForm {
 		final KeyAdapter keyAdapter = getDeleteKeyListener();
 		goals.addKeyListener(keyAdapter);
 		pluginAwareGoals.addKeyListener(keyAdapter);
+
+		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -198,12 +198,15 @@ public class ApplicationSettingsForm {
 	}
 
 	public void setData(ApplicationSettings data) {
+		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
 	}
 
 	public void getData(ApplicationSettings data) {
+		data.setUseIgnoredPoms(useIgnoredPoms.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
+		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
 		return false;
 	}
 }

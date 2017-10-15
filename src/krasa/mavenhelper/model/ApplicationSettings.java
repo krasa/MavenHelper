@@ -1,20 +1,28 @@
 package krasa.mavenhelper.model;
 
+import com.rits.cloning.Cloner;
+import org.jetbrains.idea.maven.model.MavenConstants;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.jetbrains.idea.maven.model.MavenConstants;
-
-import com.rits.cloning.Cloner;
 
 public class ApplicationSettings extends DomainObject implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 	public static final int ACTUAL_VERSION = 1;
 
 	int version = 0;
+	private boolean useIgnoredPoms = false;
 	private Goals goals = new Goals();
 	private Goals pluginAwareGoals = new Goals();
+
+	public boolean isUseIgnoredPoms() {
+		return useIgnoredPoms;
+	}
+
+	public void setUseIgnoredPoms(boolean useIgnoredPoms) {
+		this.useIgnoredPoms = useIgnoredPoms;
+	}
 
 	public int getVersion() {
 		return version;
@@ -57,6 +65,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		goals.add(new Goal("clean install"));
 		applicationSettings.setGoals(goals);
 		applicationSettings.setVersion(ACTUAL_VERSION);
+		applicationSettings.setUseIgnoredPoms(false);
 		return applicationSettings;
 	}
 

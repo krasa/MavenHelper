@@ -135,6 +135,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		return settings;
 	}
 
+	@Override
 	public void loadState(ApplicationSettings state) {
 		if (state.getVersion() < ApplicationSettings.ACTUAL_VERSION) {
 			settings = ApplicationSettings.defaultApplicationSettings();

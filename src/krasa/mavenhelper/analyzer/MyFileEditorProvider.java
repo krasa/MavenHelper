@@ -30,7 +30,8 @@ public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 		final String path = file.getPath();
 		if (!path.endsWith("/" + MavenConstants.POM_XML))
 			return false;
-		final MavenProject mavenProject = MavenProjectsManager.getInstance(project).findProject(file);
+		MavenProjectsManager instance = MavenProjectsManager.getInstance(project);
+		final MavenProject mavenProject = instance == null ? null : instance.findProject(file);
 		if (mavenProject != null) {
 			return mavenProject.getPath().equals(path);
 		}
