@@ -72,7 +72,6 @@ public class ApplicationSettingsForm {
 		pluginAwareGoals.addKeyListener(keyAdapter);
 
 		findNearbyPom.setSelected(this.settings.isFindNearbyPom());
-		findNearbyPom.addChangeListener(findNearbyPomListener());
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -131,15 +130,6 @@ public class ApplicationSettingsForm {
 		for (Object goal : selectedValues) {
 			goals.removeElement(goal);
 		}
-	}
-
-	private ChangeListener findNearbyPomListener() {
-		return new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ApplicationSettingsForm.this.settings.setFindNearbyPom(((JCheckBox)e.getSource()).isSelected());
-			}
-		};
 	}
 
 	private void createUIComponents() {
@@ -215,12 +205,15 @@ public class ApplicationSettingsForm {
 	}
 
 	public void setData(ApplicationSettings data) {
+		findNearbyPom.setSelected(data.isFindNearbyPom());
 	}
 
 	public void getData(ApplicationSettings data) {
+		data.setFindNearbyPom(findNearbyPom.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
+		if (findNearbyPom.isSelected() != data.isFindNearbyPom()) return true;
 		return false;
 	}
 }
