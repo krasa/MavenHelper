@@ -1,22 +1,26 @@
 package krasa.mavenhelper.gui;
 
-import static com.intellij.openapi.ui.Messages.getQuestionIcon;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.EventListener;
-
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-
-import krasa.mavenhelper.model.ApplicationSettings;
-import krasa.mavenhelper.model.Goal;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.intellij.ui.components.JBList;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
+import org.apache.commons.lang.StringUtils;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListDataListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.EventListener;
+
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 /**
  * @author Vojtech Krasa
@@ -33,6 +37,7 @@ public class ApplicationSettingsForm {
 	private JList pluginAwareGoals;
 	private JButton addGoal;
 	private JButton addPluginAware;
+	private JCheckBox findNearbyPom;
 
 	protected JBList focusedComponent;
 
@@ -65,6 +70,9 @@ public class ApplicationSettingsForm {
 		final KeyAdapter keyAdapter = getDeleteKeyListener();
 		goals.addKeyListener(keyAdapter);
 		pluginAwareGoals.addKeyListener(keyAdapter);
+
+		findNearbyPom.setSelected(this.settings.isFindNearbyPom());
+		findNearbyPom.addChangeListener(findNearbyPomListener());
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -123,6 +131,15 @@ public class ApplicationSettingsForm {
 		for (Object goal : selectedValues) {
 			goals.removeElement(goal);
 		}
+	}
+
+	private ChangeListener findNearbyPomListener() {
+		return new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ApplicationSettingsForm.this.settings.setFindNearbyPom(((JCheckBox)e.getSource()).isSelected());
+			}
+		};
 	}
 
 	private void createUIComponents() {

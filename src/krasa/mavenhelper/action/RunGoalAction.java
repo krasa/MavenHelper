@@ -1,27 +1,30 @@
 package krasa.mavenhelper.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAware;
+import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
+import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAware;
-
-import krasa.mavenhelper.model.Goal;
+import javax.swing.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunGoalAction extends AnAction implements DumbAware {
 
+	private File focusFile;
 	private final Goal goal;
 	private final List<String> goalsToRun;
 
@@ -59,14 +62,36 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	public void actionPerformed(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		if (mavenProject != null) {
+		ApplicationComponent instance = ApplicationComponent.getInstance();
+		ApplicationSettings state = instance.getState();
+
+		String pomDir = null;
+		if (state != null && state.isFindNearbyPom()) {
+			pomDir = getNearbyPOMDir(focusFile);
+		} else {
+			MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+			if (mavenProject != null) {
+				pomDir = mavenProject.getDirectory();
+			}
+		}
+		if (pomDir != null) {
 			final DataContext context = e.getDataContext();
 			MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
-			MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goalsToRun,
+			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, goalsToRun,
 					projectsManager.getExplicitProfiles());
 			run(context, params);
 		}
+	}
+
+	private String getNearbyPOMDir(File focusFile) {
+		if (focusFile == null || !focusFile.exists()) 	return null;
+		File dir = (focusFile.isDirectory() ? focusFile : focusFile.getParentFile());
+		return isPomDir(dir) ? dir.getAbsolutePath() : getNearbyPOMDir(dir == null ? null : dir.getParentFile());
+	}
+
+	private boolean isPomDir(File file) {
+		if (file == null || !file.exists() || !file.isDirectory()) 	return false;
+		return new File(file.getAbsolutePath() + File.separator + MavenConstants.POM_XML).exists();
 	}
 
 	protected void run(DataContext context, MavenRunnerParameters params) {
@@ -79,6 +104,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		Presentation p = e.getPresentation();
 		p.setEnabled(isAvailable(e));
 		p.setVisible(isVisible(e));
+		focusFile = new File(CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext()).getPath());
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {
