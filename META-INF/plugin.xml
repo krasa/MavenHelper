@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-    <version>3.6.138.1503.0</version>
+	<version>3.6.172.1454.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -85,7 +85,7 @@
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
 	<!--<idea-version since-build="129.60" until-build="132.000"/>-->
 	<!--<idea-version since-build="132.947" until-build="138.1503"/>-->
-	<idea-version since-build="138.1503"/>
+	<idea-version since-build="172.1454"/>
 
 	<application-components>
 		<component>
