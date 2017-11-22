@@ -60,7 +60,7 @@ public class GuiForm {
 	protected static final Comparator<MavenArtifactNode> BY_ARTICATF_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
-			return o1.getArtifact().getArtifactId().compareTo(o2.getArtifact().getArtifactId());
+      return o1.getArtifact().getArtifactId().toLowerCase().compareTo(o2.getArtifact().getArtifactId().toLowerCase());
 		}
 	};
 	private static final String LAST_RADIO_BUTTON = "MavenHelper.lastRadioButton";
@@ -347,7 +347,7 @@ public class GuiForm {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				final List<MavenArtifactNode> nodes = s.getValue();
 				if (nodes.size() > 1 && hasConflicts(nodes)) {
-					if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
+					if (searchFieldText == null || s.getKey().toLowerCase().contains(searchFieldText.toLowerCase())) {
 						listDataModel.addElement(new MyListNode(s));
 					}
 				}
@@ -399,7 +399,7 @@ public class GuiForm {
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
-				if (searchFieldText == null || s.getKey().contains(searchFieldText)) {
+				if (searchFieldText == null || s.getKey().toLowerCase().contains(searchFieldText.toLowerCase())) {
 					listDataModel.addElement(new MyListNode(s));
 				}
 			}
@@ -431,36 +431,31 @@ public class GuiForm {
 	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree, String searchFieldText) {
 		boolean search = StringUtils.isNotBlank(searchFieldText);
 		Collections.sort(dependencyTree, BY_ARTICATF_ID);
-		boolean containsFilteredItem = false;
+		boolean hasAddedNodes = false;
 
 		for (MavenArtifactNode mavenArtifactNode : dependencyTree) {
+			boolean directMatch = false;
 			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 			if (search && contains(searchFieldText, mavenArtifactNode)) {
-				containsFilteredItem = true;
+				directMatch = true;
 				treeUserObject.highlight = true;
 			}
 			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(treeUserObject);
-			containsFilteredItem |= fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
+			boolean childAdded = fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
 
-			if (parent == leftTreeRoot) {
-				if (search && !containsFilteredItem) {
-					// do not add
-				} else {
-					parent.add(newNode);
-				}
-				containsFilteredItem = false;
-			} else {
+			if (!search || directMatch || childAdded) {
 				parent.add(newNode);
+				hasAddedNodes = true;
 			}
 		}
 
-		return containsFilteredItem;
+		return hasAddedNodes;
 	}
 
 	private boolean contains(String searchFieldText, MavenArtifactNode mavenArtifactNode) {
 		MavenArtifact artifact = mavenArtifactNode.getArtifact();
-		String displayStringSimple = artifact.getDisplayStringSimple();
-		return displayStringSimple.contains(searchFieldText);
+		String displayStringSimple = getArtifactKey(artifact);
+		return displayStringSimple.toLowerCase().contains(searchFieldText.toLowerCase());
 	}
 
 	private boolean hasConflicts(List<MavenArtifactNode> nodes) {
