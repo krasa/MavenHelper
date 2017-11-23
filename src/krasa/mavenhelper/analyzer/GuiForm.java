@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.BuildNumber;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
@@ -60,7 +61,7 @@ public class GuiForm {
 	protected static final Comparator<MavenArtifactNode> BY_ARTIFACT_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
-			return o1.getArtifact().getArtifactId().toLowerCase().compareTo(o2.getArtifact().getArtifactId().toLowerCase());
+			return o1.getArtifact().getArtifactId().compareToIgnoreCase(o2.getArtifact().getArtifactId());
 		}
 	};
 	private static final String LAST_RADIO_BUTTON = "MavenHelper.lastRadioButton";
@@ -458,7 +459,7 @@ public class GuiForm {
 	}
 
 	private boolean contains(String searchFieldText, String artifactKey) {
-		return StringUtils.isBlank(searchFieldText) || StringUtils.containsIgnoreCase(artifactKey, searchFieldText);
+		return StringUtils.isBlank(searchFieldText) || StringUtil.containsIgnoreCase(artifactKey, searchFieldText);
 	}
 
 	private boolean hasConflicts(List<MavenArtifactNode> nodes) {
