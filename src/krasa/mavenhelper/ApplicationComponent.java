@@ -1,6 +1,8 @@
 package krasa.mavenhelper;
 
+import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import org.apache.commons.lang.WordUtils;
+import org.apache.maven.model.Build;
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.notification.NotificationDisplayType;
@@ -24,7 +26,7 @@ import krasa.mavenhelper.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 
-@State(name = "MavenRunHelper", storages = { @Storage(id = "MavenRunHelper", file = "$APP_CONFIG$/mavenRunHelper.xml") })
+@State(name = "MavenRunHelper", storages = { @Storage(file = "$APP_CONFIG$/mavenRunHelper.xml") })
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
 		PersistentStateComponent<ApplicationSettings> {
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
@@ -38,9 +40,17 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
-		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
-		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
-		registerActions();
+		if (!ApplicationInfoEx.getInstanceEx().getBuild().asStringWithoutProductCodeAndSnapshot().contains("182.3208")) {
+			try {
+				addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
+				addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
+				registerActions();
+			} catch (Exception e) {
+				LOG.error(e);
+			}
+		} else {
+			LOG.warn("Broken IntelliJ, skipping init");
+		} 
 	}
 
 	public void registerActions() {
