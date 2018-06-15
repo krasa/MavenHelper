@@ -1,8 +1,6 @@
 package krasa.mavenhelper;
 
-import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import org.apache.commons.lang.WordUtils;
-import org.apache.maven.model.Build;
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.notification.NotificationDisplayType;
@@ -40,17 +38,9 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
-		if (!ApplicationInfoEx.getInstanceEx().getBuild().asStringWithoutProductCodeAndSnapshot().contains("182.3208")) {
-			try {
-				addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
-				addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
-				registerActions();
-			} catch (Exception e) {
-				LOG.error(e);
-			}
-		} else {
-			LOG.warn("Broken IntelliJ, skipping init");
-		} 
+		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
+		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
+		registerActions();
 	}
 
 	public void registerActions() {
