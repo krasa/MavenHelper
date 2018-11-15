@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.*;
 
+import com.intellij.execution.ProgramRunnerUtil;
+import com.intellij.execution.configurations.RunConfiguration;
 import krasa.mavenhelper.analyzer.ComparableVersion;
 
 import org.apache.commons.lang.StringUtils;
@@ -199,8 +201,13 @@ public class RunTestFileAction extends DumbAwareAction {
 		p.setEnabled(isTest && available);
 		p.setVisible(isTest && visible);
 		if (isTest && available && visible) {
-			String s = BaseRunConfigurationAction.suggestRunActionName((LocatableConfiguration) configuration.getConfiguration());
-			p.setText(getText(s));
+			RunConfiguration runConfiguration = configuration.getConfiguration();
+			if (runConfiguration instanceof LocatableConfiguration) {
+				String s = BaseRunConfigurationAction.suggestRunActionName((LocatableConfiguration) runConfiguration);
+				p.setText(getText(s));
+			} else {
+				p.setText(getText(ProgramRunnerUtil.shortenName(configuration.getName(), 0)));
+			}
 		}
 	}
 
