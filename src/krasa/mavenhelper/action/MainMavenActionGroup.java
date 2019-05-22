@@ -29,8 +29,8 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
 
-import icons.MavenIcons;
 import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 
@@ -172,11 +172,11 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	protected Icon getRunIcon() {
-		return MavenIcons.Phase;
+		return MyIcons.RUN_MAVEN_ICON;
 	}
 
 	protected Icon getIcon() {
-		return MavenIcons.PhasesClosed;
+		return MyIcons.PHASES_CLOSED;
 	}
 
 	private void addPluginGoals(Project project, MavenPlugin mavenPlugin, MavenActionGroup pluginGroup) {
@@ -185,7 +185,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		if (pluginInfo != null) {
 			for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 				pluginGoalsSet.add(mojo.getDisplayName());
-				pluginGroup.add(createGoalRunAction(new Goal(mojo.getDisplayName()), MavenIcons.PluginGoal));
+				pluginGroup.add(createGoalRunAction(new Goal(mojo.getDisplayName()), MyIcons.PLUGIN_GOAL));
 			}
 		}
 	}

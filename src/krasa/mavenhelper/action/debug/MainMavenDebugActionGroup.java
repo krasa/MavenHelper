@@ -13,6 +13,7 @@ import krasa.mavenhelper.action.CreateCustomGoalAction;
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.RunConfigurationAction;
 import krasa.mavenhelper.action.RunGoalAction;
+import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.Goal;
 
 @SuppressWarnings("ComponentNotRegistered")
@@ -34,7 +35,7 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 
 	@Override
 	protected Icon getRunIcon() {
-		return Debug.ICON;
+		return MyIcons.ICON;
 	}
 
 	@Override

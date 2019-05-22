@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import krasa.mavenhelper.action.CreateCustomGoalAction;
 import krasa.mavenhelper.action.RunGoalAction;
+import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.Goal;
 
 public class CreateCustomDebugGoalAction extends CreateCustomGoalAction {
@@ -20,7 +21,7 @@ public class CreateCustomDebugGoalAction extends CreateCustomGoalAction {
 
 	@Override
 	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return DebugGoalAction.createDebug(goal, Debug.ICON, false);
+		return DebugGoalAction.createDebug(goal, MyIcons.ICON, false);
 	}
 
 }

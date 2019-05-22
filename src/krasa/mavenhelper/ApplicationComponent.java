@@ -13,14 +13,13 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 
-import icons.MavenIcons;
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.RunGoalAction;
 import krasa.mavenhelper.action.RunTestFileAction;
-import krasa.mavenhelper.action.debug.Debug;
 import krasa.mavenhelper.action.debug.DebugGoalAction;
 import krasa.mavenhelper.action.debug.DebugTestFileAction;
 import krasa.mavenhelper.action.debug.MainMavenDebugActionGroup;
+import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 
@@ -31,15 +30,14 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Maven Helper",
 		NotificationDisplayType.STICKY_BALLOON, true);
-	
-	
+
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
 	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
 
 	public void initComponent() {
-		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, Debug.ICON), RUN_MAVEN);
-		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MavenIcons.Phase), RUN_MAVEN);
+		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, MyIcons.ICON), DEBUG_MAVEN);
+		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MyIcons.RUN_MAVEN_ICON), RUN_MAVEN);
 		registerActions();
 	}
 
@@ -47,9 +45,9 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			String actionId = getActionId(goal);
-			registerAction(instance, actionId, RunGoalAction.create(goal, MavenIcons.PluginGoal, false));
+			registerAction(instance, actionId, RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false));
 			actionId = getDebugActionId(goal);
-			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MavenIcons.PluginGoal, false));
+			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MyIcons.PLUGIN_GOAL, false));
 		}
 		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction());
 		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());
@@ -86,12 +84,12 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	}
 
-	private void addActionGroup(ActionGroup actionGroup, String runMaven) {
+	private void addActionGroup(ActionGroup actionGroup, String name) {
 		DefaultActionGroup editorPopupMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"EditorPopupMenu.Run");
 		DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"ProjectViewPopupMenuRunGroup");
-		clear(editorPopupMenu, projectViewPopupMenuRunGroup, runMaven);
+		clear(editorPopupMenu, projectViewPopupMenuRunGroup, name);
 
 		add(actionGroup, editorPopupMenu, projectViewPopupMenuRunGroup);
 	}
@@ -103,15 +101,15 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
-			String runMaven) {
-		clear(editorPopupMenu, RUN_MAVEN);
-		clear(projectViewPopupMenuRunGroup, runMaven);
+			String name) {
+		clear(editorPopupMenu, name);
+		clear(projectViewPopupMenuRunGroup, name);
 	}
 
-	private void clear(DefaultActionGroup editorPopupMenu, String runMaven) {
+	private void clear(DefaultActionGroup editorPopupMenu, String name) {
 		AnAction[] childActionsOrStubs = editorPopupMenu.getChildActionsOrStubs();
 		for (AnAction childActionsOrStub : childActionsOrStubs) {
-			if (runMaven.equals(childActionsOrStub.getTemplatePresentation().getText())) {
+			if (name.equals(childActionsOrStub.getTemplatePresentation().getText())) {
 				editorPopupMenu.remove(childActionsOrStub);
 			}
 		}

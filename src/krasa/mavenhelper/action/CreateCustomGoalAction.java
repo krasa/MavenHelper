@@ -6,9 +6,9 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
 
-import icons.MavenIcons;
 import krasa.mavenhelper.ApplicationComponent;
 import krasa.mavenhelper.gui.ApplicationSettingsForm;
+import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 
@@ -36,7 +36,7 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	}
 
 	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return RunGoalAction.create(goal, MavenIcons.PluginGoal, false);
+		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false);
 	}
 
 	private void runGoal(AnActionEvent e, Goal s) {

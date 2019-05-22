@@ -2,8 +2,6 @@ package krasa.mavenhelper.action.debug;
 
 import java.util.List;
 
-import krasa.mavenhelper.action.RunTestFileAction;
-
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
@@ -13,10 +11,13 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiJavaFile;
 
+import krasa.mavenhelper.action.RunTestFileAction;
+import krasa.mavenhelper.icons.MyIcons;
+
 public class DebugTestFileAction extends RunTestFileAction {
 
 	public DebugTestFileAction() {
-		super("Debug file", "Debug current File with Maven", Debug.ICON);
+		super("Debug file", "Debug current File with Maven", MyIcons.ICON);
 	}
 
 	@Override
