@@ -1,5 +1,29 @@
 package krasa.mavenhelper.analyzer;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.idea.maven.server.MavenServerManager;
+
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.util.PropertiesComponent;
@@ -22,30 +46,9 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.text.VersionComparatorUtil;
 
 import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.server.MavenServerManager;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -88,6 +91,7 @@ public class GuiForm {
 	private JTree leftTree;
 	private JCheckBox showGroupId;
 	private JPanel buttonsPanel;
+	private JButton donate;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected final DefaultTreeModel rightTreeModel;
@@ -220,6 +224,7 @@ public class GuiForm {
 		} else {
 			conflictsRadioButton.setSelected(true);
 		}
+		Donate.init(rootPanel, donate);
 	}
 
 	private void createUIComponents() {

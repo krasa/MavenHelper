@@ -1,19 +1,23 @@
 package krasa.mavenhelper.gui;
 
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.NonEmptyInputValidator;
-import com.intellij.ui.components.JBList;
-import krasa.mavenhelper.model.ApplicationSettings;
-import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.StringUtils;
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventListener;
 
-import static com.intellij.openapi.ui.Messages.getQuestionIcon;
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.NonEmptyInputValidator;
+import com.intellij.ui.components.JBList;
+
+import krasa.mavenhelper.Donate;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
 
 /**
  * @author Vojtech Krasa
@@ -31,6 +35,7 @@ public class ApplicationSettingsForm {
 	private JButton addGoal;
 	private JButton addPluginAware;
 	private JCheckBox useIgnoredPoms;
+	private JButton donate;
 
 	protected JBList focusedComponent;
 
@@ -65,6 +70,7 @@ public class ApplicationSettingsForm {
 		pluginAwareGoals.addKeyListener(keyAdapter);
 
 		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
+		Donate.init(rootComponent, donate);
 	}
 
 	private KeyAdapter getDeleteKeyListener() {
