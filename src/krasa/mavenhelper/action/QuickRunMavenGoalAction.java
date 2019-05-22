@@ -1,14 +1,10 @@
 package krasa.mavenhelper.action;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.*;
-
 import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -17,8 +13,13 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.ui.popup.list.ListPopupModel;
-
 import krasa.mavenhelper.ApplicationComponent;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements DumbAware {
 
@@ -30,10 +31,21 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			group.addAll(new MainMavenActionGroup().getActions(dataContext, currentProject));
 		}
 	}
-
 	@Override
-	protected boolean isEnabled() {
-		return true;
+	public void update(AnActionEvent e) {
+		super.update(e);
+		Presentation p = e.getPresentation();
+		p.setEnabled(isAvailable(e));
+		p.setVisible(isVisible(e));
+	}
+
+	protected boolean isAvailable(AnActionEvent e) {
+		return MavenActionUtil.hasProject(e.getDataContext());
+	}
+
+	protected boolean isVisible(AnActionEvent e) {
+		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+		return mavenProject != null;
 	}
 
 	protected JBPopupFactory.ActionSelectionAid getAidMethod() {
