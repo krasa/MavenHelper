@@ -1,18 +1,16 @@
 package krasa.mavenhelper.action.debug;
 
-import java.util.List;
-
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClassOwner;
+import krasa.mavenhelper.action.RunTestFileAction;
+import krasa.mavenhelper.icons.MyIcons;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiJavaFile;
-
-import krasa.mavenhelper.action.RunTestFileAction;
-import krasa.mavenhelper.icons.MyIcons;
+import java.util.List;
 
 public class DebugTestFileAction extends RunTestFileAction {
 
@@ -26,7 +24,7 @@ public class DebugTestFileAction extends RunTestFileAction {
 	}
 
 	@Override
-	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject) {
+	protected List<String> getGoals(AnActionEvent e, PsiClassOwner psiFile, MavenProject mavenProject) {
 		List<String> goals = super.getGoals(e, psiFile, mavenProject);
 		goals.addAll(Debug.DEBUG_FORK_MODE);
 		return goals;

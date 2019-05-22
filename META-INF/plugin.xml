@@ -39,6 +39,7 @@
 	<change-notes><![CDATA[
             <br>3.8
             <br> - Added: Open Terminal at Current Module
+            <br> - Added: Goal Aliases
             <br>3.7
             <br> - IntelliJ 2018.2 EAP compatibility
             <br>3.6

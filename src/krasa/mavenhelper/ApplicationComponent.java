@@ -1,8 +1,5 @@
 package krasa.mavenhelper;
 
-import org.apache.commons.lang.WordUtils;
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.actionSystem.*;
@@ -12,7 +9,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
-
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.RunGoalAction;
 import krasa.mavenhelper.action.RunTestFileAction;
@@ -22,8 +18,10 @@ import krasa.mavenhelper.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
+import org.apache.commons.lang.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
-@State(name = "MavenRunHelper", storages = { @Storage(file = "$APP_CONFIG$/mavenRunHelper.xml") })
+@State(name = "MavenRunHelper", storages = {@Storage("mavenRunHelper.xml")})
 public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
 		PersistentStateComponent<ApplicationSettings> {
 	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
@@ -33,7 +31,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
-	private ApplicationSettings settings = ApplicationSettings.defaultApplicationSettings();
+	private ApplicationSettings settings = new ApplicationSettings();
 
 	public void initComponent() {
 		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, MyIcons.ICON), DEBUG_MAVEN);
@@ -128,18 +126,14 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	@Override
 	public ApplicationSettings getState() {
 		if (settings == null) {
-			settings = ApplicationSettings.defaultApplicationSettings();
+			settings = new ApplicationSettings();
 		}
 		return settings;
 	}
 
 	@Override
 	public void loadState(ApplicationSettings state) {
-		if (state.getVersion() < ApplicationSettings.ACTUAL_VERSION) {
-			settings = ApplicationSettings.defaultApplicationSettings();
-		} else {
-			settings = state;
-		}
+		settings = state;
 	}
 
 

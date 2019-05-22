@@ -37,7 +37,7 @@ public class MyConfigurable implements Configurable {
 
 	
 	public boolean isModified() {
-		return form.isSettingsModified(state);
+		return form != null && form.isSettingsModified(state);
 	}
 
 	public void apply() throws ConfigurationException {

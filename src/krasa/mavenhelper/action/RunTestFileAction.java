@@ -1,15 +1,21 @@
 package krasa.mavenhelper.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
 import com.intellij.execution.ProgramRunnerUtil;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.BaseRunConfigurationAction;
+import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiFile;
+import icons.MavenIcons;
 import krasa.mavenhelper.analyzer.ComparableVersion;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -20,19 +26,9 @@ import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.BaseRunConfigurationAction;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
-import icons.MavenIcons;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunTestFileAction extends DumbAwareAction {
 	private final Logger LOG = Logger.getInstance("#" + getClass().getCanonicalName());
@@ -50,12 +46,12 @@ public class RunTestFileAction extends DumbAwareAction {
 		if (mavenProject != null) {
 
 			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
-			if (psiFile instanceof PsiJavaFile) {
-				List<String> goals = getGoals(e, (PsiJavaFile) psiFile,
+			if (psiFile instanceof PsiClassOwner) {
+				List<String> goals = getGoals(e, (PsiClassOwner) psiFile,
 						MavenActionUtil.getMavenProject(e.getDataContext()));
 
 				final DataContext context = e.getDataContext();
-				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), goals,
+				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), null, goals,
 						MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
 				run(context, params);
 			} else {
@@ -68,7 +64,7 @@ public class RunTestFileAction extends DumbAwareAction {
 		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
 	}
 
-	protected List<String> getGoals(AnActionEvent e, PsiJavaFile psiFile, MavenProject mavenProject) {
+	protected List<String> getGoals(AnActionEvent e, PsiClassOwner psiFile, MavenProject mavenProject) {
 		List<String> goals = new ArrayList<String>();
 		boolean skipTests = isSkipTests(mavenProject);
 		// so many possibilities...
@@ -89,21 +85,21 @@ public class RunTestFileAction extends DumbAwareAction {
 		return goals;
 	}
 
-	private void addSurefireParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals) {
-		goals.add("-Dtest=" + getTestArgument(e, psiFile));
+	private void addSurefireParameters(AnActionEvent e, PsiClassOwner psiFile, List<String> goals) {
+		goals.add("-Dtest=" + Utils.getTestArgument(e, psiFile));
 	}
 
-	private void addFailSafeParameters(AnActionEvent e, PsiJavaFile psiFile, List<String> goals, MavenPlugin mavenProjectPlugin) {
+	private void addFailSafeParameters(AnActionEvent e, PsiClassOwner psiFile, List<String> goals, MavenPlugin mavenProjectPlugin) {
 		ComparableVersion version = new ComparableVersion(mavenProjectPlugin.getVersion());
 		ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
 		if (minimumForMethodTest.compareTo(version) == 1) {
-            goals.add("-Dit.test=" + getTestArgumentWithoutMethod(e, psiFile));
+			goals.add("-Dit.test=" + Utils.getTestArgumentWithoutMethod(e, psiFile));
         } else {
-            goals.add("-Dit.test=" + getTestArgument(e, psiFile));
+			goals.add("-Dit.test=" + Utils.getTestArgument(e, psiFile));
         }
 	}
 
-	private boolean isExcludedFromSurefire(PsiJavaFile psiFile, MavenProject mavenProject) {
+	private boolean isExcludedFromSurefire(PsiClassOwner psiFile, MavenProject mavenProject) {
 		boolean excluded = false;
 		try {
 			Element pluginConfiguration = mavenProject.getPluginConfiguration("org.apache.maven.plugins",
@@ -136,7 +132,7 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	@NotNull
-	private String getPsiFilePath(PsiJavaFile psiFile) {
+	private String getPsiFilePath(PsiClassOwner psiFile) {
 		String packageName = psiFile.getPackageName();
 		String fullName;
 		if (packageName.isEmpty()) {
@@ -160,25 +156,6 @@ public class RunTestFileAction extends DumbAwareAction {
 			}
 		}
 		return skipTests;
-	}
-
-	protected String getTestArgument(AnActionEvent e, PsiJavaFile psiFile) {
-		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
-		RunnerAndConfigurationSettings configuration = context.getConfiguration();
-		String classAndMethod = configuration.getName().replace(".", "#");
-
-		String result;
-		String packageName = psiFile.getPackageName();
-		if (StringUtils.isNotBlank(packageName)) {
-			result = packageName + "." + classAndMethod;
-		} else {
-			result = classAndMethod;
-		}
-		return result;
-	}
-
-	protected String getTestArgumentWithoutMethod(AnActionEvent e, PsiJavaFile psiFile) {
-		return StringUtils.substringBefore(getTestArgument(e, psiFile), "#");
 	}
 
 	@Override

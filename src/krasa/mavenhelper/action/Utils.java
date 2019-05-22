@@ -1,23 +1,28 @@
 package krasa.mavenhelper.action;
 
-import java.io.File;
-
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.model.MavenConstants;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
-
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-
-import krasa.mavenhelper.ApplicationComponent;
+import com.intellij.psi.PsiClassOwner;
+import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.model.ApplicationSettings;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.model.MavenConstants;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
+
+import java.io.File;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class Utils {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(Utils.class);
+	public static final String NOT_RESOLVED = "NOT_RESOLVED";
 
 	static VirtualFile getPomDir(AnActionEvent e) {
 		VirtualFile fileByUrl = null;
@@ -31,8 +36,7 @@ public class Utils {
 
 	@Nullable
 	static String getPomDirAsString(AnActionEvent e) {
-		ApplicationComponent instance = ApplicationComponent.getInstance();
-		ApplicationSettings state = instance.getState();
+		ApplicationSettings state = ApplicationSettings.get();
 
 		String pomDir = null;
 		if (state.isUseIgnoredPoms()) {
@@ -61,6 +65,55 @@ public class Utils {
 		if (file == null || !file.exists() || !file.isDirectory())
 			return false;
 		return new File(file.getAbsolutePath() + File.separator + MavenConstants.POM_XML).exists();
+	}
+
+	public static String getTestArgument(AnActionEvent e, @Nullable PsiFile psiFile) {
+		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+		RunnerAndConfigurationSettings configuration = context.getConfiguration();
+		String classAndMethod = null;
+		if (configuration != null) {
+			classAndMethod = configuration.getName().replace(".", "#");
+		}
+
+		String result;
+		String packageName = null;
+		if (psiFile instanceof PsiClassOwner) {
+			packageName = ((PsiClassOwner) psiFile).getPackageName();
+		}
+
+		if (isNotBlank(packageName) && isNotBlank(classAndMethod)) {
+			result = packageName + "." + classAndMethod;
+		} else if (isNotBlank(classAndMethod)) {
+			result = classAndMethod;
+		} else {
+			result = NOT_RESOLVED;
+		}
+		return result;
+	}
+
+	public static String getQualifiedName(@Nullable PsiFile psiFile) {
+		String result = NOT_RESOLVED;
+
+		if (psiFile != null) {
+			String packageName = null;
+			if (psiFile instanceof PsiClassOwner) {
+				packageName = ((PsiClassOwner) psiFile).getPackageName();
+			}
+			String name = psiFile.getName();
+			name = StringUtils.substringBefore(name, ".");
+
+			if (isNotBlank(packageName) && isNotBlank(name)) {
+				result = packageName + "." + name;
+			} else if (isNotBlank(name)) {
+				result = name;
+			}
+		}
+
+		return result;
+	}
+
+	public static String getTestArgumentWithoutMethod(AnActionEvent e, PsiFile psiFile) {
+		return StringUtils.substringBefore(getTestArgument(e, psiFile), "#");
 	}
 
 }

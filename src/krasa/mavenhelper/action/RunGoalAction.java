@@ -1,10 +1,12 @@
 package krasa.mavenhelper.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAware;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -12,22 +14,18 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAware;
-
-import krasa.mavenhelper.model.Goal;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunGoalAction extends AnAction implements DumbAware {
 
 	private final Goal goal;
-	private final List<String> goalsToRun;
+	String commandLine;
 
 	protected RunGoalAction(Goal goal, String text, Icon icon) {
 		super(text, text, icon);
-		this.goalsToRun = parse(goal.getCommandLine());
+		commandLine = goal.getCommandLine();
 		this.goal = goal;
 	}
 
@@ -47,7 +45,9 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		return "run: " + goal.getCommandLine();
 	}
 
-	protected List<String> parse(String goal) {
+	private List<String> parse(AnActionEvent e, String goal) {
+		goal = ApplicationSettings.get().applyAliases(e, goal);
+		
 		List<String> strings = new ArrayList<String>();
 		String[] split = goal.split(" ");
 		for (String s : split) {
@@ -64,7 +64,8 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		if (pomDir != null) {
 			final DataContext context = e.getDataContext();
 			MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
-			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, goalsToRun,
+			List<String> goalsToRun = parse(e, commandLine);
+			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun,
 					projectsManager.getExplicitProfiles());
 			run(context, params);
 		}

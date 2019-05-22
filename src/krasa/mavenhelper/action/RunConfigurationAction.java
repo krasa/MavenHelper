@@ -32,7 +32,7 @@ public class RunConfigurationAction extends AnAction {
 	public void actionPerformed(AnActionEvent event) {
 		if (!myEnabled) return;
 
-		ProgramRunnerUtil.executeConfiguration(myProject, mySettings, myExecutor);
+		ProgramRunnerUtil.executeConfiguration(mySettings, myExecutor);
 	}
 
 	@Override

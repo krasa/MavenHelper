@@ -1,23 +1,26 @@
 package krasa.mavenhelper.gui;
 
-import static com.intellij.openapi.ui.Messages.getQuestionIcon;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.NonEmptyInputValidator;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.components.JBList;
+import krasa.mavenhelper.Donate;
+import krasa.mavenhelper.model.ApplicationSettings;
+import krasa.mavenhelper.model.Goal;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventListener;
 
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.NonEmptyInputValidator;
-import com.intellij.ui.components.JBList;
-
-import krasa.mavenhelper.Donate;
-import krasa.mavenhelper.model.ApplicationSettings;
-import krasa.mavenhelper.model.Goal;
+import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 /**
  * @author Vojtech Krasa
@@ -30,36 +33,111 @@ public class ApplicationSettingsForm {
 	protected ApplicationSettings settings;
 	private JList goals;
 	private JComponent rootComponent;
-	private JButton deleteButton;
 	private JList pluginAwareGoals;
-	private JButton addGoal;
-	private JButton addPluginAware;
 	private JCheckBox useIgnoredPoms;
 	private JButton donate;
+	private JPanel myPathVariablesPanel;
+	private JPanel goalsPanel;
+	private JPanel pluginAwareGoalsPanel;
 
 	protected JBList focusedComponent;
+	private AliasTable aliasTable;
 
 	public ApplicationSettingsForm(ApplicationSettings original) {
 		this.settings = original.clone();
-		addGoal.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Goal o = showDialog(ApplicationSettingsForm.this.settings);
-				if (o != null) {
-					goalsModel.addElement(o);
+		aliasTable = new AliasTable();
+		myPathVariablesPanel.add(
+			ToolbarDecorator.createDecorator(aliasTable)
+				.setAddAction(new AnActionButtonRunnable() {
+					@Override
+					public void run(AnActionButton button) {
+						aliasTable.addAlias();
+					}
+				}).setRemoveAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					aliasTable.removeSelectedAliases();
 				}
-			}
-		});
-		addPluginAware.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Goal o = showDialog(ApplicationSettingsForm.this.settings);
-				if (o != null) {
-					pluginsModel.addElement(o);
+			}).setEditAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					aliasTable.editAlias();
 				}
-			}
-		});
-		deleteButton.addActionListener(deleteListener());
+			}).setMoveUpAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton anActionButton) {
+					aliasTable.moveUp();
+				}
+			}).setMoveDownAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton anActionButton) {
+					aliasTable.moveDown();
+				}
+			}).addExtraAction(new AnActionButton("Reset Default Aliases", AllIcons.Actions.Rollback) {
+				@Override
+				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+					aliasTable.resetDefaultAliases();
+				}
+			}).createPanel(), BorderLayout.CENTER);
+
+
+		goalsModel = new DefaultListModel();
+		pluginsModel = new DefaultListModel();
+		goals = createJBList(goalsModel);
+		pluginAwareGoals = createJBList(pluginsModel);
+
+		goalsPanel.add(
+			ToolbarDecorator.createDecorator(goals)
+				.setAddAction(new AnActionButtonRunnable() {
+					@Override
+					public void run(AnActionButton button) {
+						Goal o = showDialog(ApplicationSettingsForm.this.settings);
+						if (o != null) {
+							goalsModel.addElement(o);
+						}
+					}
+				}).setRemoveAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					delete(goalsModel);
+				}
+			}).setEditAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					Object selectedValue = goals.getSelectedValue();
+					if (selectedValue != null) {
+						showEditDialog(settings, (Goal) selectedValue);
+
+					}
+				}
+			}).createPanel(), BorderLayout.CENTER);
+
+
+		pluginAwareGoalsPanel.add(
+			ToolbarDecorator.createDecorator(pluginAwareGoals)
+				.setAddAction(new AnActionButtonRunnable() {
+					@Override
+					public void run(AnActionButton button) {
+						Goal o = showDialog(ApplicationSettingsForm.this.settings);
+						if (o != null) {
+							pluginsModel.addElement(o);
+						}
+					}
+				}).setRemoveAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					delete(pluginsModel);
+				}
+			}).setEditAction(new AnActionButtonRunnable() {
+				@Override
+				public void run(AnActionButton button) {
+					Object selectedValue = pluginAwareGoals.getSelectedValue();
+					if (selectedValue != null) {
+						showEditDialog(settings, (Goal) selectedValue);
+					}
+				}
+			}).createPanel(), BorderLayout.CENTER);
+
 
 		final FocusAdapter focusListener = getFocusListener();
 		pluginAwareGoals.addFocusListener(focusListener);
@@ -88,9 +166,20 @@ public class ApplicationSettingsForm {
 		String[] goalsAsStrings = settings1.getAllGoalsAsStringArray();
 		Goal o = null;
 		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(), goalsAsStrings,
-				"", new NonEmptyInputValidator());
+			"", new NonEmptyInputValidator());
 		if (StringUtils.isNotBlank(s)) {
 			o = new Goal(s);
+		}
+		return o;
+	}
+
+	public static Goal showEditDialog(final ApplicationSettings settings1, Goal goal) {
+		String[] goalsAsStrings = settings1.getAllGoalsAsStringArray();
+		Goal o = null;
+		String s = Messages.showEditableChooseDialog("Command line:", "Edit Goal", getQuestionIcon(), goalsAsStrings,
+			goal.getCommandLine(), new NonEmptyInputValidator());
+		if (StringUtils.isNotBlank(s)) {
+			goal.setCommandLine(s);
 		}
 		return o;
 	}
@@ -132,10 +221,6 @@ public class ApplicationSettingsForm {
 	}
 
 	private void createUIComponents() {
-		goalsModel = new DefaultListModel();
-		pluginsModel = new DefaultListModel();
-		goals = createJBList(goalsModel);
-		pluginAwareGoals = createJBList(pluginsModel);
 	}
 
 	private JBList createJBList(DefaultListModel pluginsModel) {
@@ -143,7 +228,7 @@ public class ApplicationSettingsForm {
 		jbList.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
+														  boolean cellHasFocus) {
 				final Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				Goal goal = (Goal) value;
 				setText(goal.getCommandLine());
@@ -185,6 +270,7 @@ public class ApplicationSettingsForm {
 	}
 
 	public ApplicationSettings getSettings() {
+		aliasTable.commit(settings);
 		getData(settings);
 		return settings;
 	}
@@ -194,6 +280,7 @@ public class ApplicationSettingsForm {
 	}
 
 	public boolean isSettingsModified(ApplicationSettings settings) {
+		if (aliasTable.isModified(settings)) return true;
 		return !this.settings.equals(settings) || isModified(settings);
 	}
 
@@ -201,8 +288,10 @@ public class ApplicationSettingsForm {
 		this.settings = settings.clone();
 		initializeModel();
 		setData(settings);
+		aliasTable.reset(settings);
 	}
 
+	//GENERATED
 	public void setData(ApplicationSettings data) {
 		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
 	}
