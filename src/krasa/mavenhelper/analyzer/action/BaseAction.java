@@ -1,14 +1,5 @@
 package krasa.mavenhelper.analyzer.action;
 
-import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
-import org.jetbrains.idea.maven.dom.model.MavenDomShortArtifactCoordinates;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.model.MavenId;
-import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,6 +10,14 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericDomValue;
+import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
+import org.jetbrains.idea.maven.dom.model.MavenDomShortArtifactCoordinates;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenId;
+import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 /**
  * @author Vojtech Krasa
@@ -59,12 +58,16 @@ public abstract class BaseAction extends DumbAwareAction {
 		VirtualFile virtualFile = getVirtualFile(artifact, project, mavenProject);
 		if (virtualFile != null) {
 			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-			return (XmlFile) psiFile;
+			if (psiFile instanceof XmlFile) {
+				return (XmlFile) psiFile;
+			}
 		}
 		return null;
 	}
 
-	/** org.jetbrains.idea.maven.navigator.MavenProjectsStructure.DependencyNode#getNavigatable() */
+	/**
+	 * org.jetbrains.idea.maven.navigator.MavenProjectsStructure.DependencyNode#getNavigatable()
+	 */
 	public static Navigatable getNavigatable(MavenArtifactNode myArtifactNode, Project project, MavenProject mavenProject) {
 		final VirtualFile file = getVirtualFile(myArtifactNode, project, mavenProject);
 		return file == null ? null : MavenNavigationUtil.createNavigatableForDependency(project, file, myArtifactNode.getArtifact());
