@@ -14,8 +14,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
-import icons.MavenIcons;
 import krasa.mavenhelper.analyzer.ComparableVersion;
+import krasa.mavenhelper.icons.MyIcons;
 import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class RunTestFileAction extends DumbAwareAction {
 	private final Logger LOG = Logger.getInstance("#" + getClass().getCanonicalName());
 
 	public RunTestFileAction() {
-		super("Test file", "Run current File with Maven", MavenIcons.MavenLogo);
+		super("Test file", "Run current File with Maven", MyIcons.MAVEN_LOGO);
 	}
 
 	public RunTestFileAction(String text, @Nullable String description, @Nullable Icon icon) {

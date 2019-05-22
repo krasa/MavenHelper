@@ -22,7 +22,7 @@
         </constraints>
         <properties>
           <text value="Plugin aware goals:"/>
-          <toolTipText value="Shows up only when there is a plugin which hava that goal"/>
+          <toolTipText value="Shows up only when there is a plugin which has that goal"/>
         </properties>
       </component>
       <grid id="c7968" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
