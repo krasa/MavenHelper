@@ -26,6 +26,7 @@ import krasa.mavenhelper.model.Alias;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import krasa.mavenhelper.model.Goals;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -470,7 +471,7 @@ public class GoalEditor extends DialogWrapper {
 		@Nullable
 		@Override
 		public String getTooltipTextFor(ListItem listItem) {
-			return listItem.description;
+			return StringEscapeUtils.escapeHtml(listItem.description);
 		}
 
 		@Override
