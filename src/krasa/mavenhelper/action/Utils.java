@@ -4,6 +4,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -26,7 +27,7 @@ public class Utils {
 
 	static VirtualFile getPomDir(AnActionEvent e) {
 		VirtualFile fileByUrl = null;
-		String pomDir = getPomDirAsString(e);
+		String pomDir = getPomDirAsString(e.getDataContext());
 		if (pomDir != null) {
 			fileByUrl = VirtualFileManager.getInstance().findFileByUrl("file://" + pomDir);
 
@@ -35,18 +36,18 @@ public class Utils {
 	}
 
 	@Nullable
-	static String getPomDirAsString(AnActionEvent e) {
+	static String getPomDirAsString(DataContext dataContext) {
 		ApplicationSettings state = ApplicationSettings.get();
 
 		String pomDir = null;
 		if (state.isUseIgnoredPoms()) {
-			VirtualFile data = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+			VirtualFile data = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
 			if (data != null) {
 				File focusedFile = new File(data.getPath());
 				pomDir = getNearbyPOMDir(focusedFile);
 			}
 		} else {
-			MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+			MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
 			if (mavenProject != null) {
 				pomDir = mavenProject.getDirectory();
 			}
@@ -67,8 +68,7 @@ public class Utils {
 		return new File(file.getAbsolutePath() + File.separator + MavenConstants.POM_XML).exists();
 	}
 
-	public static String getTestArgument(AnActionEvent e, @Nullable PsiFile psiFile) {
-		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
+	public static String getTestArgument(@Nullable PsiFile psiFile, ConfigurationContext context) {
 		RunnerAndConfigurationSettings configuration = context.getConfiguration();
 		String classAndMethod = null;
 		if (configuration != null) {
@@ -113,7 +113,19 @@ public class Utils {
 	}
 
 	public static String getTestArgumentWithoutMethod(AnActionEvent e, PsiFile psiFile) {
-		return StringUtils.substringBefore(getTestArgument(e, psiFile), "#");
+		return StringUtils.substringBefore(getTestArgument(psiFile, ConfigurationContext.getFromContext(e.getDataContext())), "#");
 	}
+
+
+	public static String limitLength(String text) {
+		if (text == null) {
+			return null;
+		}
+
+		int max = 200;
+		if (text.length() > max) text = text.substring(0, max - 3) + "...";
+		return text;
+	}
+
 
 }

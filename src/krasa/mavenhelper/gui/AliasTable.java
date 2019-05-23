@@ -132,9 +132,9 @@ public class AliasTable extends JBTable {
 		aliases.addAll(settings.getAliases().getAliases());
 	}
 
-	public void editAlias() {
+	public boolean editAlias() {
 		if (getSelectedRowCount() != 1) {
-			return;
+			return false;
 		}
 		final int selectedRow = getSelectedRow();
 		final Alias alias = myAliases.get(selectedRow);
@@ -144,6 +144,7 @@ public class AliasTable extends JBTable {
 			alias.setTo(editor.getTo());
 			myTableModel.fireTableDataChanged();
 		}
+		return true;
 	}
 
 	public boolean isModified(ApplicationSettings settings) {

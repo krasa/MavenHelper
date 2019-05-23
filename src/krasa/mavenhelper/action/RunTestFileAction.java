@@ -86,7 +86,7 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	private void addSurefireParameters(AnActionEvent e, PsiClassOwner psiFile, List<String> goals) {
-		goals.add("-Dtest=" + Utils.getTestArgument(e, psiFile));
+		goals.add("-Dtest=" + Utils.getTestArgument(psiFile, ConfigurationContext.getFromContext(e.getDataContext())));
 	}
 
 	private void addFailSafeParameters(AnActionEvent e, PsiClassOwner psiFile, List<String> goals, MavenPlugin mavenProjectPlugin) {
@@ -95,7 +95,7 @@ public class RunTestFileAction extends DumbAwareAction {
 		if (minimumForMethodTest.compareTo(version) == 1) {
 			goals.add("-Dit.test=" + Utils.getTestArgumentWithoutMethod(e, psiFile));
         } else {
-			goals.add("-Dit.test=" + Utils.getTestArgument(e, psiFile));
+			goals.add("-Dit.test=" + Utils.getTestArgument(psiFile, ConfigurationContext.getFromContext(e.getDataContext())));
         }
 	}
 

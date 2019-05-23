@@ -1,5 +1,6 @@
 package krasa.mavenhelper.model;
 
+import krasa.mavenhelper.action.Utils;
 import org.jetbrains.annotations.NotNull;
 
 public class Goal extends DomainObject {
@@ -18,5 +19,9 @@ public class Goal extends DomainObject {
 
 	public void setCommandLine(String commandLine) {
 		this.commandLine = commandLine;
+	}
+
+	public String getPresentableName() {
+		return Utils.limitLength(commandLine);
 	}
 }

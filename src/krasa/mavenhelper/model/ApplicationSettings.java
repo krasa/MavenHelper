@@ -1,7 +1,6 @@
 package krasa.mavenhelper.model;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.rits.cloning.Cloner;
@@ -148,15 +147,14 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		return remove;
 	}
 
-	public String applyAliases(AnActionEvent e, String commandLine) {
+	public String applyAliases(String commandLine, PsiFile psiFile, ConfigurationContext fromContext) {
 		String s = aliases.applyAliases(commandLine);
-		PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 
 		if (s.contains(CURRENT_CLASS_MACRO)) {
 			s = s.replace(CURRENT_CLASS_MACRO, Utils.getQualifiedName(psiFile));
 		}
 		if (s.contains(CURRENT_CLASS_WITH_METHOD_MACRO)) {
-			String to = Utils.getTestArgument(e, psiFile);
+			String to = Utils.getTestArgument(psiFile, fromContext);
 			if (Utils.NOT_RESOLVED.equals(to)) {
 				to = Utils.getQualifiedName(psiFile);
 			}

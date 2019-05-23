@@ -2,10 +2,9 @@ package krasa.mavenhelper.gui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import krasa.mavenhelper.Donate;
@@ -19,8 +18,6 @@ import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventListener;
-
-import static com.intellij.openapi.ui.Messages.getQuestionIcon;
 
 /**
  * @author Vojtech Krasa
@@ -39,6 +36,7 @@ public class ApplicationSettingsForm {
 	private JPanel myPathVariablesPanel;
 	private JPanel goalsPanel;
 	private JPanel pluginAwareGoalsPanel;
+	private JSplitPane split;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -80,18 +78,37 @@ public class ApplicationSettingsForm {
 				}
 			}).createPanel(), BorderLayout.CENTER);
 
+		new DoubleClickListener() {
+			@Override
+			protected boolean onDoubleClick(MouseEvent e) {
+				return aliasTable.editAlias();
+			}
+		}.installOn(aliasTable);
 
 		goalsModel = new DefaultListModel();
 		pluginsModel = new DefaultListModel();
 		goals = createJBList(goalsModel);
 		pluginAwareGoals = createJBList(pluginsModel);
+		new DoubleClickListener() {
+			@Override
+			protected boolean onDoubleClick(MouseEvent e) {
+				return editGoal(goals);
+			}
+		}.installOn(goals);
+
+		new DoubleClickListener() {
+			@Override
+			protected boolean onDoubleClick(MouseEvent e) {
+				return editGoal(pluginAwareGoals);
+			}
+		}.installOn(pluginAwareGoals);
 
 		goalsPanel.add(
 			ToolbarDecorator.createDecorator(goals)
 				.setAddAction(new AnActionButtonRunnable() {
 					@Override
 					public void run(AnActionButton button) {
-						Goal o = showDialog(ApplicationSettingsForm.this.settings);
+						Goal o = newGoal(ApplicationSettingsForm.this.settings);
 						if (o != null) {
 							goalsModel.addElement(o);
 						}
@@ -104,11 +121,7 @@ public class ApplicationSettingsForm {
 			}).setEditAction(new AnActionButtonRunnable() {
 				@Override
 				public void run(AnActionButton button) {
-					Object selectedValue = goals.getSelectedValue();
-					if (selectedValue != null) {
-						showEditDialog(settings, (Goal) selectedValue);
-
-					}
+					editGoal(goals);
 				}
 			}).createPanel(), BorderLayout.CENTER);
 
@@ -118,7 +131,7 @@ public class ApplicationSettingsForm {
 				.setAddAction(new AnActionButtonRunnable() {
 					@Override
 					public void run(AnActionButton button) {
-						Goal o = showDialog(ApplicationSettingsForm.this.settings);
+						Goal o = newGoal(ApplicationSettingsForm.this.settings);
 						if (o != null) {
 							pluginsModel.addElement(o);
 						}
@@ -131,10 +144,7 @@ public class ApplicationSettingsForm {
 			}).setEditAction(new AnActionButtonRunnable() {
 				@Override
 				public void run(AnActionButton button) {
-					Object selectedValue = pluginAwareGoals.getSelectedValue();
-					if (selectedValue != null) {
-						showEditDialog(settings, (Goal) selectedValue);
-					}
+					editGoal(pluginAwareGoals);
 				}
 			}).createPanel(), BorderLayout.CENTER);
 
@@ -151,6 +161,7 @@ public class ApplicationSettingsForm {
 		Donate.init(rootComponent, donate);
 	}
 
+
 	private KeyAdapter getDeleteKeyListener() {
 		return new KeyAdapter() {
 			@Override
@@ -162,26 +173,37 @@ public class ApplicationSettingsForm {
 		};
 	}
 
-	public static Goal showDialog(final ApplicationSettings settings1) {
-		String[] goalsAsStrings = settings1.getAllGoalsAsStringArray();
+	public Goal newGoal(final ApplicationSettings settings1) {
 		Goal o = null;
-		String s = Messages.showEditableChooseDialog("Command line:", "New Goal", getQuestionIcon(), goalsAsStrings,
-			"", new NonEmptyInputValidator());
-		if (StringUtils.isNotBlank(s)) {
-			o = new Goal(s);
+
+		GoalEditor editor = new GoalEditor("New Goal", "", settings1, false, null, null);
+		if (editor.showAndGet()) {
+			String s = editor.getCmd();
+			if (StringUtils.isNotBlank(s)) {
+				o = new Goal(s);
+			}
 		}
 		return o;
 	}
 
-	public static Goal showEditDialog(final ApplicationSettings settings1, Goal goal) {
-		String[] goalsAsStrings = settings1.getAllGoalsAsStringArray();
-		Goal o = null;
-		String s = Messages.showEditableChooseDialog("Command line:", "Edit Goal", getQuestionIcon(), goalsAsStrings,
-			goal.getCommandLine(), new NonEmptyInputValidator());
-		if (StringUtils.isNotBlank(s)) {
-			goal.setCommandLine(s);
+	private boolean editGoal(JList goals) {
+		Object selectedValue = goals.getSelectedValue();
+		if (selectedValue != null) {
+			editGoal(settings, (Goal) selectedValue);
+			return true;
 		}
-		return o;
+		return false;
+	}
+
+	public Goal editGoal(final ApplicationSettings settings1, Goal goal) {
+		GoalEditor editor = new GoalEditor("Edit Goal", goal.getCommandLine(), settings1, false, null, null);
+		if (editor.showAndGet()) {
+			String s = editor.getCmd();
+			if (StringUtils.isNotBlank(s)) {
+				goal.setCommandLine(s);
+			}
+		}
+		return goal;
 	}
 
 	private FocusAdapter getFocusListener() {
@@ -231,7 +253,8 @@ public class ApplicationSettingsForm {
 														  boolean cellHasFocus) {
 				final Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				Goal goal = (Goal) value;
-				setText(goal.getCommandLine());
+
+				setText(goal.getPresentableName());
 				return comp;
 			}
 		});

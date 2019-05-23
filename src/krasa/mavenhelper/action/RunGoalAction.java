@@ -1,10 +1,10 @@
 package krasa.mavenhelper.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang.StringUtils;
@@ -23,17 +23,17 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	private final Goal goal;
 	String commandLine;
 
-	protected RunGoalAction(Goal goal, String text, Icon icon) {
-		super(text, text, icon);
+	protected RunGoalAction(Goal goal, String text, String description, Icon icon) {
+		super(text, description, icon);
 		commandLine = goal.getCommandLine();
 		this.goal = goal;
 	}
 
 	public static RunGoalAction create(Goal goal, Icon icon, boolean popupAction) {
 		if (popupAction) {
-			return new RunGoalAction(goal, goal.getCommandLine(), icon);
+			return new RunGoalAction(goal, goal.getPresentableName(), goal.getCommandLine(), icon);
 		} else {
-			return new RunGoalAction(goal, getText(goal), icon);
+			return new RunGoalAction(goal, "run: " + goal.getPresentableName(), "run: " + goal.getCommandLine(), icon);
 		}
 	}
 
@@ -41,15 +41,11 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		return goal;
 	}
 
-	private static String getText(Goal goal) {
-		return "run: " + goal.getCommandLine();
-	}
-
-	private List<String> parse(AnActionEvent e, String goal) {
-		goal = ApplicationSettings.get().applyAliases(e, goal);
+	private List<String> parse(String goal, PsiFile psiFile, ConfigurationContext configurationContext) {
+		goal = ApplicationSettings.get().applyAliases(goal, psiFile, configurationContext);
 		
 		List<String> strings = new ArrayList<String>();
-		String[] split = goal.split(" ");
+		String[] split = goal.split("\\s");
 		for (String s : split) {
 			if (StringUtils.isNotBlank(s)) {
 				strings.add(s);
@@ -59,20 +55,27 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	public void actionPerformed(AnActionEvent e) {
-		String pomDir = Utils.getPomDirAsString(e);
+		final DataContext context = e.getDataContext();
 
+		Project project = MavenActionUtil.getProject(context);
+		String pomDir = Utils.getPomDirAsString(context);
+		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
+		PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
+		ConfigurationContext configurationContext = ConfigurationContext.getFromContext(e.getDataContext());
+
+		actionPerformed(project, pomDir, projectsManager, data, configurationContext);
+	}
+
+	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext) {
 		if (pomDir != null) {
-			final DataContext context = e.getDataContext();
-			MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
-			List<String> goalsToRun = parse(e, commandLine);
-			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun,
-					projectsManager.getExplicitProfiles());
-			run(context, params);
+			List<String> goalsToRun = parse(commandLine, psiFile, configurationContext);
+			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
+			run(params, project);
 		}
 	}
 
-	protected void run(DataContext context, MavenRunnerParameters params) {
-		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+	protected void run(MavenRunnerParameters params, Project project) {
+		MavenRunConfigurationType.runConfiguration(project, params, null);
 	}
 
 	@Override
