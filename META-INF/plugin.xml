@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>3.9.183.4139.0</version>
+    <version>3.9.183.4139.1</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -120,7 +120,7 @@
 				description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.png">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 		</action>
-	</actions>
+    </actions>
 
 	
 	

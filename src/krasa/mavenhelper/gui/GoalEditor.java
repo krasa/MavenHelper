@@ -101,7 +101,7 @@ public class GoalEditor extends DialogWrapper {
 							for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 								ListItem listItem = new ListItem(mojo.getDisplayName());
 								if (first) {
-									listItem.separatorAbove = new ListItem(mavenPlugin.getGroupId());
+									listItem.separatorAbove = new ListItem(mavenPlugin.getArtifactId());
 								}
 								listItems.add(listItem);
 								first = false;
