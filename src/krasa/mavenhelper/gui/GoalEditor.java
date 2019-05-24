@@ -161,8 +161,8 @@ public class GoalEditor extends DialogWrapper {
 
 	private ListItem[] getHelpfulGoals() {
 		return new ListItem[]{
-			new ListItem("dependency:tree", "Display project dependencies"),
-			new ListItem("dependency:analyze", "Analyze project dependencies"),
+			new ListItem("dependency:tree -Dverbose", "Display project dependencies"),
+			new ListItem("dependency:analyze -Dverbose", "Analyze project dependencies"),
 
 			new ListItem("help:effective-settings", "Display effective Maven settings").withSeparatorAbove(),
 			new ListItem("help:effective-pom", "Display effective POM"),
@@ -352,6 +352,7 @@ public class GoalEditor extends DialogWrapper {
 
 			myEditor.getDocument().setText(text);
 			myEditor.getCaretModel().moveToOffset(myEditor.getDocument().getTextLength());
+			myEditor.getContentComponent().requestFocus();
 			cmdPanel.validate();
 			cmdPanel.repaint();
 		});
