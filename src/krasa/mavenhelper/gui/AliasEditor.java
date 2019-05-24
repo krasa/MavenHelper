@@ -2,17 +2,18 @@ package krasa.mavenhelper.gui;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.DocumentAdapter;
+import krasa.mavenhelper.model.ApplicationSettings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class AliasEditor extends DialogWrapper {
 	private JTextField fromField;
 	private JPanel myPanel;
-	private JTextField toField;
 	private final Validator myValidator;
+	private GoalEditor goalEditor;
 
 	public interface Validator {
 		boolean isOK(String name, String value);
@@ -22,18 +23,27 @@ public class AliasEditor extends DialogWrapper {
 		super(true);
 		setTitle(title);
 		myValidator = validator;
-		DocumentListener documentListener = new DocumentAdapter() {
+
+		goalEditor = new GoalEditor(null, value, ApplicationSettings.get(), false, null, null) {
+			@Override
+			protected void updateControls() {
+				if (goalEditor != null) {
+					AliasEditor.this.updateControls();
+				}
+			}
+		};
+		goalEditor.commandLineLabel.setText("To:");
+		//noinspection deprecation
+		fromField.setNextFocusableComponent(goalEditor.getPreferredFocusedComponent());
+
+		fromField.getDocument().addDocumentListener(new DocumentAdapter() {
 			@Override
 			public void textChanged(@NotNull DocumentEvent event) {
 				updateControls();
 			}
-		};
-		fromField.getDocument().addDocumentListener(documentListener);
-		toField.getDocument().addDocumentListener(documentListener);
+		});
 
 		fromField.setText(macroName);
-		toField.setText(value);
-
 		init();
 		updateControls();
 	}
@@ -63,7 +73,7 @@ public class AliasEditor extends DialogWrapper {
 	}
 
 	public String getTo() {
-		return toField.getText().trim();
+		return goalEditor.getCmd();
 	}
 
 	@Override
@@ -73,6 +83,13 @@ public class AliasEditor extends DialogWrapper {
 
 	@Override
 	protected JComponent createCenterPanel() {
-		return null;
+		return goalEditor.createCenterPanel();
 	}
+
+	@Nullable
+	protected String getDimensionServiceKey() {
+//		return null;
+		return GoalEditor.DIMENSION;
+	}
+	
 }

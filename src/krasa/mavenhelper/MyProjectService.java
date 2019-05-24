@@ -35,6 +35,7 @@ public class MyProjectService {
 			}
 
 			@Override
+
 			public void projectsUpdated(@NotNull List<Pair<MavenProject, MavenProjectChanges>> updated, @NotNull List<MavenProject> deleted) {
 			}
 

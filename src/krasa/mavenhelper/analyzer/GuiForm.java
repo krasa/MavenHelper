@@ -115,6 +115,8 @@ public class GuiForm implements Disposable {
 	private MavenProjectsManager mavenProjectsManager;
 	private MyProjectService myProjectService;
 
+	private boolean manualReimport;
+	                  
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
@@ -244,12 +246,14 @@ public class GuiForm implements Disposable {
 
 			@Override
 			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges, @Nullable NativeMavenProjectHolder nativeMavenProject) {
-				if (refreshButton.isShowing() && manualReimport) {
-					manualReimport = false;
-					refreshButton.doClick();
-				} else {
-					refreshButton.setIcon(AllIcons.General.BalloonWarning);
-					refreshButton.setToolTipText("Maven model changed, refresh UI");
+				if (projectWithChanges.first == mavenProject) {
+					if (refreshButton.isShowing() && manualReimport) {
+						manualReimport = false;
+						refreshButton.doClick();
+					} else {
+						refreshButton.setIcon(AllIcons.General.BalloonWarning);
+						refreshButton.setToolTipText("Maven model changed, refresh UI");
+					}
 				}
 			}
 		};
@@ -263,7 +267,6 @@ public class GuiForm implements Disposable {
 		});
 	}
 
-	boolean manualReimport;
 	
 	private void createUIComponents() {
 		listDataModel = new DefaultListModel();

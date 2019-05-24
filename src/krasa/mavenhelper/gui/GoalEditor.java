@@ -58,6 +58,7 @@ public class GoalEditor extends DialogWrapper {
 	private JPanel aliasesPanel;
 	private JPanel optionsPanel2;
 	private JCheckBox saveGoalCheckBox;
+	protected JLabel commandLineLabel;
 	private EditorImpl myEditor;
 
 	public GoalEditor(String title, String initialValue, ApplicationSettings applicationSettings, boolean persist, Project project, DataContext dataContext) {
@@ -357,7 +358,7 @@ public class GoalEditor extends DialogWrapper {
 	}
 
 
-	private void updateControls() {
+	protected void updateControls() {
 		getOKAction().setEnabled(!getCmd().isEmpty());
 	}
 

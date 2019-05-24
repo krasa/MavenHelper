@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-    <version>4.0.183.4139.0</version>
+    <version>4.1.183.4139.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -12,9 +12,10 @@
 	    A must have plugin for working with Maven.<br><br>
 		Provides:<br>
 		<ul>
-		<li>easy way for finding and excluding conflicting dependencies</li>
+		<li>easy way for analyzing and excluding conflicting dependencies</li>
         <li>actions to run/debug maven goals for a module that contains the current file or on the root module</li>
-        <li>actions to run/debug the current test file. 
+              <li>action to open terminal at the current maven module path</li> 
+        <li>actions to run/debug the current test file.
         <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
         </li> 
         </ul>
@@ -23,7 +24,7 @@
 		<ul>
         <li>Right click in Editor | Run Maven<br>
         </li><li>Right click in Project View Toolbar | (Run|Debug) Maven<br>
-        </li><li>CTRL + ALT + R - "Quick Run Maven Goal" action (you can use Delete key in the popup)<br>
+        </li><li>CTRL + ALT + R - "Run Maven Goal" action (you can use Delete key in the popup)<br>
         </li><li>CTRL + SHIFT + ALT + R - for running goals on the root module (you can use Delete key in the popup)<br>
         <br>
         </li><li>Customize goals: Settings | Other Settings | Maven Helper <br>
@@ -37,6 +38,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.1
+            <br> - Better Alias editor
             <br>4.0
             <br> - Dependency Analyzer improvements
             <br>3.9
@@ -99,7 +102,7 @@
 	<actions>
 		<!-- Add your actions here -->
         <action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
-                text="Open Terminal at the Current Maven Module"
+                text="Open Terminal at the Current Maven Module Path"
                 icon="/krasa/mavenhelper/icons/OpenTerminal.png">
 			<add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
 			<add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
@@ -107,13 +110,15 @@
 <!--			<add-to-group group-id="RevealGroup" anchor="last"/>-->
 <!--  		 	<add-to-group group-id="TouchBarDefault_alt" anchor="last"/>-->
 		</action>
-		<action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction" text="Quick Run Maven Goal"
-				description="Quick Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.png">
+        <action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction"
+                text="Run Maven Goal"
+                description="Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.png">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
 		</action>
-		<action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction" text="Quick Run Root Maven Goal"
-				description="Quick Run Root Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.png">
+        <action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction"
+                text="Run Maven Goal on Root Module"
+                description="Run Maven Goal on Root Module" icon="/krasa/mavenhelper/icons/runMaven.png">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
 		</action>
