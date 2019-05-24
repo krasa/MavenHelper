@@ -1,29 +1,6 @@
 package krasa.mavenhelper.analyzer;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.server.MavenServerManager;
-
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.util.PropertiesComponent;
@@ -31,6 +8,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
@@ -39,28 +17,54 @@ import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.BuildNumber;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.text.VersionComparatorUtil;
-
 import krasa.mavenhelper.ApplicationComponent;
 import krasa.mavenhelper.Donate;
+import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectChanges;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.idea.maven.server.MavenServerManager;
+import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.*;
 
 /**
  * @author Vojtech Krasa
  */
-public class GuiForm {
+public class GuiForm implements Disposable {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.GuiForm");
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
-			+ "If your project is Maven2 compatible, you could try one of the following:\n"
-			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
-			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
-			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
+		+ "If your project is Maven2 compatible, you could try one of the following:\n"
+		+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
+		+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
+		+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
 	protected static final Comparator<MavenArtifactNode> BY_ARTIFACT_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
@@ -92,6 +96,7 @@ public class GuiForm {
 	private JCheckBox showGroupId;
 	private JPanel buttonsPanel;
 	private JButton donate;
+	private JButton reimport;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected final DefaultTreeModel rightTreeModel;
@@ -106,9 +111,15 @@ public class GuiForm {
 
 	private final SimpleTextAttributes errorBoldAttributes;
 
+	private MyProjectService.MyEventListener myEventListener;
+	private MavenProjectsManager mavenProjectsManager;
+	private MyProjectService myProjectService;
+
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
+		mavenProjectsManager = MavenProjectsManager.getInstance(project);
+		myProjectService = MyProjectService.getInstance(project);
 		this.mavenProject = mavenProject;
 		final ActionListener radioButtonListener = new ActionListener() {
 			@Override
@@ -131,6 +142,9 @@ public class GuiForm {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				refreshButton.setToolTipText(null);
+				refreshButton.setIcon(null);
+
 				initializeModel();
 				rootPanel.requestFocus();
 			}
@@ -170,8 +184,7 @@ public class GuiForm {
 					mavenEmbedderVMOptions += " -Dmaven3.use.compat.resolver";
 				}
 				MavenServerManager.getInstance().setMavenEmbedderVMOptions(mavenEmbedderVMOptions);
-				final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
-				projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+				mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
 				refreshButton.getActionListeners()[0].actionPerformed(e);
 			}
 		});
@@ -225,8 +238,33 @@ public class GuiForm {
 			conflictsRadioButton.setSelected(true);
 		}
 		Donate.init(rootPanel, donate);
+
+
+		myEventListener = new MyProjectService.MyEventListener() {
+
+			@Override
+			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges, @Nullable NativeMavenProjectHolder nativeMavenProject) {
+				if (refreshButton.isShowing() && manualReimport) {
+					manualReimport = false;
+					refreshButton.doClick();
+				} else {
+					refreshButton.setIcon(AllIcons.General.BalloonWarning);
+					refreshButton.setToolTipText("Maven model changed, refresh UI");
+				}
+			}
+		};
+		myProjectService.register(myEventListener);
+		reimport.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				manualReimport = true;
+				mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+			}
+		});
 	}
 
+	boolean manualReimport;
+	
 	private void createUIComponents() {
 		listDataModel = new DefaultListModel();
 		leftPanelList = new JBList(listDataModel);
@@ -269,6 +307,11 @@ public class GuiForm {
 			}
 		});
 		return value.get(0).getArtifact().getVersion();
+	}
+
+	@Override
+	public void dispose() {
+		myProjectService.unregister(myEventListener);
 	}
 
 	private class LeftTreeSelectionListener implements TreeSelectionListener {
@@ -383,16 +426,15 @@ public class GuiForm {
 					final Notification notification = ApplicationComponent.NOTIFICATION.createNotification(
 						"Fix your Maven VM options for importer", "<html>Your settings causes problems in multi-module Maven projects.<br> " +
 							" <a href=\"fix\">Remove -Didea.maven3.use.compat.resolver</a> ", NotificationType.WARNING, new NotificationListener() {
-								@Override
-								public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
-									notification.expire();
-									String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
-									MavenServerManager.getInstance().setMavenEmbedderVMOptions(
-											mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
-									final MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(project);
-									projectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
-								}
-							});
+							@Override
+							public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
+								notification.expire();
+								String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
+								MavenServerManager.getInstance().setMavenEmbedderVMOptions(
+									mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
+								mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
+							}
+						});
 					ApplicationManager.getApplication().invokeLater(new Runnable() {
 						@Override
 						public void run() {

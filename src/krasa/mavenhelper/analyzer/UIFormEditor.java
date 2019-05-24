@@ -1,13 +1,5 @@
 package krasa.mavenhelper.analyzer;
 
-import java.beans.PropertyChangeListener;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -17,6 +9,12 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+
+import javax.swing.*;
+import java.beans.PropertyChangeListener;
 
 public final class UIFormEditor extends UserDataHolderBase implements /* Navigatable */FileEditor {
 	public static final FileEditorState MY_EDITOR_STATE = new FileEditorState() {
@@ -41,6 +39,9 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 	}
 
 	public void dispose() {
+		if (myEditor != null) {
+			myEditor.dispose();
+		}
 	}
 
 	public JComponent getPreferredFocusedComponent() {

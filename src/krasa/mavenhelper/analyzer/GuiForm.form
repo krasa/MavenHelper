@@ -15,7 +15,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="27dc6" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="27dc6" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>
@@ -42,7 +42,7 @@
               </component>
               <splitpane id="6c003" binding="splitPane">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="400" height="400"/>
                   </grid>
                 </constraints>
@@ -131,42 +131,15 @@
                   <text value="All Dependencies as Tree"/>
                 </properties>
               </component>
-              <component id="1dcd5" class="javax.swing.JButton" binding="refreshButton" default-binding="true">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Refresh"/>
-                </properties>
-              </component>
-              <component id="ffcef" class="javax.swing.JButton" binding="applyMavenVmOptionsFixButton">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Apply fix"/>
-                </properties>
-              </component>
-              <component id="a2ceb" class="javax.swing.JLabel" binding="noConflictsLabel">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="44" height="14"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <foreground swing-color="link.foreground"/>
-                  <text value="No Conflicts"/>
-                </properties>
-              </component>
               <component id="e414c" class="com.intellij.ui.SearchTextField" binding="searchField">
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
               <component id="da9dd" class="javax.swing.JCheckBox" binding="showGroupId">
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Show GroupId"/>
@@ -174,32 +147,83 @@
               </component>
               <grid id="f3064" binding="buttonsPanel" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="1" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children/>
               </grid>
-              <hspacer id="4c24d">
+              <grid id="9dba6" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="1dcd5" class="javax.swing.JButton" binding="refreshButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Refresh UI"/>
+                    </properties>
+                  </component>
+                  <component id="ffcef" class="javax.swing.JButton" binding="applyMavenVmOptionsFixButton">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Apply fix"/>
+                    </properties>
+                  </component>
+                  <component id="a2ceb" class="javax.swing.JLabel" binding="noConflictsLabel">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                        <preferred-size width="44" height="14"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <foreground swing-color="link.foreground"/>
+                      <text value="No Conflicts"/>
+                    </properties>
+                  </component>
+                  <hspacer id="4c24d">
+                    <constraints>
+                      <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <component id="be5ad" class="javax.swing.JButton" binding="donate">
+                    <constraints>
+                      <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <background color="-2697514"/>
+                      <font/>
+                      <hideActionText value="false"/>
+                      <horizontalTextPosition value="0"/>
+                      <icon value="krasa/mavenhelper/icons/donate.gif"/>
+                      <text value=""/>
+                      <toolTipText value="Donate via PayPal"/>
+                      <verticalAlignment value="0"/>
+                    </properties>
+                  </component>
+                  <component id="b88dc" class="javax.swing.JButton" binding="reimport">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Reimport"/>
+                      <toolTipText value="Reimport All Maven Projects"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <hspacer id="6ff95">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <component id="be5ad" class="javax.swing.JButton" binding="donate">
-                <constraints>
-                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-2697514"/>
-                  <font/>
-                  <hideActionText value="false"/>
-                  <horizontalTextPosition value="0"/>
-                  <icon value="krasa/mavenhelper/icons/donate.gif"/>
-                  <text value=""/>
-                  <toolTipText value="Donate via PayPal"/>
-                  <verticalAlignment value="0"/>
-                </properties>
-              </component>
             </children>
           </grid>
         </children>

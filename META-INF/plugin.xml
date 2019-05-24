@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-    <version>3.9.183.4139.1</version>
+    <version>4.0.183.4139.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -37,6 +37,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.0
+            <br> - Dependency Analyzer improvements
             <br>3.9
             <br> - New GUI
             <br>3.8
@@ -128,7 +130,8 @@
 		<!-- Add your extensions here -->
 		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
 		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper" displayName="Maven Helper"  />
-	</extensions>
+        <projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
+    </extensions>
 
 	<depends>org.jetbrains.idea.maven</depends>
    <depends optional="true">org.jetbrains.plugins.terminal</depends>
