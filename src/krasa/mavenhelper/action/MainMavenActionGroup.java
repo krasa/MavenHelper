@@ -81,6 +81,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		return result.toArray(new AnAction[result.size()]);
 	}
 
+	@NotNull
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
 		return new MavenProjectInfo(MavenActionUtil.getMavenProject(dataContext), false);
 	}

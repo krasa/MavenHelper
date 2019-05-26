@@ -1,6 +1,7 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.openapi.actionSystem.DataContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
@@ -10,11 +11,12 @@ import java.util.List;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class RootMavenActionGroup extends MainMavenActionGroup {
+	@NotNull
 	@Override
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
 		if (mavenProject == null) {
-			return null;
+			return new MavenProjectInfo(null, false);
 		}
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(dataContext);
 		List<MavenProject> rootProjects = projectsManager.getRootProjects();
