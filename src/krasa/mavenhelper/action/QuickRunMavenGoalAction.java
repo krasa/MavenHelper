@@ -128,7 +128,12 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
-				return new AnAction[]{new DebugTestFileAction()};
+				return new AnAction[]{new DebugTestFileAction() {
+					@Override
+					protected String getText(String s) {
+						return "Debug";
+					}
+				}};
 			}
 
 			@Override
@@ -168,7 +173,9 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
-				return new AnAction[]{new DebugConfigurationAction(DefaultDebugExecutor.getDebugExecutorInstance(), true, project, cfg)};
+				DebugConfigurationAction debugConfigurationAction = new DebugConfigurationAction(DefaultDebugExecutor.getDebugExecutorInstance(), true, project, cfg);
+				debugConfigurationAction.getTemplatePresentation().setText("Debug");
+				return new AnAction[]{debugConfigurationAction};
 			}
 
 			@Override
