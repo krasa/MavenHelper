@@ -1,13 +1,14 @@
 package krasa.mavenhelper.model;
 
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.containers.ContainerUtil;
 import krasa.mavenhelper.action.Utils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Goal extends DomainObject {
 	private String commandLine;
@@ -35,14 +36,6 @@ public class Goal extends DomainObject {
 		String cmd = getCommandLine();
 		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext);
 
-		List<String> strings = new ArrayList<String>();
-		String[] split = cmd.split("\\s");
-		for (String s : split) {
-			if (StringUtils.isNotBlank(s)) {
-				strings.add(s);
-			}
-		}
-//		return ContainerUtil.newArrayList(StringUtil.tokenize(new StringTokenizer(cmd)));
-		return strings;
+		return ContainerUtil.newArrayList(StringUtil.tokenize(new StringTokenizer(cmd)));
 	}
 }
