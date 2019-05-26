@@ -37,7 +37,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		if (popupAction) {
 			return new RunGoalAction(goal, goal.getPresentableName(), goal.getCommandLine(), icon, mavenProject);
 		} else {
-			return new RunGoalAction(goal, "run: " + goal.getPresentableName(), "run: " + goal.getCommandLine(), icon, mavenProject);
+			return new RunGoalAction(goal, "Run: " + goal.getPresentableName(), "Run: " + goal.getCommandLine(), icon, mavenProject);
 		}
 	}
 
