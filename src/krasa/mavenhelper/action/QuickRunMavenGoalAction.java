@@ -6,6 +6,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.CreateAction;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -242,7 +243,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		}
 
 		private AnAction editAndRun(Goal goal, MavenProjectInfo mavenProject) {
-			return new DumbAwareAction("Edit and Run") {
+			return new DumbAwareAction("Edit and Run", null, AllIcons.Actions.Edit) {
 
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
@@ -253,11 +254,11 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		}
 
 		private AnAction debug(Goal goalRunAction, MavenProjectInfo mavenProject) {
-			return DebugGoalAction.createDebug(goalRunAction, MyIcons.ICON, false, mavenProject);
+			return DebugGoalAction.createDebug(goalRunAction, "Debug", MyIcons.ICON, mavenProject);
 		}
 
 		private AnAction delete(Goal goal) {
-			return new DumbAwareAction("Delete") {
+			return new DumbAwareAction("Delete", null, AllIcons.General.Remove) {
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
 					ApplicationComponent.getInstance().getState().removeGoal(goal);

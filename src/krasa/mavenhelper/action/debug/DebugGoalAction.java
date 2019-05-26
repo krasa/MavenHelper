@@ -1,5 +1,6 @@
 package krasa.mavenhelper.action.debug;
 
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.RunGoalAction;
@@ -20,6 +21,11 @@ public class DebugGoalAction extends RunGoalAction {
 		} else {
 			return new DebugGoalAction(goal, "Debug: " + goal.getPresentableName(), "Debug: " + goal.getCommandLine(), icon, mavenProject);
 		}
+	}
+
+	public static AnAction createDebug(Goal goal, String name, Icon icon, MavenProjectInfo mavenProject) {
+		return new DebugGoalAction(goal, name, "Debug: " + goal.getPresentableName(), icon, mavenProject);
+		
 	}
 
 	@Override
