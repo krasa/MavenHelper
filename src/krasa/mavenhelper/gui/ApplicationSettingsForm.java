@@ -18,6 +18,7 @@ import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EventListener;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -226,7 +227,7 @@ public class ApplicationSettingsForm {
 	}
 
 	private void delete(DefaultListModel goals) {
-		Object[] selectedValues = focusedComponent.getSelectedValues();
+		List selectedValues = focusedComponent.getSelectedValuesList();
 		for (Object goal : selectedValues) {
 			goals.removeElement(goal);
 		}
