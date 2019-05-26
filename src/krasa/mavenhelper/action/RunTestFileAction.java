@@ -176,7 +176,7 @@ public class RunTestFileAction extends DumbAwareAction {
 
 		Presentation p = e.getPresentation();
 		p.setEnabled(isTest && available);
-		p.setVisible(isTest && visible);
+		p.setVisible(isTest && available);
 		if (isTest && available && visible) {
 			RunConfiguration runConfiguration = configuration.getConfiguration();
 			if (runConfiguration instanceof LocatableConfiguration) {

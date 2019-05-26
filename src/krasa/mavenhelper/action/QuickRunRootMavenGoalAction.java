@@ -1,5 +1,6 @@
 package krasa.mavenhelper.action;
 
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
@@ -10,6 +11,7 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
+import java.util.List;
 
 public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction implements DumbAware {
 
@@ -20,6 +22,15 @@ public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction impleme
 		if (currentProject != null) {
 			group.addAll(new RootMavenActionGroup() {
 
+				@Override
+				protected void addTestFile(List<AnAction> result) {
+					QuickRunRootMavenGoalAction.this.addTestFile(result);
+				}
+
+				@Override
+				protected AnAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+					return QuickRunRootMavenGoalAction.this.getRunConfigurationAction(project, cfg);
+				}
 				@Override
 				protected AnAction createGoalRunAction(Goal goal, final Icon icon, boolean plugin, MavenProjectInfo mavenProject) {
 					return QuickRunRootMavenGoalAction.this.createGoalRunAction(goal, icon, plugin, mavenProject);

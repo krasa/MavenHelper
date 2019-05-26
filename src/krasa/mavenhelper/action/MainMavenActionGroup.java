@@ -66,7 +66,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 			addGoals(result, mavenProject);
 			separator(result);
 
-			List<MavenActionGroup> mavenActionGroups = getPlugins(project, mavenProject);
+			List<DefaultActionGroup> mavenActionGroups = getPlugins(project, mavenProject);
 
 			addPluginAwareActions(result, mavenActionGroups, mavenProject);
 			separator(result);
@@ -99,7 +99,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	protected RunConfigurationAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+	protected AnAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
 		return new RunConfigurationAction(DefaultRunExecutor.getRunExecutorInstance(), true, project, cfg);
 	}
 
@@ -120,11 +120,13 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		result.add(new RunTestFileAction());
 	}
 
-	private void addPlugins(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups) {
-		MavenActionGroup plugins = new MavenActionGroup("Plugins", true);
-		anActions.add(plugins);
-		for (MavenActionGroup mavenActionGroup : mavenActionGroups) {
-			plugins.add(mavenActionGroup);
+	private void addPlugins(List<AnAction> anActions, List<DefaultActionGroup> mavenActionGroups) {
+		if (!mavenActionGroups.isEmpty()) {
+			DefaultActionGroup plugins = new DefaultActionGroup("Plugins", true);
+			for (DefaultActionGroup mavenActionGroup : mavenActionGroups) {
+				plugins.add(mavenActionGroup);
+			}
+			anActions.add(plugins);
 		}
 	}
 
@@ -148,7 +150,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		return ApplicationComponent.getInstance().getState();
 	}
 
-	private void addPluginAwareActions(List<AnAction> anActions, List<MavenActionGroup> mavenActionGroups, MavenProjectInfo mavenProject) {
+	private void addPluginAwareActions(List<AnAction> anActions, List<DefaultActionGroup> mavenActionGroups, MavenProjectInfo mavenProject) {
 		assert mavenActionGroups != null; // just to be sure that pluginGoalsSet was initialized
 		for (Goal goal : getState().getPluginAwareGoals().getGoals()) {
 			if (pluginGoalsSet.contains(goal.getCommandLine())) {
@@ -157,10 +159,10 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	private List<MavenActionGroup> getPlugins(Project project, MavenProjectInfo mavenProject) {
-		List<MavenActionGroup> mavenActionGroups = new ArrayList<MavenActionGroup>();
+	private List<DefaultActionGroup> getPlugins(Project project, MavenProjectInfo mavenProject) {
+		List<DefaultActionGroup> mavenActionGroups = new ArrayList<DefaultActionGroup>();
 		for (MavenPlugin mavenPlugin : mavenProject.mavenProject.getDeclaredPlugins()) {
-			MavenActionGroup plugin = new MavenActionGroup(mavenPlugin.getArtifactId(), true);
+			DefaultActionGroup plugin = new DefaultActionGroup(mavenPlugin.getArtifactId(), true);
 			plugin.getTemplatePresentation().setIcon(getIcon());
 			addPluginGoals(project, mavenPlugin, plugin, mavenProject);
 			mavenActionGroups.add(plugin);
@@ -176,7 +178,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		return MyIcons.PHASES_CLOSED;
 	}
 
-	private void addPluginGoals(Project project, MavenPlugin mavenPlugin, MavenActionGroup pluginGroup, MavenProjectInfo mavenProject) {
+	private void addPluginGoals(Project project, MavenPlugin mavenPlugin, DefaultActionGroup pluginGroup, MavenProjectInfo mavenProject) {
 		MavenPluginInfo pluginInfo = MavenArtifactUtil.readPluginInfo(
 			MavenProjectsManager.getInstance(project).getLocalRepository(), mavenPlugin.getMavenId());
 		if (pluginInfo != null) {
@@ -190,5 +192,11 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	protected AnAction createGoalRunAction(Goal goal, final Icon icon, boolean plugin, MavenProjectInfo mavenProject) {
 		return RunGoalAction.create(goal, icon, true, mavenProject);
 	}
+
+	@Override
+	public boolean hideIfNoVisibleChildren() {
+		return true;
+	}
+	
 
 }

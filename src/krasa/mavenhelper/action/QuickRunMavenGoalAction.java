@@ -1,8 +1,11 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.execution.Location;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.CreateAction;
+import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,7 +20,9 @@ import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.ui.popup.list.ListPopupModel;
 import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.action.debug.DebugConfigurationAction;
 import krasa.mavenhelper.action.debug.DebugGoalAction;
+import krasa.mavenhelper.action.debug.DebugTestFileAction;
 import krasa.mavenhelper.gui.GoalEditor;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
@@ -31,6 +36,7 @@ import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements DumbAware {
 
@@ -40,6 +46,16 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 	protected void fillActions(final Project currentProject, DefaultActionGroup group, DataContext dataContext) {
 		if (currentProject != null) {
 			group.addAll(new MainMavenActionGroup() {
+
+				@Override
+				protected void addTestFile(List<AnAction> result) {
+					QuickRunMavenGoalAction.this.addTestFile(result);
+				}
+
+				@Override
+				protected AnAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+					return QuickRunMavenGoalAction.this.getRunConfigurationAction(project, cfg);
+				}
 
 				@Override
 				protected AnAction createGoalRunAction(Goal goal, final Icon icon, boolean plugin, MavenProjectInfo mavenProject) {
@@ -105,6 +121,73 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		}
 	}
 
+	void addTestFile(List<AnAction> result) {
+		RunTestFileAction action = new RunTestFileAction();
+		result.add(new ActionGroup(action.getTemplatePresentation().getText(), action.getTemplatePresentation().getDescription(), action.getTemplatePresentation().getIcon()) {
+			@NotNull
+			@Override
+			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+				return new AnAction[]{new DebugTestFileAction()};
+			}
+
+			@Override
+			public void update(@NotNull AnActionEvent e) {
+				action.update(e);
+			}
+
+			@Override
+			public void actionPerformed(@NotNull AnActionEvent e) {
+				action.actionPerformed(e);
+			}
+
+			@Override
+			public boolean hideIfNoVisibleChildren() {
+				return true;
+			}
+
+			@Override
+			public boolean canBePerformed(@NotNull DataContext context) {
+				return true;
+			}
+
+			@Override
+			public boolean isPopup() {
+				return true;
+			}
+
+		});
+
+	}
+
+
+	protected AnAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
+		RunConfigurationAction action = new RunConfigurationAction(DefaultRunExecutor.getRunExecutorInstance(), true, project, cfg);
+
+		return new ActionGroup(action.getTemplatePresentation().getText(), action.getTemplatePresentation().getDescription(), action.getTemplatePresentation().getIcon()) {
+			@NotNull
+			@Override
+			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+				return new AnAction[]{new DebugConfigurationAction(DefaultDebugExecutor.getDebugExecutorInstance(), true, project, cfg)};
+			}
+
+			@Override
+			public void actionPerformed(@NotNull AnActionEvent e) {
+				action.actionPerformed(e);
+			}
+
+			@Override
+			public boolean canBePerformed(@NotNull DataContext context) {
+				return true;
+			}
+
+			@Override
+			public boolean isPopup() {
+				return true;
+			}
+
+		};
+	}
+
 	protected AnAction createGoalRunAction(Goal goal, Icon runIcon, boolean plugin, MavenProjectInfo mavenProject) {
 		RunGoalAction goalRunAction = RunGoalAction.create(goal, runIcon, true, mavenProject);
 		return new MyActionGroup(goalRunAction, plugin, goal, mavenProject);
@@ -137,16 +220,6 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		@Override
 		public boolean isPopup() {
 			return true;
-		}
-
-		@Override
-		public boolean hideIfNoVisibleChildren() {
-			return super.hideIfNoVisibleChildren();
-		}
-
-		@Override
-		public boolean disableIfNoVisibleChildren() {
-			return super.disableIfNoVisibleChildren();
 		}
 
 		@NotNull

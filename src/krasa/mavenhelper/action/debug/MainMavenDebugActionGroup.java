@@ -44,5 +44,6 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 	@Override
 	protected RunConfigurationAction getRunConfigurationAction(Project project, RunnerAndConfigurationSettings cfg) {
 		return new DebugConfigurationAction(DefaultDebugExecutor.getDebugExecutorInstance(), true, project, cfg);
-	}
+	}        
+	
 }
