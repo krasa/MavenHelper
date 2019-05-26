@@ -37,6 +37,7 @@ public class ApplicationSettingsForm {
 	private JPanel goalsPanel;
 	private JPanel pluginAwareGoalsPanel;
 	private JSplitPane split;
+	private JCheckBox enableDelete;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -189,21 +190,10 @@ public class ApplicationSettingsForm {
 	private boolean editGoal(JList goals) {
 		Object selectedValue = goals.getSelectedValue();
 		if (selectedValue != null) {
-			editGoal(settings, (Goal) selectedValue);
+			GoalEditor.editGoal("Edit Goal", settings, (Goal) selectedValue);
 			return true;
 		}
 		return false;
-	}
-
-	public Goal editGoal(final ApplicationSettings settings1, Goal goal) {
-		GoalEditor editor = new GoalEditor("Edit Goal", goal.getCommandLine(), settings1, false, null, null);
-		if (editor.showAndGet()) {
-			String s = editor.getCmd();
-			if (StringUtils.isNotBlank(s)) {
-				goal.setCommandLine(s);
-			}
-		}
-		return goal;
 	}
 
 	private FocusAdapter getFocusListener() {
@@ -314,17 +304,19 @@ public class ApplicationSettingsForm {
 		aliasTable.reset(settings);
 	}
 
-	//GENERATED
 	public void setData(ApplicationSettings data) {
 		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
+		enableDelete.setSelected(data.isEnableDelete());
 	}
 
 	public void getData(ApplicationSettings data) {
 		data.setUseIgnoredPoms(useIgnoredPoms.isSelected());
+		data.setEnableDelete(enableDelete.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
 		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
+		if (enableDelete.isSelected() != data.isEnableDelete()) return true;
 		return false;
 	}
 }

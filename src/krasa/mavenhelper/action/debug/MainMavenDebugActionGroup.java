@@ -1,20 +1,18 @@
 package krasa.mavenhelper.action.debug;
 
-import java.util.List;
-
-import javax.swing.*;
-
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
-
 import krasa.mavenhelper.action.CreateCustomGoalAction;
 import krasa.mavenhelper.action.MainMavenActionGroup;
+import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.RunConfigurationAction;
-import krasa.mavenhelper.action.RunGoalAction;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.Goal;
+
+import javax.swing.*;
+import java.util.List;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class MainMavenDebugActionGroup extends MainMavenActionGroup {
@@ -24,8 +22,8 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 	}
 
 	@Override
-	protected CreateCustomGoalAction getCreateCustomGoalAction() {
-		return new CreateCustomDebugGoalAction("New Goal...");
+	protected CreateCustomGoalAction getCreateCustomGoalAction(MavenProjectInfo mavenProject) {
+		return new CreateCustomDebugGoalAction("New Goal...", mavenProject);
 	}
 
 	@Override
@@ -39,8 +37,8 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 	}
 
 	@Override
-	protected RunGoalAction createGoalRunAction(Goal basicPhase, final Icon phase) {
-		return DebugGoalAction.createDebug(basicPhase, phase, true);
+	protected AnAction createGoalRunAction(Goal basicPhase, final Icon icon, boolean plugin, MavenProjectInfo mavenProject) {
+		return DebugGoalAction.createDebug(basicPhase, icon, true, mavenProject);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package krasa.mavenhelper.action.debug;
 
 import com.intellij.openapi.project.Project;
+import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.RunGoalAction;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -9,15 +10,15 @@ import javax.swing.*;
 
 public class DebugGoalAction extends RunGoalAction {
 
-	private DebugGoalAction(Goal goal, String text, String description, Icon icon) {
-		super(goal, text, description, icon);
+	private DebugGoalAction(Goal goal, String text, String description, Icon icon, MavenProjectInfo mavenProject) {
+		super(goal, text, description, icon, mavenProject);
 	}
 
-	public static DebugGoalAction createDebug(Goal goal, Icon icon, boolean popupAction) {
+	public static DebugGoalAction createDebug(Goal goal, Icon icon, boolean popupAction, MavenProjectInfo mavenProject) {
 		if (popupAction) {
-			return new DebugGoalAction(goal, goal.getPresentableName(), goal.getCommandLine(), icon);
+			return new DebugGoalAction(goal, goal.getPresentableName(), goal.getCommandLine(), icon, mavenProject);
 		} else {
-			return new DebugGoalAction(goal, "debug: " + goal.getPresentableName(), "debug: " + goal.getCommandLine(), icon);
+			return new DebugGoalAction(goal, "Debug: " + goal.getPresentableName(), "Debug: " + goal.getCommandLine(), icon, mavenProject);
 		}
 	}
 

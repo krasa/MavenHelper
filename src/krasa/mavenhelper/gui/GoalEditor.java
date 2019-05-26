@@ -27,6 +27,7 @@ import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import krasa.mavenhelper.model.Goals;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -61,6 +62,17 @@ public class GoalEditor extends DialogWrapper {
 	protected JLabel commandLineLabel;
 	private EditorImpl myEditor;
 
+	public static Goal editGoal(String title, final ApplicationSettings settings1, Goal goal) {
+		GoalEditor editor = new GoalEditor(title, goal.getCommandLine(), settings1, false, null, null);
+		if (editor.showAndGet()) {
+			String s = editor.getCmd();
+			if (StringUtils.isNotBlank(s)) {
+				goal.setCommandLine(s);
+			}
+		}
+		return goal;
+	}
+	                 
 	public GoalEditor(String title, String initialValue, ApplicationSettings applicationSettings, boolean persist, Project project, DataContext dataContext) {
 		super(true);
 		setTitle(title);

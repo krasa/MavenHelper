@@ -43,9 +43,9 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		ActionManager instance = ActionManager.getInstance();
 		for (Goal goal : settings.getAllGoals()) {
 			String actionId = getActionId(goal);
-			registerAction(instance, actionId, RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false));
+			registerAction(instance, actionId, RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false, null));
 			actionId = getDebugActionId(goal);
-			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MyIcons.PLUGIN_GOAL, false));
+			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MyIcons.PLUGIN_GOAL, false, null));
 		}
 		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction());
 		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());

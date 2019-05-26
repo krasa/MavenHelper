@@ -12,12 +12,15 @@ import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 public class CreateCustomGoalAction extends AnAction implements DumbAware {
+	@Nullable
+	protected MavenProjectInfo mavenProject;
 	private boolean runGoal = true;
 
 	public CreateCustomGoalAction() {
@@ -27,8 +30,9 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 		this.runGoal = runGoal;
 	}
 
-	public CreateCustomGoalAction(@Nullable String text) {
+	public CreateCustomGoalAction(@Nullable String text, @NotNull MavenProjectInfo mavenProject) {
 		super(text);
+		this.mavenProject = mavenProject;
 	}
 
 	public void actionPerformed(AnActionEvent e) {
@@ -37,13 +41,13 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 
 		DataContext context = e.getDataContext();
 		Project project = MavenActionUtil.getProject(context);
-		String pomDir = Utils.getPomDirAsString(context);
+		String pomDir = Utils.getPomDirAsString(context, mavenProject);
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 		PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 		ConfigurationContext configurationContext = ConfigurationContext.getFromContext(e.getDataContext());
 
 
-		GoalEditor editor = new GoalEditor("New Goal", "", state, true, e.getProject(), e.getDataContext());
+		GoalEditor editor = new GoalEditor("Create and Run", "", state, true, e.getProject(), e.getDataContext());
 		if (editor.showAndGet()) {
 			String s = editor.getCmd();
 			if (StringUtils.isNotBlank(s)) {
@@ -65,7 +69,7 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	}
 
 	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false);
+		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false, mavenProject);
 	}
 
 	@Override

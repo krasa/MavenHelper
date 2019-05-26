@@ -24,6 +24,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private Goals goals = new Goals();
 	private Goals pluginAwareGoals = new Goals();
 	private Aliases aliases = new Aliases();
+	private boolean enableDelete = true;
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -161,5 +162,13 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 			s = s.replace(CURRENT_CLASS_WITH_METHOD_MACRO, to);
 		}
 		return s;
+	}
+
+	public boolean isEnableDelete() {
+		return enableDelete;
+	}
+
+	public void setEnableDelete(final boolean enableDelete) {
+		this.enableDelete = enableDelete;
 	}
 }

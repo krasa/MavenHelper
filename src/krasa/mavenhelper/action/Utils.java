@@ -27,7 +27,7 @@ public class Utils {
 
 	static VirtualFile getPomDir(AnActionEvent e) {
 		VirtualFile fileByUrl = null;
-		String pomDir = getPomDirAsString(e.getDataContext());
+		String pomDir = getPomDirAsString(e.getDataContext(), null);
 		if (pomDir != null) {
 			fileByUrl = VirtualFileManager.getInstance().findFileByUrl("file://" + pomDir);
 
@@ -36,10 +36,14 @@ public class Utils {
 	}
 
 	@Nullable
-	static String getPomDirAsString(DataContext dataContext) {
+	static String getPomDirAsString(DataContext dataContext, @Nullable MavenProjectInfo mavenProjectInfo) {
 		ApplicationSettings state = ApplicationSettings.get();
 
+
 		String pomDir = null;
+		if (mavenProjectInfo != null && mavenProjectInfo.root) {
+			return mavenProjectInfo.mavenProject.getDirectory();
+		}
 		if (state.isUseIgnoredPoms()) {
 			VirtualFile data = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
 			if (data != null) {
