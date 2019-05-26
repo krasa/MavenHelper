@@ -5,9 +5,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -16,7 +14,6 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RunGoalAction extends AnAction implements DumbAware {
@@ -24,11 +21,9 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	private final Goal goal;
 	@Nullable
 	private final MavenProjectInfo mavenProject;
-	String commandLine;
 
 	protected RunGoalAction(Goal goal, String text, String description, Icon icon, @Nullable MavenProjectInfo mavenProject) {
 		super(text, description, icon);
-		commandLine = goal.getCommandLine();
 		this.goal = goal;
 		this.mavenProject = mavenProject;
 	}
@@ -45,19 +40,6 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		return goal;
 	}
 
-	private List<String> parse(String goal, PsiFile psiFile, ConfigurationContext configurationContext) {
-		goal = ApplicationSettings.get().applyAliases(goal, psiFile, configurationContext);
-		
-		List<String> strings = new ArrayList<String>();
-		String[] split = goal.split("\\s");
-		for (String s : split) {
-			if (StringUtils.isNotBlank(s)) {
-				strings.add(s);
-			}
-		}
-		return strings;
-	}
-
 	public void actionPerformed(AnActionEvent e) {
 		final DataContext context = e.getDataContext();
 
@@ -72,7 +54,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 
 	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext) {
 		if (pomDir != null) {
-			List<String> goalsToRun = parse(commandLine, psiFile, configurationContext);
+			List<String> goalsToRun = goal.parse(psiFile, configurationContext);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
 			run(params, project);
 		}

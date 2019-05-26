@@ -1,5 +1,8 @@
 package krasa.mavenhelper.action;
 
+import com.intellij.execution.Location;
+import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.CreateAction;
 import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -8,6 +11,8 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.ui.popup.list.ListPopupModel;
@@ -19,6 +24,7 @@ import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.execution.MavenGoalLocation;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
@@ -153,7 +159,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 			} else {
 				return new AnAction[]{
-					debug(goal, mavenProject), editAndRun(goal, mavenProject), delete(goal)
+					debug(goal, mavenProject), editAndRun(goal, mavenProject), delete(goal), new MyCreateAction(goal, mavenProject)
 				};
 			}
 		}
@@ -185,6 +191,47 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 				}
 			};
 		}
-		
+
+		private class MyCreateAction extends DumbAwareAction {
+			private final Goal goal;
+			private final MavenProjectInfo mavenProject;
+			private CreateAction createAction;
+
+			public MyCreateAction(Goal goal, MavenProjectInfo mavenProject) {
+				super("Create Run Configuration");
+				this.goal = goal;
+				this.mavenProject = mavenProject;
+				createAction = new CreateAction();
+			}
+
+			@Override
+			public void actionPerformed(@NotNull AnActionEvent e) {
+				createAction.actionPerformed(getAnActionEvent(e));
+			}
+
+			@Override
+			public void update(@NotNull AnActionEvent e) {
+				createAction.update(getAnActionEvent(e));
+			}
+
+			@NotNull
+			private AnActionEvent getAnActionEvent(@NotNull AnActionEvent e) {
+				DataContext dataContext = new DataContext() {
+					@Nullable
+					@Override
+					public Object getData(@NotNull String s) {
+						if (Location.DATA_KEY.is(s)) {
+							PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
+							ConfigurationContext fromContext = ConfigurationContext.getFromContext(e.getDataContext());
+							PsiFile psiFile = PsiManager.getInstance(e.getProject()).findFile(mavenProject.mavenProject.getFile());
+							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext));
+						}
+						return e.getDataContext().getData(s);
+					}
+				};
+
+				return AnActionEvent.createFromDataContext("MavenRunHelper.CreateRunConfiguration", e.getPresentation(), dataContext);
+			}
+		}
 	}
 }

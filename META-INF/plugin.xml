@@ -40,7 +40,7 @@
 	<change-notes><![CDATA[
             <br>4.2
             <br> - Fixed running goals on the root module
-            <br> - Added options to debug, edit or delete to "Run Maven Goal" popup
+            <br> - Added options to debug, edit, delete, create run configuration to "Run Maven Goal" popup
             <br> - Added settings to disable delete key in popups
             <br>4.1
             <br> - Better Alias editor
