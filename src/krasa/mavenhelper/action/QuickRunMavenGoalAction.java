@@ -254,8 +254,10 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-					GoalEditor.editGoal("Edit and Run", ApplicationSettings.get(), goal);
-					RunGoalAction.create(goal, MyIcons.RUN_MAVEN_ICON, true, mavenProject).actionPerformed(anActionEvent);
+					Goal edit_and_run = GoalEditor.editGoal("Edit and Run", ApplicationSettings.get(), goal);
+					if (edit_and_run != null) {
+						RunGoalAction.create(goal, MyIcons.RUN_MAVEN_ICON, true, mavenProject).actionPerformed(anActionEvent);
+					}
 				}
 			};
 		}

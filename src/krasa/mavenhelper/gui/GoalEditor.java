@@ -69,8 +69,9 @@ public class GoalEditor extends DialogWrapper {
 			if (StringUtils.isNotBlank(s)) {
 				goal.setCommandLine(s);
 			}
+			return goal;
 		}
-		return goal;
+		return null;
 	}
 	                 
 	public GoalEditor(String title, String initialValue, ApplicationSettings applicationSettings, boolean persist, Project project, DataContext dataContext) {
