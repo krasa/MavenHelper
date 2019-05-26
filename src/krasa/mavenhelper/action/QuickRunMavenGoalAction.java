@@ -111,7 +111,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		private final MavenProjectInfo mavenProject;
 
 		public MyActionGroup(RunGoalAction goalRunAction, boolean plugin, Goal goal, MavenProjectInfo mavenProject) {
-			super(goalRunAction.getTemplateText(), goalRunAction.getTemplatePresentation().getDescription(), goalRunAction.getTemplatePresentation().getIcon());
+			super(goalRunAction.getTemplatePresentation().getText(), goalRunAction.getTemplatePresentation().getDescription(), goalRunAction.getTemplatePresentation().getIcon());
 			this.goalRunAction = goalRunAction;
 			this.plugin = plugin;
 			this.goal = goal;
