@@ -62,7 +62,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="c143" class="javax.swing.JTree" binding="rightTree" custom-create="true">
+                      <component id="c143" class="krasa.mavenhelper.analyzer.MyHighlightingTree" binding="rightTree" custom-create="true">
                         <constraints/>
                         <properties/>
                       </component>
@@ -82,7 +82,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="4cb6b" class="javax.swing.JTree" binding="leftTree" custom-create="true">
+                          <component id="4cb6b" class="krasa.mavenhelper.analyzer.MyHighlightingTree" binding="leftTree" custom-create="true">
                             <constraints/>
                             <properties/>
                           </component>

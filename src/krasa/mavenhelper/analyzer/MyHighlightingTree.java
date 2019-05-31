@@ -1,32 +1,32 @@
 package krasa.mavenhelper.analyzer;
 
-import static com.intellij.ui.ColorUtil.darker;
-import static com.intellij.ui.ColorUtil.softer;
-
-import java.awt.*;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.project.MavenProject;
-
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.UIUtil;
-
 import krasa.mavenhelper.analyzer.action.BaseAction;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.project.MavenProject;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+
+import static com.intellij.ui.ColorUtil.darker;
+import static com.intellij.ui.ColorUtil.softer;
 
 public class MyHighlightingTree extends Tree implements DataProvider {
 	private final Project project;
-	private final MavenProject mavenProject;
+	private MavenProject mavenProject;
 
-	public MyHighlightingTree(Project project, MavenProject mavenProject) {
+	public MyHighlightingTree(Project project) {
 		this.project = project;
-		this.mavenProject = mavenProject;
 		setOpaque(false);
+	}
+
+	public void setMavenProject(MavenProject mavenProject) {
+		this.mavenProject = mavenProject;
 	}
 
 	@Override

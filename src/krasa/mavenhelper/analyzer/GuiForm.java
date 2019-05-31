@@ -77,7 +77,7 @@ public class GuiForm implements Disposable {
 	private final VirtualFile file;
 	private MavenProject mavenProject;
 	private JBList leftPanelList;
-	private JTree rightTree;
+	private MyHighlightingTree rightTree;
 	private JPanel rootPanel;
 
 	private JRadioButton conflictsRadioButton;
@@ -92,7 +92,7 @@ public class GuiForm implements Disposable {
 	private SearchTextField searchField;
 	private JButton applyMavenVmOptionsFixButton;
 	private JPanel leftPanelWrapper;
-	private JTree leftTree;
+	private MyHighlightingTree leftTree;
 	private JCheckBox showGroupId;
 	private JPanel buttonsPanel;
 	private JButton donate;
@@ -202,7 +202,8 @@ public class GuiForm implements Disposable {
 		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		rightTree.addMouseListener(new RightTreePopupHandler(project, mavenProject, rightTree));
-
+		rightTree.setMavenProject(mavenProject);
+		
 		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftTreeRoot = new DefaultMutableTreeNode();
 		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
@@ -213,7 +214,9 @@ public class GuiForm implements Disposable {
 		leftTree.setCellRenderer(new TreeRenderer(showGroupId));
 		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		leftTree.addMouseListener(new LeftTreePopupHandler(project, mavenProject, leftTree));
-
+		leftTree.setMavenProject(mavenProject);
+			
+			
 		showGroupId.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -296,8 +299,8 @@ public class GuiForm implements Disposable {
 
 			}
 		});
-		rightTree = new MyHighlightingTree(project, mavenProject);
-		leftTree = new MyHighlightingTree(project, mavenProject);
+		rightTree = new MyHighlightingTree(project);
+		leftTree = new MyHighlightingTree(project);
 	}
 
 	public static String sortByVersion(List<MavenArtifactNode> value) {
