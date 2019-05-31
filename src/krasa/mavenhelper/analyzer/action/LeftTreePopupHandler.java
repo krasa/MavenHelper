@@ -99,6 +99,7 @@ public class LeftTreePopupHandler extends PopupHandler {
 	public void hidePopup() {
 		if (popup != null && popup.isVisible()) {
 			popup.setVisible(false);
+			popup = null;
 		}
 	}
 	
