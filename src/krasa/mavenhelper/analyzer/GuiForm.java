@@ -116,7 +116,9 @@ public class GuiForm implements Disposable {
 	private MyProjectService myProjectService;
 
 	private boolean manualReimport;
-	                  
+	private RightTreePopupHandler rightTreePopupHandler;
+	private LeftTreePopupHandler leftTreePopupHandler;
+
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
@@ -201,7 +203,8 @@ public class GuiForm implements Disposable {
 		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
 		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		rightTree.addMouseListener(new RightTreePopupHandler(project, mavenProject, rightTree));
+		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree);
+		rightTree.addMouseListener(rightTreePopupHandler);
 		rightTree.setMavenProject(mavenProject);
 		
 		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
@@ -213,7 +216,8 @@ public class GuiForm implements Disposable {
 		leftTree.expandPath(new TreePath(leftTreeRoot.getPath()));
 		leftTree.setCellRenderer(new TreeRenderer(showGroupId));
 		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		leftTree.addMouseListener(new LeftTreePopupHandler(project, mavenProject, leftTree));
+		leftTreePopupHandler = new LeftTreePopupHandler(project, mavenProject, leftTree);
+		leftTree.addMouseListener(leftTreePopupHandler);
 		leftTree.setMavenProject(mavenProject);
 			
 			
@@ -375,6 +379,9 @@ public class GuiForm implements Disposable {
 	}
 
 	private void initializeModel() {
+		rightTreePopupHandler.hidePopup();
+		leftTreePopupHandler.hidePopup();
+		
 		final Object selectedValue = leftPanelList.getSelectedValue();
 
 		dependencyTree = mavenProject.getDependencyTree();

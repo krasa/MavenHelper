@@ -1,23 +1,20 @@
 package krasa.mavenhelper.analyzer.action;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-
-import krasa.mavenhelper.analyzer.MyTreeUserObject;
-
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.project.MavenProject;
-
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupHandler;
+import krasa.mavenhelper.analyzer.MyTreeUserObject;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 /**
  * @author Vojtech Krasa
@@ -26,6 +23,7 @@ public class LeftTreePopupHandler extends PopupHandler {
 	private final Project project;
 	private final MavenProject mavenProject;
 	protected final JTree tree;
+	private JPopupMenu popup;
 
 	public LeftTreePopupHandler(Project project, MavenProject mavenProject, JTree tree) {
 		this.project = project;
@@ -94,8 +92,15 @@ public class LeftTreePopupHandler extends PopupHandler {
 				}
 			});
 		}
-		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
-
+		popup = ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent();
+		popup.show(comp, x, y);
 	}
+
+	public void hidePopup() {
+		if (popup != null && popup.isVisible()) {
+			popup.setVisible(false);
+		}
+	}
+	
 
 }
