@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.model.ApplicationSettings;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -19,7 +19,7 @@ import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import java.io.File;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class Utils {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(Utils.class);

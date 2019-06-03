@@ -11,7 +11,7 @@ import krasa.mavenhelper.gui.GoalEditor;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.MavenProject;

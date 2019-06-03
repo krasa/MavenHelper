@@ -2,6 +2,7 @@ package krasa.mavenhelper.gui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.DoubleClickListener;
@@ -10,7 +11,7 @@ import com.intellij.ui.components.JBList;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,6 +25,7 @@ import java.util.List;
  * @author Vojtech Krasa
  */
 public class ApplicationSettingsForm {
+	private static final Logger LOG = Logger.getInstance(ApplicationSettingsForm.class);
 
 	protected DefaultListModel goalsModel;
 	protected DefaultListModel pluginsModel;
@@ -295,7 +297,9 @@ public class ApplicationSettingsForm {
 
 	public boolean isSettingsModified(ApplicationSettings settings) {
 		if (aliasTable.isModified(settings)) return true;
-		return !this.settings.equals(settings) || isModified(settings);
+		boolean b = !this.settings.equals(settings) || isModified(settings);
+		LOG.info("isSettingsModified: " + b);
+		return b;
 	}
 
 	public void importFrom(ApplicationSettings settings) {
@@ -315,7 +319,7 @@ public class ApplicationSettingsForm {
 		data.setEnableDelete(enableDelete.isSelected());
 	}
 
-	public boolean isModified(ApplicationSettings data) {
+	public boolean isModified(ApplicationSettings data) {      
 		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
 		if (enableDelete.isSelected() != data.isEnableDelete()) return true;
 		return false;

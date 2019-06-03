@@ -27,7 +27,7 @@ import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import krasa.mavenhelper.model.Goals;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenPlugin;
