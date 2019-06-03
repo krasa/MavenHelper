@@ -1,9 +1,6 @@
 package krasa.mavenhelper.model;
 
-import com.intellij.openapi.diagnostic.Logger;
-
-public class Alias {
-	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(Alias.class);
+public class Alias extends DomainObject {
 	private String from;
 	private String to;
 
@@ -42,30 +39,4 @@ public class Alias {
 		return commandLine;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Alias alias = (Alias) o;
-
-		if (from != null ? !from.equals(alias.from) : alias.from != null) return false;
-		return to != null ? to.equals(alias.to) : alias.to == null;
-
-	}
-
-	@Override
-	public int hashCode() {
-		int result = from != null ? from.hashCode() : 0;
-		result = 31 * result + (to != null ? to.hashCode() : 0);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Alias{" +
-			"from='" + from + '\'' +
-			", to='" + to + '\'' +
-			'}';
-	}
 }
