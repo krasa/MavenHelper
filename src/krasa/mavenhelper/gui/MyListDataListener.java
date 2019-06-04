@@ -1,35 +1,45 @@
 package krasa.mavenhelper.gui;
 
+import krasa.mavenhelper.model.Goal;
+import krasa.mavenhelper.model.Goals;
+
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-
-import krasa.mavenhelper.model.Goal;
-import krasa.mavenhelper.model.Goals;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
  */
 public class MyListDataListener implements ListDataListener {
-	private DefaultListModel model;
+	private DefaultListModel<Goal> model;
 	private Goals goals;
 
-	public MyListDataListener(DefaultListModel model, Goals goals) {
+	public MyListDataListener(DefaultListModel<Goal> model, Goals goals) {
 		this.model = model;
 		this.goals = goals;
 	}
 
 	@Override
 	public void intervalAdded(ListDataEvent e) {
-		goals.getGoals().add(e.getIndex0(), (Goal) model.getElementAt(e.getIndex0()));
+		listChanged();
 	}
 
 	@Override
 	public void intervalRemoved(ListDataEvent e) {
-		goals.getGoals().remove(e.getIndex0());
+		listChanged();
 	}
 
 	@Override
 	public void contentsChanged(ListDataEvent e) {
+		listChanged();
+	}
+
+	private void listChanged() {
+		List<Goal> list = this.goals.getGoals();
+		list.clear();
+		for (int i = 0; i < model.getSize(); i++) {
+			list.add(model.getElementAt(i));
+		}
 	}
 }

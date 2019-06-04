@@ -27,8 +27,8 @@ import java.util.List;
 public class ApplicationSettingsForm {
 	private static final Logger LOG = Logger.getInstance(ApplicationSettingsForm.class);
 
-	protected DefaultListModel goalsModel;
-	protected DefaultListModel pluginsModel;
+	protected DefaultListModel<Goal> goalsModel;
+	protected DefaultListModel<Goal> pluginsModel;
 
 	protected ApplicationSettings settings;
 	private JList goals;
@@ -89,8 +89,8 @@ public class ApplicationSettingsForm {
 			}
 		}.installOn(aliasTable);
 
-		goalsModel = new DefaultListModel();
-		pluginsModel = new DefaultListModel();
+		goalsModel = new DefaultListModel<>();
+		pluginsModel = new DefaultListModel<>();
 		goals = createJBList(goalsModel);
 		pluginAwareGoals = createJBList(pluginsModel);
 		new DoubleClickListener() {
@@ -271,6 +271,8 @@ public class ApplicationSettingsForm {
 			pluginsModel.addElement(o);
 		}
 		addModelListeners(settings);
+		setData(settings);
+		aliasTable.reset(settings);
 	}
 
 	private void removeListeners(final DefaultListModel listModel) {
@@ -297,16 +299,12 @@ public class ApplicationSettingsForm {
 
 	public boolean isSettingsModified(ApplicationSettings settings) {
 		if (aliasTable.isModified(settings)) return true;
-		boolean b = !this.settings.equals(settings) || isModified(settings);
-		LOG.info("isSettingsModified: " + b);
-		return b;
+		return !this.settings.equals(settings) || isModified(settings);
 	}
 
 	public void importFrom(ApplicationSettings settings) {
 		this.settings = settings.clone();
 		initializeModel();
-		setData(settings);
-		aliasTable.reset(settings);
 	}
 
 	public void setData(ApplicationSettings data) {
