@@ -13,14 +13,12 @@ public class MyListNode {
 
 	protected final String key;
 	protected final List<MavenArtifactNode> value;
-	protected String maxVersion;
 	protected String rightVersion;
 	protected boolean conflict;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
 		key = s.getKey();
 		value = s.getValue();
-		maxVersion = GuiForm.sortByVersion(value);
 		initRightVersion();
 		initConflict();
 	}
@@ -37,16 +35,11 @@ public class MyListNode {
 	}
 
 	private void initConflict() {
-		String lastVersion = null;
 		if (value != null && !value.isEmpty()) {
 			for (MavenArtifactNode mavenArtifactNode : value) {
-				if (mavenArtifactNode.getState() != MavenArtifactState.EXCLUDED) {
-					String version = mavenArtifactNode.getArtifact().getVersion();
-					if (lastVersion != null && !lastVersion.equals(version)) {
-						conflict = true;
-						break;
-					}
-					lastVersion = version;
+				if (Utils.isOmitted(mavenArtifactNode) || Utils.isConflictAlternativeMethod(mavenArtifactNode)) {
+					conflict = true;
+					break;
 				}
 			}
 		}
@@ -54,10 +47,6 @@ public class MyListNode {
 
 	public boolean isConflict() {
 		return conflict;
-	}
-
-	public String getMaxVersion() {
-		return maxVersion;
 	}
 
 	public String getRightVersion() {

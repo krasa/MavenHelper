@@ -1,6 +1,7 @@
 package krasa.mavenhelper.analyzer;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.util.PropertiesComponent;
@@ -97,6 +98,8 @@ public class GuiForm implements Disposable {
 	private JPanel buttonsPanel;
 	private JButton donate;
 	private JButton reimport;
+	protected JEditorPane intellijBugLabel;
+	protected JEditorPane falsePositive;
 	protected DefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected final DefaultTreeModel rightTreeModel;
@@ -125,6 +128,42 @@ public class GuiForm implements Disposable {
 		mavenProjectsManager = MavenProjectsManager.getInstance(project);
 		myProjectService = MyProjectService.getInstance(project);
 		this.mavenProject = mavenProject;
+
+		intellijBugLabel.setText("<html>\n" +
+			"  <head>\n" +
+			"\n" +
+			"  </head>\n" +
+			"  <body>\n" +
+			"      1) An artifact is in conflict, its version is probably wrongly resolved due to a <a href=\"https://github.com/krasa/MavenHelper/issues/40\">bug in IntelliJ</a>." +
+			"  </body>\n" +
+			"</html>\n");
+		intellijBugLabel.setBackground(rootPanel.getBackground());
+		intellijBugLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		intellijBugLabel.setVisible(false);
+		intellijBugLabel.addHyperlinkListener(e -> {
+			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				BrowserUtil.browse(e.getURL());
+			}
+		});
+
+
+		falsePositive.setText("<html>\n" +
+			"  <head>\n" +
+			"\n" +
+			"  </head>\n" +
+			"  <body>\n" +
+			"      2) Probably a false positive, this should not happen, please report it at <a href=\"https://github.com/krasa/MavenHelper/issues/\">GitHub</a>." +
+			"  </body>\n" +
+			"</html>\n");
+		falsePositive.setBackground(rootPanel.getBackground());
+		falsePositive.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		falsePositive.setVisible(false);
+		falsePositive.addHyperlinkListener(e -> {
+			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				BrowserUtil.browse(e.getURL());
+			}
+		});
+		
 		final ActionListener radioButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -193,6 +232,8 @@ public class GuiForm implements Disposable {
 			}
 		});
 		noConflictsWarningLabel.setText(WARNING);
+		noConflictsWarningLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
 		rightTreeRoot = new DefaultMutableTreeNode();
@@ -201,7 +242,7 @@ public class GuiForm implements Disposable {
 		rightTree.setRootVisible(false);
 		rightTree.setShowsRootHandles(true);
 		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
-		rightTree.setCellRenderer(new TreeRenderer(showGroupId));
+		rightTree.setCellRenderer(new TreeRenderer(showGroupId, this));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree);
 		rightTree.addMouseListener(rightTreePopupHandler);
@@ -214,7 +255,7 @@ public class GuiForm implements Disposable {
 		leftTree.setRootVisible(false);
 		leftTree.setShowsRootHandles(true);
 		leftTree.expandPath(new TreePath(leftTreeRoot.getPath()));
-		leftTree.setCellRenderer(new TreeRenderer(showGroupId));
+		leftTree.setCellRenderer(new TreeRenderer(showGroupId, this));
 		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		leftTreePopupHandler = new LeftTreePopupHandler(project, mavenProject, leftTree);
 		leftTree.addMouseListener(leftTreePopupHandler);
@@ -335,7 +376,7 @@ public class GuiForm implements Disposable {
 				final String key = getArtifactKey(userObject.getArtifact());
 				List<MavenArtifactNode> mavenArtifactNodes = allArtifactsMap.get(key);
 				if (mavenArtifactNodes != null) {// can be null while refreshing
-					fillRightTree(mavenArtifactNodes, sortByVersion(mavenArtifactNodes));
+					fillRightTree(mavenArtifactNodes);
 				}
 			}
 		}
@@ -350,14 +391,14 @@ public class GuiForm implements Disposable {
 
 			final MyListNode myListNode = (MyListNode) leftPanelList.getSelectedValue();
 			List<MavenArtifactNode> artifacts = myListNode.value;
-			fillRightTree(artifacts, myListNode.getRightVersion());
+			fillRightTree(artifacts);
 		}
 	}
 
-	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes, String rightVersion) {
+	private void fillRightTree(List<MavenArtifactNode> mavenArtifactNodes) {
 		rightTreeRoot.removeAllChildren();
 		for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
-			MyTreeUserObject userObject = MyTreeUserObject.create(mavenArtifactNode, rightVersion);
+			MyTreeUserObject userObject = new MyTreeUserObject(mavenArtifactNode);
 			userObject.showOnlyVersion = true;
 			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
 			fillRightTree(mavenArtifactNode, newNode);
@@ -379,6 +420,8 @@ public class GuiForm implements Disposable {
 	}
 
 	private void initializeModel() {
+		intellijBugLabel.setVisible(false);
+		falsePositive.setVisible(false);
 		rightTreePopupHandler.hidePopup();
 		leftTreePopupHandler.hidePopup();
 		
@@ -398,6 +441,8 @@ public class GuiForm implements Disposable {
 	}
 
 	private void updateLeftPanel() {
+		intellijBugLabel.setVisible(false);
+		falsePositive.setVisible(false);
 		listDataModel.clear();
 		leftTreeRoot.removeAllChildren();
 
@@ -458,7 +503,7 @@ public class GuiForm implements Disposable {
 			}
 
 			leftPanelLayout.show(leftPanelWrapper, "list");
-		} else if (allDependenciesAsListRadioButton.isSelected()) {
+		} else if (allDependenciesAsListRadioButton.isSelected()) {  //list
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (contains(searchFieldText, s.getKey())) {
 					listDataModel.addElement(new MyListNode(s));
@@ -496,7 +541,7 @@ public class GuiForm implements Disposable {
 
 		for (MavenArtifactNode mavenArtifactNode : dependencyTree) {
 			boolean directMatch = false;
-			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+			MyTreeUserObject treeUserObject = new MyTreeUserObject(mavenArtifactNode);
 			if (search && contains(searchFieldText, mavenArtifactNode)) {
 				directMatch = true;
 				treeUserObject.highlight = true;

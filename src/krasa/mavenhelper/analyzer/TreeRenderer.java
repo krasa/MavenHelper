@@ -3,6 +3,7 @@ package krasa.mavenhelper.analyzer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.model.MavenArtifactState;
@@ -17,6 +18,7 @@ import java.awt.*;
 public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final JCheckBox showGroupId;
+	private final GuiForm guiForm;
 	private final SimpleTextAttributes errorBoldAttributes;
 
 	private final SimpleTextAttributes testAttributes;
@@ -27,9 +29,11 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final SimpleTextAttributes runtimeAttributes;
 	private final SimpleTextAttributes runtimeBoldAttributes;
+	public static final SimpleTextAttributes ITALIC_ERROR = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_ITALIC, null, null, null);
 
-	public TreeRenderer(JCheckBox showGroupId) {
+	public TreeRenderer(JCheckBox showGroupId, GuiForm guiForm) {
 		this.showGroupId = showGroupId;
+		this.guiForm = guiForm;
 		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 
 		testAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, new JBColor(new Color(4, 111, 0), new Color(0x69AF80)));
@@ -57,18 +61,29 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		} else {
 			classifier = "";
 		}
-
+		MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
+		boolean omitted = Utils.isOmitted(mavenArtifactNode);
+		boolean conflict_AlternativeMethod = Utils.isConflictAlternativeMethod(mavenArtifactNode);
+		boolean error = omitted || conflict_AlternativeMethod;
 		String currentVersion = artifact.getVersion();
-		if (myTreeUserObject.showOnlyVersion) {
-			append(currentVersion + " [" + classifier + artifact.getScope() + "]", myTreeUserObject.attributes);
-		} else {
-			MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
-			boolean omitted = mavenArtifactNode.getState() == MavenArtifactState.CONFLICT
-				&& (mavenArtifactNode.getRelatedArtifact() == null || !currentVersion.equals(mavenArtifactNode.getRelatedArtifact().getVersion()));
 
+
+		if (myTreeUserObject.showOnlyVersion) {
+			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+			if (error) {
+				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
+			}
+			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
+
+
+			checkForBug(myTreeUserObject);
+			if (!omitted && conflict_AlternativeMethod) {
+				conflict_AlternativeMethod(mavenArtifactNode, attributes, getConflictWinner(mavenArtifactNode));
+			}
+		} else {
 			SimpleTextAttributes attributes;
 			SimpleTextAttributes boldAttributes;
-			if (omitted) {
+			if (error) {
 				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 				boldAttributes = errorBoldAttributes;
 			} else if ("test".equals(myTreeUserObject.getArtifact().getScope())) {
@@ -92,19 +107,61 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 				append(artifact.getGroupId() + " : ", attributes);
 			}
 			append(artifact.getArtifactId(), boldAttributes);
+			append(" : " + currentVersion, attributes);
+			append(" [" + classifier + artifact.getScope() + "]", attributes);
 
-			if (omitted) {
-				MavenArtifact relatedArtifact = mavenArtifactNode.getRelatedArtifact();
-				String realVersion = null;
-				if (relatedArtifact != null) {
-					realVersion = relatedArtifact.getVersion();
+			if (error) {
+				String winner = getConflictWinner(mavenArtifactNode);
+
+				if (omitted) {
+					append(" (omitted for conflict with: " + winner + ")", attributes);
+					checkForBug(myTreeUserObject);
+				} else {//conflict_AlternativeMethod
+					conflict_AlternativeMethod(mavenArtifactNode, attributes, winner);
 				}
-				append(" : " + currentVersion + " (omitted for conflict with " + realVersion + ")" + " [" + classifier + artifact.getScope() + "]", attributes);
-			} else {
-				append(" : " + currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
 			}
+
 		}
 
 	}
+
+	private void conflict_AlternativeMethod(MavenArtifactNode mavenArtifactNode, SimpleTextAttributes attributes, String realArtifact) {
+		append(" (artifact state: " + mavenArtifactNode.getState() + ", conflict with: " + realArtifact, attributes);
+		append(")", attributes);
+		append(" - 2)", ITALIC_ERROR);
+		guiForm.falsePositive.setVisible(true);
+	}
+
+	@Nullable
+	private String getConflictWinner(MavenArtifactNode mavenArtifactNode) {
+		String realArtifact = "null";
+		MavenArtifact conflictWinner = mavenArtifactNode.getRelatedArtifact();
+
+		if (conflictWinner != null) {
+			String realVersion;
+			String realClassifier;
+			realVersion = conflictWinner.getVersion();
+			realClassifier = conflictWinner.getClassifier();
+			String scope = conflictWinner.getScope();
+			if (realClassifier != null) {
+				realClassifier = realClassifier + " - ";
+			} else {
+				realClassifier = "";
+			}
+			realArtifact = realVersion;
+//			realArtifact = realVersion + " [" + realClassifier + scope + "]";
+		}
+		return realArtifact;
+	}
+
+	private void checkForBug(MyTreeUserObject myTreeUserObject) {
+		MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
+		if (mavenArtifactNode.getState() == MavenArtifactState.CONFLICT && !Utils.isVersionMismatch(myTreeUserObject.getMavenArtifactNode())) {
+			append(" - 1)", ITALIC_ERROR);
+			guiForm.intellijBugLabel.setVisible(true);
+		}
+	}
+
+
 
 }

@@ -15,7 +15,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="27dc6" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="27dc6" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>
@@ -42,7 +42,7 @@
               </component>
               <splitpane id="6c003" binding="splitPane">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                  <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="400" height="400"/>
                   </grid>
                 </constraints>
@@ -224,6 +224,28 @@
                   <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
+              <component id="a7c42" class="javax.swing.JEditorPane" binding="intellijBugLabel">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <contentType value="text/html"/>
+                  <editable value="false"/>
+                  <foreground color="-65516"/>
+                  <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;    &#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    BUG&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+                </properties>
+              </component>
+              <component id="38953" class="javax.swing.JEditorPane" binding="falsePositive">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <contentType value="text/html"/>
+                  <editable value="false"/>
+                  <foreground color="-65516"/>
+                  <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;    &#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    FALSE POSITIVE&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
