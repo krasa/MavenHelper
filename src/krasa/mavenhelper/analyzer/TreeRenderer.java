@@ -29,7 +29,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final SimpleTextAttributes runtimeAttributes;
 	private final SimpleTextAttributes runtimeBoldAttributes;
-	public static final SimpleTextAttributes ITALIC_ERROR = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_ITALIC, null, null, null);
+	public static final SimpleTextAttributes ERROR_BOLD = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
 
 	public TreeRenderer(JCheckBox showGroupId, GuiForm guiForm) {
 		this.showGroupId = showGroupId;
@@ -128,7 +128,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 	private void conflict_AlternativeMethod(MavenArtifactNode mavenArtifactNode, SimpleTextAttributes attributes, String realArtifact) {
 		append(" (artifact state: " + mavenArtifactNode.getState() + ", conflict with: " + realArtifact, attributes);
 		append(")", attributes);
-		append(" - 2)", ITALIC_ERROR);
+		append(" - 2)", ERROR_BOLD);
 		guiForm.falsePositive.setVisible(true);
 	}
 
@@ -157,7 +157,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 	private void checkForBug(MyTreeUserObject myTreeUserObject) {
 		MavenArtifactNode mavenArtifactNode = myTreeUserObject.getMavenArtifactNode();
 		if (mavenArtifactNode.getState() == MavenArtifactState.CONFLICT && !Utils.isVersionMismatch(myTreeUserObject.getMavenArtifactNode())) {
-			append(" - 1)", ITALIC_ERROR);
+			append(" - 1)", ERROR_BOLD);
 			guiForm.intellijBugLabel.setVisible(true);
 		}
 	}
