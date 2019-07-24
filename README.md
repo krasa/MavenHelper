@@ -2,6 +2,9 @@ Maven Helper  [![Donate][badge-paypal-img]][badge-paypal]
 ==================
 IntelliJ plugin - https://plugins.jetbrains.com/plugin/7179 
 
+---
+Project setup: [gif](projectSetup.gif)
+
 ------
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
