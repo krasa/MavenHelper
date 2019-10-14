@@ -12,6 +12,7 @@ out/
 rebel.xml
 *.ipr
 *.iws
+*.iml
 
 
 DependencyManager/target/
