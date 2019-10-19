@@ -6,6 +6,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.rits.cloning.Cloner;
 import krasa.mavenhelper.ApplicationComponent;
 import krasa.mavenhelper.action.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenConstants;
 
@@ -18,6 +19,8 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 	public static final String CURRENT_CLASS_MACRO = "<<<CURRENT_CLASS>>>";
 	public static final String CURRENT_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_CLASS_WITH_TEST_METHOD>>>";
+	public static final String CURRENT_FULL_CLASS_MACRO = "<<<CURRENT_FULL_CLASS>>>";
+	public static final String CURRENT_FULL_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_FULL_CLASS_WITH_TEST_METHOD>>>";
 
 	int version = 1;
 	private boolean useIgnoredPoms = false;
@@ -103,6 +106,8 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	public static Aliases addDefaultAliases(Aliases aliases) {
 		aliases.add(new Alias("$class$", CURRENT_CLASS_MACRO));
 		aliases.add(new Alias("$classWithMethod$", CURRENT_CLASS_WITH_METHOD_MACRO));
+		aliases.add(new Alias("$fullClass$", CURRENT_FULL_CLASS_MACRO));
+		aliases.add(new Alias("$fullClassWithMethod$", CURRENT_FULL_CLASS_WITH_METHOD_MACRO));
 		return aliases;
 	}
 
@@ -152,14 +157,29 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		String s = aliases.applyAliases(commandLine);
 
 		if (s.contains(CURRENT_CLASS_MACRO)) {
-			s = s.replace(CURRENT_CLASS_MACRO, Utils.getQualifiedName(psiFile));
+			String name = StringUtils.substringBefore(psiFile.getName(), ".");
+			s = s.replace(CURRENT_CLASS_MACRO, name);
+		}
+		if (s.contains(CURRENT_FULL_CLASS_MACRO)) {
+			s = s.replace(CURRENT_FULL_CLASS_MACRO, Utils.getQualifiedName(psiFile));
 		}
 		if (s.contains(CURRENT_CLASS_WITH_METHOD_MACRO)) {
+			String to = Utils.NOT_RESOLVED;
+			if (null != fromContext) {
+				String className = null != fromContext.getConfiguration()? fromContext.getConfiguration().getName() : Utils.NOT_RESOLVED;
+				to = className.replace(".", "#");
+			}
+			if (Utils.NOT_RESOLVED.equals(to)) {
+				to = StringUtils.substringBefore(psiFile.getName(), ".");
+			}
+			s = s.replace(CURRENT_CLASS_WITH_METHOD_MACRO, to);
+		}
+		if (s.contains(CURRENT_FULL_CLASS_WITH_METHOD_MACRO)) {
 			String to = Utils.getTestArgument(psiFile, fromContext);
 			if (Utils.NOT_RESOLVED.equals(to)) {
 				to = Utils.getQualifiedName(psiFile);
 			}
-			s = s.replace(CURRENT_CLASS_WITH_METHOD_MACRO, to);
+			s = s.replace(CURRENT_FULL_CLASS_WITH_METHOD_MACRO, to);
 		}
 		return s;
 	}
