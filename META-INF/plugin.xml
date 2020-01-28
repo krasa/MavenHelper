@@ -2,11 +2,9 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.5.183.4139.0</version>
+	<version>4.6.193.000.0</version>
 
-	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech
-		Krasa
-	</vendor>
+	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
 	<description><![CDATA[
 	    A must have plugin for working with Maven.<br><br>
@@ -38,6 +36,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.6
+            <br> - IntelliJ 2020 compatibility
             <br>4.5
             <br> - Fixed conflict false negative due to a <a href="https://youtrack.jetbrains.com/issue/IDEA-215596">bugged dependency resolution by IntelliJ</a> 
             <br>4.4
@@ -98,12 +98,9 @@
 			]]>
 	</change-notes>
 
-    <idea-version since-build="183.4139"/>
+	<idea-version since-build="193.000"/>
 
 	<application-components>
-		<component>
-			<implementation-class>krasa.mavenhelper.ApplicationComponent</implementation-class>
-		</component>
 	</application-components>
 
 	<project-components>
@@ -139,16 +136,20 @@
 		</action>
 	</actions>
 
-	
-	
+
 	<extensions defaultExtensionNs="com.intellij">
 		<!-- Add your extensions here -->
 		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
-		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper" displayName="Maven Helper"  />
-        <projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
-    </extensions>
+		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper"
+								 displayName="Maven Helper"/>
+		<projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
+		<postStartupActivity implementation="krasa.mavenhelper.ShortcutStartupActivity"/>
+		<applicationService serviceImplementation="krasa.mavenhelper.ApplicationService"/>
+
+	</extensions>
 
 	<depends>org.jetbrains.idea.maven</depends>
-   <depends optional="true">org.jetbrains.plugins.terminal</depends>
-	
+	<depends optional="true">org.jetbrains.plugins.terminal</depends>
+	<depends>com.intellij.modules.java</depends>
+
 </idea-plugin>

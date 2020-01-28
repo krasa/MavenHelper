@@ -4,7 +4,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.rits.cloning.Cloner;
-import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.action.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	@NotNull
 	public static ApplicationSettings get() {
-		ApplicationComponent instance = ApplicationComponent.getInstance();
+		ApplicationService instance = ApplicationService.getInstance();
 		return instance.getState();
 	}
 

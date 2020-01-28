@@ -3,8 +3,8 @@ package krasa.mavenhelper;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
@@ -22,9 +22,8 @@ import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "MavenRunHelper", storages = {@Storage("mavenRunHelper.xml")})
-public class ApplicationComponent implements com.intellij.openapi.components.ApplicationComponent,
-		PersistentStateComponent<ApplicationSettings> {
-	static final Logger LOG = Logger.getInstance(ApplicationComponent.class);
+public class ApplicationService implements PersistentStateComponent<ApplicationSettings> {
+	static final Logger LOG = Logger.getInstance(ApplicationService.class);
 
 	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Maven Helper",
 		NotificationDisplayType.STICKY_BALLOON, true);
@@ -33,7 +32,7 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	public static final String DEBUG_MAVEN = "Debug Maven";
 	private ApplicationSettings settings = new ApplicationSettings();
 
-	public void initComponent() {
+	public void initShortcuts() {
 		addActionGroup(new MainMavenDebugActionGroup(DEBUG_MAVEN, MyIcons.ICON), DEBUG_MAVEN);
 		addActionGroup(new MainMavenActionGroup(RUN_MAVEN, MyIcons.RUN_MAVEN_ICON), RUN_MAVEN);
 		registerActions();
@@ -113,15 +112,6 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 		}
 	}
 
-	public void disposeComponent() {
-		// TODO: insert component disposal logic here
-	}
-
-	@NotNull
-	public String getComponentName() {
-		return "ApplicationComponent";
-	}
-
 	@NotNull
 	@Override
 	public ApplicationSettings getState() {
@@ -137,8 +127,8 @@ public class ApplicationComponent implements com.intellij.openapi.components.App
 	}
 
 
-	public static ApplicationComponent getInstance() {
-		return ApplicationManager.getApplication().getComponent(ApplicationComponent.class);
+	public static ApplicationService getInstance() {
+		return ServiceManager.getService(ApplicationService.class);
 	}
 
 }

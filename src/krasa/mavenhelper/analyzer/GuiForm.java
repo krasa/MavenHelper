@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.text.VersionComparatorUtil;
-import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
@@ -134,7 +134,7 @@ public class GuiForm implements Disposable {
 			"\n" +
 			"  </head>\n" +
 			"  <body>\n" +
-			"      1) An artifact is in conflict, its version is probably wrongly resolved due to a <a href=\"https://github.com/krasa/MavenHelper/issues/40\">bug in IntelliJ</a>." +
+			"      1) An artifact is in conflict, its version is probably wrongly resolved due to a <a href=\"https://youtrack.jetbrains.com/issue/IDEA-215596\">bug in IntelliJ</a>." +
 			"  </body>\n" +
 			"</html>\n");
 		intellijBugLabel.setBackground(rootPanel.getBackground());
@@ -481,7 +481,7 @@ public class GuiForm implements Disposable {
 			if (!conflictsWarning && newIDE && newMaven && containsCompatResolver140) {
 				if (!notificationShown) {
 					notificationShown = true;
-					final Notification notification = ApplicationComponent.NOTIFICATION.createNotification(
+					final Notification notification = ApplicationService.NOTIFICATION.createNotification(
 						"Fix your Maven VM options for importer", "<html>Your settings causes problems in multi-module Maven projects.<br> " +
 							" <a href=\"fix\">Remove -Didea.maven3.use.compat.resolver</a> ", NotificationType.WARNING, new NotificationListener() {
 							@Override

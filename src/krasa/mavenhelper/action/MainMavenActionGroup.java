@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
-import krasa.mavenhelper.ApplicationComponent;
+import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -148,7 +148,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 
 	private ApplicationSettings getState() {
-		return ApplicationComponent.getInstance().getState();
+		return ApplicationService.getInstance().getState();
 	}
 
 	private void addPluginAwareActions(List<AnAction> anActions, List<DefaultActionGroup> mavenActionGroups, MavenProjectInfo mavenProject) {

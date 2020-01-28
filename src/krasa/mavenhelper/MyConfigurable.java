@@ -12,11 +12,11 @@ import javax.swing.*;
 public class MyConfigurable implements Configurable {
 	private ApplicationSettingsForm form;
 	public ApplicationSettings state;
-	private ApplicationComponent applicationComponent;
+	private ApplicationService applicationService;
 
-	public MyConfigurable(ApplicationComponent 	applicationComponent) {
-		this.applicationComponent = applicationComponent;
-		this.state = applicationComponent.getState();
+	public MyConfigurable() {
+		this.applicationService = ApplicationService.getInstance();
+		this.state = applicationService.getState();
 	}
 
 	@Nls
@@ -41,10 +41,10 @@ public class MyConfigurable implements Configurable {
 	}
 
 	public void apply() throws ConfigurationException {
-		applicationComponent.unRegisterActions();
+		applicationService.unRegisterActions();
 		state = form.getSettings().clone();
-		applicationComponent.loadState(state);
-		applicationComponent.registerActions();
+		applicationService.loadState(state);
+		applicationService.registerActions();
 	}
 
 	public void reset() {
