@@ -41,7 +41,7 @@ public class ApplicationSettingsForm {
 	private JPanel pluginAwareGoalsPanel;
 	private JSplitPane split;
 	private JCheckBox enableDelete;
-	private JCheckBox resolveWorkspaceConflictsCheckBox;
+	private JCheckBox resolveWorkspaceArtifactsCheckBox;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -311,19 +311,19 @@ public class ApplicationSettingsForm {
 	public void setData(ApplicationSettings data) {
 		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
 		enableDelete.setSelected(data.isEnableDelete());
-		resolveWorkspaceConflictsCheckBox.setSelected(data.isResolveWorkspaceConflits());
+		resolveWorkspaceArtifactsCheckBox.setSelected(data.isResolveWorkspaceArtifacts());
 	}
 
 	public void getData(ApplicationSettings data) {
 		data.setUseIgnoredPoms(useIgnoredPoms.isSelected());
 		data.setEnableDelete(enableDelete.isSelected());
-		data.setResolveWorkspaceConflits(resolveWorkspaceConflictsCheckBox.isSelected());
+		data.setResolveWorkspaceArtifacts(resolveWorkspaceArtifactsCheckBox.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {      
 		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
 		if (enableDelete.isSelected() != data.isEnableDelete()) return true;
-		if (resolveWorkspaceConflictsCheckBox.isSelected() != data.isResolveWorkspaceConflits()) return true;
+		if (resolveWorkspaceArtifactsCheckBox.isSelected() != data.isResolveWorkspaceArtifacts()) return true;
 		return false;
 	}
 }

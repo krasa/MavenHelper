@@ -155,12 +155,12 @@
           <text value="Enable Delete key in &quot;Run Maven Goal&quot; popups"/>
         </properties>
       </component>
-      <component id="76825" class="javax.swing.JCheckBox" binding="resolveWorkspaceConflictsCheckBox" default-binding="true">
+      <component id="76825" class="javax.swing.JCheckBox" binding="resolveWorkspaceArtifactsCheckBox" default-binding="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Resolve workspace conflicts"/>
+          <text value="Resolve workspace artifacts"/>
         </properties>
       </component>
     </children>

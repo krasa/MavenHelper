@@ -28,7 +28,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private Goals pluginAwareGoals = new Goals();
 	private Aliases aliases = new Aliases();
 	private boolean enableDelete = true;
-	private boolean resolveWorkspaceConflits = false;
+	private boolean resolveWorkspaceArtifacts = false;
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -193,11 +193,11 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		this.enableDelete = enableDelete;
 	}
 
-	public boolean isResolveWorkspaceConflits() {
-		return resolveWorkspaceConflits;
+	public boolean isResolveWorkspaceArtifacts() {
+		return resolveWorkspaceArtifacts;
 	}
 
-	public void setResolveWorkspaceConflits(boolean resolveWorkspaceConflits) {
-		this.resolveWorkspaceConflits = resolveWorkspaceConflits;
+	public void setResolveWorkspaceArtifacts(boolean resolveWorkspaceArtifacts) {
+		this.resolveWorkspaceArtifacts = resolveWorkspaceArtifacts;
 	}
 }
