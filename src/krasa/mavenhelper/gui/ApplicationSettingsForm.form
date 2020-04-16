@@ -161,6 +161,7 @@
         </constraints>
         <properties>
           <text value="Resolve workspace artifacts"/>
+          <toolTipText value="In case of multi-project workspace,dependencies will be looked for in the workspace first, and only after that in local repository"/>
         </properties>
       </component>
     </children>
