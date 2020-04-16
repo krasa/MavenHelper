@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.6.193.000.0</version>
+	<version>4.7.193.000.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -36,6 +36,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.7
+            <br> - Resolve Workspace artifacts option
             <br>4.6
             <br> - IntelliJ 2020 compatibility
             <br>4.5
