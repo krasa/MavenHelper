@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
@@ -56,6 +57,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		if (pomDir != null) {
 			List<String> goalsToRun = goal.parse(psiFile, configurationContext);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
+			params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 			run(params, project);
 		}
 	}

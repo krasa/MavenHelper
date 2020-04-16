@@ -28,6 +28,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private Goals pluginAwareGoals = new Goals();
 	private Aliases aliases = new Aliases();
 	private boolean enableDelete = true;
+	private boolean resolveWorkspaceArtifacts = false;
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -190,5 +191,13 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	public void setEnableDelete(final boolean enableDelete) {
 		this.enableDelete = enableDelete;
+	}
+
+	public boolean isResolveWorkspaceArtifacts() {
+		return resolveWorkspaceArtifacts;
+	}
+
+	public void setResolveWorkspaceArtifacts(boolean resolveWorkspaceArtifacts) {
+		this.resolveWorkspaceArtifacts = resolveWorkspaceArtifacts;
 	}
 }
