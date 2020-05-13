@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="mavenLogo.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="784"
+     inkscape:window-height="480"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="14.75"
+     inkscape:cx="1.0847458"
+     inkscape:cy="8"
+     inkscape:window-x="542"
+     inkscape:window-y="330"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4" />
+  <path
+     fill="#6E6E6E"
+     fill-rule="evenodd"
+     d="M2.39466362,3.02668161 L0.4,12.992599 L3.138395,12.992599 L4.38312083,6.31930232 C4.38312083,6.31930232 5.46188272,5.37819638 6.29169956,5.46375146 C7.1215164,5.54930655 7.1215164,6.41225837 7.1215164,6.41225837 L5.95977282,13 L8.69942541,13 L10.0258753,6.31930232 C10.0258753,6.31930232 10.9386739,5.37819638 11.8514724,5.46375146 C12.7642709,5.54930655 12.5983075,6.49781345 12.5983075,6.49781345 L11.3535823,12.992599 L14.1749595,12.992599 L15.5856482,5.38559733 C15.7516115,4.18042517 15.0402711,3.13749616 14.0919779,3.02668161 C13.1436846,2.91586707 12.1833991,3.15376414 11.3535823,3.67449561 C10.5237654,4.19522709 10.0258753,4.87226682 10.0258753,4.87226682 C10.0258753,4.87226682 9.59761606,3.13749616 8.28325998,3.02668161 C6.96890389,2.91586707 6.37468124,3.23931922 5.79380946,3.58153957 C5.21293767,3.92375991 4.88101093,4.3589363 4.88101093,4.3589363 L5.10962257,3.02668161 L2.39466362,3.02668161 Z"
+     id="path2"
+     style="fill:#389fd6;fill-opacity:1" />
+</svg>

@@ -112,7 +112,7 @@
 		<!-- Add your actions here -->
         <action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
                 text="Open Terminal at the Current Maven Module Path"
-                icon="/krasa/mavenhelper/icons/OpenTerminal.png">
+                icon="/krasa/mavenhelper/icons/OpenTerminal.svg">
 			<add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
 			<add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
 			<add-to-group group-id="RunMenu" anchor="first"/>
@@ -121,19 +121,19 @@
 		</action>
         <action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction"
                 text="Run Maven Goal"
-                description="Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.png">
+                description="Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.svg">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
 		</action>
         <action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction"
                 text="Run Maven Goal on Root Module"
-                description="Run Maven Goal on Root Module" icon="/krasa/mavenhelper/icons/runMaven.png">
+                description="Run Maven Goal on Root Module" icon="/krasa/mavenhelper/icons/runMaven.svg">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
 		</action>
 		<action id="MavenHelper.CreateCustomGoalAction" class="krasa.mavenhelper.action.CreateCustomGoalAction"
 				text="Run New Maven Goal..."
-				description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.png">
+				description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.svg">
 			<add-to-group group-id="RunMenu" anchor="first"/>
 		</action>
 	</actions>
