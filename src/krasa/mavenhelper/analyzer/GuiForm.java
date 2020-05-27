@@ -469,7 +469,7 @@ public class GuiForm implements Disposable {
 			boolean newIDE = VersionComparatorUtil.compare(build.asStringWithoutProductCode(), "145.258") >= 0;
 			boolean newMaven = VersionComparatorUtil.compare(server.getCurrentMavenVersion(), "3.1.1") >= 0;
 
-			if (showNoConflictsLabel && baselineVersion >= 139) {
+			if (showNoConflictsLabel && baselineVersion >= 139 && baselineVersion < 202) {
 				boolean containsProperty = (baselineVersion == 139 && containsCompatResolver139) || (baselineVersion >= 140 && containsCompatResolver140);
 				conflictsWarning = !containsProperty && !useMaven2;
 
