@@ -1,5 +1,6 @@
 package krasa.mavenhelper.analyzer.action;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,6 +24,8 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager;
  * @author Vojtech Krasa
  */
 public abstract class BaseAction extends DumbAwareAction {
+	private static final Logger LOG = Logger.getInstance(BaseAction.class);
+
 	public static final String MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION = "Maven Helper - Dependency Analyzer - notification";
 
 	protected final Project project;
@@ -60,8 +63,12 @@ public abstract class BaseAction extends DumbAwareAction {
 			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 			if (psiFile instanceof XmlFile) {
 				return (XmlFile) psiFile;
+			} else {
+				LOG.error("Not XmlFile "+psiFile);
 			}
 		}
+		LOG.error("XmlFile null for virtualFile="+virtualFile + "; artifact="+artifact);
+
 		return null;
 	}
 
