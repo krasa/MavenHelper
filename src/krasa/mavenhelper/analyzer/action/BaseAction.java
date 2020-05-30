@@ -54,7 +54,13 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	protected DomFileElement getDomFileElement(MavenArtifactNode mavenArtifactNode) {
 		XmlFile xmlFile = getXmlFile(mavenArtifactNode);
-		return xmlFile == null ? null : DomManager.getDomManager(project).getFileElement(xmlFile, MavenDomProjectModel.class);
+		if (xmlFile == null) return null;
+
+		DomFileElement<MavenDomProjectModel> fileElement = DomManager.getDomManager(project).getFileElement(xmlFile, MavenDomProjectModel.class);
+		if (fileElement == null) {
+			LOG.error("DomFileElement<MavenDomProjectModel> null for file="+xmlFile.getVirtualFile() );
+		}
+		return fileElement;
 	}
 
 	protected XmlFile getXmlFile(MavenArtifactNode artifact) {
@@ -64,7 +70,8 @@ public abstract class BaseAction extends DumbAwareAction {
 			if (psiFile instanceof XmlFile) {
 				return (XmlFile) psiFile;
 			} else {
-				LOG.error("Not XmlFile "+psiFile);
+				Object o = psiFile != null ? psiFile.getVirtualFile() : "";
+				LOG.error("Not XmlFile " + psiFile + " " + o);
 			}
 		}
 		LOG.error("XmlFile null for virtualFile="+virtualFile + "; artifact="+artifact);
