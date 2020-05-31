@@ -1,8 +1,26 @@
 package krasa.mavenhelper.analyzer.action;
 
+import com.intellij.diagram.DiagramBuilder;
+import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.Utils;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.ui.components.JBList;
+import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.NanoXmlUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.*;
+import org.jetbrains.idea.maven.ext.uml.MavenElement;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.MavenProject;
 
 import com.intellij.notification.Notification;
@@ -13,6 +31,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xml.DomFileElement;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
 
 /**
  * @author Vojtech Krasa
@@ -23,8 +47,10 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 		super(project, mavenProject, myTreeNode, "Exclude");
 	}
 
+
+
 	private void exclude() {
-		final MavenArtifact artifactToExclude = mavenArtifactNode.getArtifact();
+		final MavenArtifact artifactToExclude = myArtifact.getArtifact();
 		final MavenArtifactNode oldestParent = getOldestParentMavenArtifact();
 
 		DomFileElement domFileElement = getDomFileElement(oldestParent);
@@ -49,25 +75,15 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 			}
 			if (!found) {
 				final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
-						"Parent dependency not found, it is probably in parent pom", NotificationType.WARNING);
+						"Parent dependency not found, it is probably in the parent pom", NotificationType.WARNING);
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						Notifications.Bus.notify(notification, project);
+						Notifications.Bus.notify(notification, myProject);
 					}
 				});
 			}
-		} else {
-			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
-					"Pom file not found", NotificationType.WARNING);
-			ApplicationManager.getApplication().invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					Notifications.Bus.notify(notification, project);
-				}
-			});
 		}
-
 	}
 
 	private void createExclusion(MavenArtifact artifactToExclude, MavenDomExclusions exclusions) {
@@ -79,7 +95,7 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		// CommandProcessor for undo and formatting
-		CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+		CommandProcessor.getInstance().executeCommand(myProject, new Runnable() {
 			public void run() {
 				ApplicationManager.getApplication().runWriteAction(new Runnable() {
 					public void run() {

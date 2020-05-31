@@ -43,7 +43,7 @@ public class JumpToSourceAction extends BaseAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		final Navigatable navigatable = getNavigatable(mavenArtifactNode, project, mavenProject);
+		final Navigatable navigatable = getNavigatable(myArtifact, myProject, myMavenProject);
 		if (navigatable != null && navigatable.canNavigate()) {
 			navigatable.navigate(true);
 		} else {
@@ -52,7 +52,7 @@ public class JumpToSourceAction extends BaseAction {
 			ApplicationManager.getApplication().invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					Notifications.Bus.notify(notification, project);
+					Notifications.Bus.notify(notification, myProject);
 				}
 			});
 		}

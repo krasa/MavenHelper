@@ -1,6 +1,15 @@
 package krasa.mavenhelper.analyzer.action;
 
+import com.intellij.diagram.DiagramColors;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -8,17 +17,27 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.ui.JBColor;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericDomValue;
+import icons.MavenIcons;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomShortArtifactCoordinates;
+import org.jetbrains.idea.maven.ext.uml.MavenElement;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.model.MavenArtifactState;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.idea.maven.utils.MavenArtifactScope;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Vojtech Krasa
@@ -28,21 +47,21 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	public static final String MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION = "Maven Helper - Dependency Analyzer - notification";
 
-	protected final Project project;
-	protected final MavenProject mavenProject;
-	protected final MavenArtifactNode mavenArtifactNode;
+	protected final Project myProject;
+	protected final MavenProject myMavenProject;
+	protected final MavenArtifactNode myArtifact;
 
-	public BaseAction(Project project, MavenProject mavenProject, MavenArtifactNode myTreeNode, final String text) {
+	public BaseAction(Project myProject, MavenProject myMavenProject, MavenArtifactNode myTreeNode, final String text) {
 		super(text);
-		this.project = project;
-		this.mavenProject = mavenProject;
-		mavenArtifactNode = myTreeNode;
+		this.myProject = myProject;
+		this.myMavenProject = myMavenProject;
+		myArtifact = myTreeNode;
 	}
 
 	protected MavenArtifactNode getOldestParentMavenArtifact() {
-		MavenArtifactNode oldestParent = mavenArtifactNode.getParent();
+		MavenArtifactNode oldestParent = myArtifact.getParent();
 		if (oldestParent == null) {
-			return mavenArtifactNode;
+			return myArtifact;
 		}
 		MavenArtifactNode parentNode = oldestParent.getParent();
 		while (parentNode != null) {
@@ -54,24 +73,71 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	protected DomFileElement getDomFileElement(MavenArtifactNode mavenArtifactNode) {
 		XmlFile xmlFile = getXmlFile(mavenArtifactNode);
-		if (xmlFile == null) return null;
+		if (xmlFile == null) {
+//			showError(mavenArtifactNode);
+			return null;
+		}
+		DomFileElement<MavenDomProjectModel> fileElement = DomManager.getDomManager(myProject).getFileElement(xmlFile, MavenDomProjectModel.class);
 
-		DomFileElement<MavenDomProjectModel> fileElement = DomManager.getDomManager(project).getFileElement(xmlFile, MavenDomProjectModel.class);
 		if (fileElement == null) {
-			LOG.error("DomFileElement<MavenDomProjectModel> null for file="+xmlFile.getVirtualFile() );
+			showError(xmlFile);
 		}
 		return fileElement;
 	}
 
+//	private void showError(MavenArtifactNode mavenArtifactNode) {
+//		final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
+//				"Pom file not found for "+mavenArtifactNode, NotificationType.ERROR);
+//		ApplicationManager.getApplication().invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				Notifications.Bus.notify(notification, myProject);
+//			}
+//		});}
+
+
+	private void showError(XmlFile xmlFile) {
+		String fileType = xmlFile.getFileType().toString();
+		String pluginName = "null";
+
+		PluginId pluginByClassName = PluginManagerCore.getPluginByClassName(xmlFile.getFileType().getClass().getCanonicalName());
+		if (pluginByClassName != null) {
+			IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginByClassName);
+			if (plugin != null) {
+				pluginName = plugin.getName();
+			}
+		}
+		if (!fileType.startsWith("com.intellij")) {
+			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
+					"Pom file not found. Possible plugin conflict with plugin: '" + pluginName + "'.\n" +
+							"" + fileType + "; " + xmlFile.getVirtualFile(), NotificationType.ERROR);
+			ApplicationManager.getApplication().invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					Notifications.Bus.notify(notification, myProject);
+				}
+			});
+		} else {
+			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
+					"Pom file not found. " + fileType + "; " + xmlFile.getVirtualFile(), NotificationType.WARNING);
+			ApplicationManager.getApplication().invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					Notifications.Bus.notify(notification, myProject);
+				}
+			});
+		}
+	}
+
 	protected XmlFile getXmlFile(MavenArtifactNode artifact) {
-		VirtualFile virtualFile = getVirtualFile(artifact, project, mavenProject);
+		VirtualFile virtualFile = getVirtualFile(artifact, myProject, myMavenProject);
 		if (virtualFile != null) {
-			PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+			PsiFile psiFile = PsiManager.getInstance(myProject).findFile(virtualFile);
 			if (psiFile instanceof XmlFile) {
 				return (XmlFile) psiFile;
 			} else {
 				Object o = psiFile != null ? psiFile.getVirtualFile() : "";
-				LOG.error("Not XmlFile " + psiFile + " " + o);
+				LOG.error("Not XmlFile " + psiFile + " " + o+"; artifact="+artifact);
 			}
 		}
 		LOG.error("XmlFile null for virtualFile="+virtualFile + "; artifact="+artifact);

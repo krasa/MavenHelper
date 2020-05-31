@@ -74,7 +74,7 @@ public class LeftTreePopupHandler extends PopupHandler {
 
 					DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) selectedNode.getPath()[1];
 					Enumeration enumeration = treeNode.breadthFirstEnumeration();
-					MavenArtifact excludedArtifact = mavenArtifactNode.getArtifact();
+					MavenArtifact excludedArtifact = myArtifact.getArtifact();
 					java.util.List<DefaultMutableTreeNode> toRemove = new ArrayList<DefaultMutableTreeNode>();
 					while (enumeration.hasMoreElements()) {
 						DefaultMutableTreeNode o = (DefaultMutableTreeNode) enumeration.nextElement();

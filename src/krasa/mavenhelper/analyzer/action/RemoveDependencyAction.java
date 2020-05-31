@@ -25,7 +25,7 @@ public class RemoveDependencyAction extends BaseAction {
 	}
 
 	private void exclude() {
-		DomFileElement domFileElement = getDomFileElement(mavenArtifactNode);
+		DomFileElement domFileElement = getDomFileElement(myArtifact);
 
 		if (domFileElement != null) {
 			final MavenDomProjectModel rootElement = (MavenDomProjectModel) domFileElement.getRootElement();
@@ -33,7 +33,7 @@ public class RemoveDependencyAction extends BaseAction {
 			boolean found = false;
 
 			for (MavenDomDependency mavenDomDependency : dependencies.getDependencies()) {
-				if (isSameDependency(mavenArtifactNode.getArtifact(), mavenDomDependency)) {
+				if (isSameDependency(myArtifact.getArtifact(), mavenDomDependency)) {
 					found = true;
 					mavenDomDependency.undefine();
 					dependencyDeleted();
@@ -41,11 +41,11 @@ public class RemoveDependencyAction extends BaseAction {
 			}
 			if (!found) {
 				final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
-						"Parent dependency not found, it is probably in parent pom", NotificationType.WARNING);
+						"Parent dependency not found, it is probably in the parent pom", NotificationType.WARNING);
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						Notifications.Bus.notify(notification, project);
+						Notifications.Bus.notify(notification, myProject);
 					}
 				});
 			}
@@ -55,7 +55,7 @@ public class RemoveDependencyAction extends BaseAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		// CommandProcessor for undo and formatting
-		CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+		CommandProcessor.getInstance().executeCommand(myProject, new Runnable() {
 			public void run() {
 				ApplicationManager.getApplication().runWriteAction(new Runnable() {
 					public void run() {
