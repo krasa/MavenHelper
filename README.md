@@ -3,7 +3,8 @@ Maven Helper  [![Donate][badge-paypal-img]][badge-paypal]
 IntelliJ plugin - https://plugins.jetbrains.com/plugin/7179 
 
 ---
-Project setup: [gif](projectSetup.gif) [mp4](https://mega.nz/#!HupmEChL!zMlxvYjuR3qjnyZnHuvPn6E3BC2aU1VBX_vkB7_cEWs)
+### Project setup:
+- [gif](projectSetup.gif) [mp4](https://mega.nz/#!HupmEChL!zMlxvYjuR3qjnyZnHuvPn6E3BC2aU1VBX_vkB7_cEWs)
 - use https://plugins.jetbrains.com/plugin/6844-useful-actions -  `Tools | Add bundled plugins to IntelliJ Platform Plugin SDK`  - for easier setup
 
 ------
