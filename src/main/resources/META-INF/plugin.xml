@@ -1,0 +1,162 @@
+<idea-plugin version="2" url="https://github.com/krasa/MavenHelper">
+
+	<id>MavenRunHelper</id>
+	<name>Maven Helper</name>
+	<version>4.9.193.000.0</version>
+
+	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
+
+	<description><![CDATA[
+	    A must have plugin for working with Maven.<br><br>
+		Provides:<br>
+		<ul>
+		<li>easy way for analyzing and excluding conflicting dependencies</li>
+        <li>actions to run/debug maven goals for a module that contains the current file or on the root module</li>
+              <li>action to open terminal at the current maven module path</li> 
+        <li>actions to run/debug the current test file.
+        <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
+        </li> 
+        </ul>
+        <br>    
+        Usage:<br>
+		<ul>
+        <li>Right click in Editor | Run Maven<br>
+        </li><li>Right click in Project View Toolbar | (Run|Debug) Maven<br>
+        </li><li>CTRL + ALT + R - "Run Maven Goal" popup (you can use Delete key in the popup)<br>
+        </li><li>CTRL + SHIFT + ALT + R - "Run Maven Goal on Root Module" popup (you can use Delete key in the popup)<br>
+        <br>
+        </li><li>Customize goals: Settings | Other Settings | Maven Helper <br>
+        </li><li>Define shortcuts: Settings | Keymap | Plug-ins | Maven Helper <br>
+    	<br>
+        </li><li>Open pom file, click on 'Dependency Analyzer' tab, right click in the tree for context actions.<br>
+        </li>
+	    </ul>
+	       
+        <br>
+      ]]></description>
+
+	<change-notes><![CDATA[
+            <br>4.9
+            <br> - IntelliJ plugin conflict warnings <a href="https://github.com/krasa/MavenHelper/issues/55">#55</a>
+            <br>4.8
+            <br> - IntelliJ 2020.2 compatibility
+            <br> - new icons thanks to <a href="https://github.com/tan9">Pei-Tang Huang</a>
+            <br>4.7
+            <br> - Resolve Workspace artifacts option
+            <br>4.6
+            <br> - IntelliJ 2020 compatibility
+            <br>4.5
+            <br> - Fixed conflict false negative due to a <a href="https://youtrack.jetbrains.com/issue/IDEA-215596">bugged dependency resolution by IntelliJ</a> 
+            <br>4.4
+            <br> - Goals rearranging fixed 
+            <br>4.3
+            <br> - Exception fix
+            <br>4.2
+            <br> - Fixed running goals on the root module
+            <br> - Added options to debug, edit, delete, create run configuration to "Run Maven Goal" popup
+            <br> - Added settings to disable delete key in popups
+            <br>4.1
+            <br> - Better Alias editor
+            <br>4.0
+            <br> - Dependency Analyzer improvements
+            <br>3.9
+            <br> - New GUI
+            <br>3.8
+            <br> - Added: Open Terminal at the Current Module
+            <br> - Added: Goal Aliases
+            <br>3.7
+            <br> - IntelliJ 2018.2 EAP compatibility
+            <br>3.6
+            <br> - Option in settings for running goals on non-imported poms
+            <br>3.5
+            <br> - added Delete key shortcut for popups
+            <br>3.4
+            <br> - added a shortcut for Jump To Source
+            <br>3.3
+            <br> - Improved displaying of version conflicts - colors, the right version according to Maven rules (Thanks to <a href="https://github.com/fengyie007">fengyie007</a>)
+            <br> - Moved buttons
+            <br> - Remembering the last selected radio button
+            <br>3.2
+            <br> - warning for removing -Didea.maven3.use.compat.resolver
+            <br>3.1
+            <br> - fixed false positive of warning message
+            <br>3.0
+            <br> - IntelliJ 2016.2 EAP compatibility
+            <br>2.9 
+            <br> - IntelliJ 2016 compatibility
+            <br>2.8 
+            <br> - Dependency Analyzer improvements: new All Dependencies Tree, improved excluding and jumping into source
+            <br>2.7 
+            <br> - IJ 15 compatibility
+            <br>2.6
+            <br> - button for fixing IDEA-133331 
+            <br>2.5
+            <br> - support for maven-failsafe-plugin, and maven-surefire-plugin integration tests
+            <br> - ability to define shortcuts for Run/Debug Current File action
+            <br>2.4
+            <br> - debug parameters changed to: -DforkMode=never -DforkCount=0 -DreuseForks=false
+            <br>2.3
+            <br> - exception fix for IJ 140.2110
+            <br> - check for <a href="https://youtrack.jetbrains.com/issue/IDEA-133331">IDEA-133331</a>
+            <br>2.2 - recompiled for IJ 138.1503
+            <br>2.1 - added quick switch action "Quick Run Maven Goal" - CTRL + ALT + R
+            <br>2.0 - fixed "no conflicts" field
+            <br>...
+			]]>
+	</change-notes>
+
+	<idea-version since-build="193.000"/>
+
+	<application-components>
+	</application-components>
+
+	<project-components>
+	</project-components>
+
+	<actions>
+		<!-- Add your actions here -->
+        <action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
+                text="Open Terminal at the Current Maven Module Path"
+                icon="/krasa/mavenhelper/icons/OpenTerminal.svg">
+			<add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
+			<add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
+			<add-to-group group-id="RunMenu" anchor="first"/>
+<!--			<add-to-group group-id="RevealGroup" anchor="last"/>-->
+<!--  		 	<add-to-group group-id="TouchBarDefault_alt" anchor="last"/>-->
+		</action>
+        <action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction"
+                text="Run Maven Goal"
+                description="Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.svg">
+			<add-to-group group-id="RunMenu" anchor="first"/>
+			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
+		</action>
+        <action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction"
+                text="Run Maven Goal on Root Module"
+                description="Run Maven Goal on Root Module" icon="/krasa/mavenhelper/icons/runMaven.svg">
+			<add-to-group group-id="RunMenu" anchor="first"/>
+			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
+		</action>
+		<action id="MavenHelper.CreateCustomGoalAction" class="krasa.mavenhelper.action.CreateCustomGoalAction"
+				text="Run New Maven Goal..."
+				description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.svg">
+			<add-to-group group-id="RunMenu" anchor="first"/>
+		</action>
+	</actions>
+
+
+	<extensions defaultExtensionNs="com.intellij">
+		<!-- Add your extensions here -->
+		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
+		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper"
+								 displayName="Maven Helper"/>
+		<projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
+		<postStartupActivity implementation="krasa.mavenhelper.ShortcutStartupActivity"/>
+		<applicationService serviceImplementation="krasa.mavenhelper.ApplicationService"/>
+
+	</extensions>
+
+	<depends>org.jetbrains.idea.maven</depends>
+	<depends optional="true">org.jetbrains.plugins.terminal</depends>
+	<depends>com.intellij.modules.java</depends>
+
+</idea-plugin>

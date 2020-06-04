@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="pluginIcon_dark.svg"
+   id="svg4"
+   version="1.1"
+   viewBox="0 0 40 40"
+   height="40"
+   width="40">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg4"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="21.559322"
+     inkscape:cx="15.830508"
+     inkscape:zoom="14.75"
+     showgrid="false"
+     id="namedview6"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <path
+     style="fill:#3592c4;fill-opacity:1;stroke-width:2.3669"
+     id="path2"
+     d="M 6.7211696,8.0631527 2,31.651484 H 8.4815076 L 11.427649,15.856456 c 0,0 2.553322,-2.227503 4.517416,-2.025003 1.964093,0.202488 1.964093,2.245021 1.964093,2.245021 l -2.749731,15.592528 h 6.484483 l 3.139575,-15.812546 c 0,0 2.160504,-2.227503 4.321006,-2.025003 2.160504,0.202488 1.767686,2.447521 1.767686,2.447521 l -2.946142,15.37251 h 6.67792 L 37.942913,13.64647 c 0.392818,-2.852521 -1.290853,-5.3210302 -3.535368,-5.5833173 -2.244515,-0.2622869 -4.517416,0.3007916 -6.48151,1.533311 -1.964094,1.2325193 -3.14255,2.8350053 -3.14255,2.8350053 0,0 -1.013646,-4.1060292 -4.124596,-4.3683163 -3.110949,-0.2622869 -4.517415,0.503292 -5.89228,1.3132935 -1.374866,0.8100008 -2.160504,1.8400208 -2.160504,1.8400208 l 0.541102,-3.1533143 z"
+     fill-rule="evenodd"
+     fill="#6E6E6E" />
+</svg>
