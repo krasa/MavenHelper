@@ -184,6 +184,13 @@ public abstract class BaseAction extends DumbAwareAction {
 		if (type.getValue() !=null && !mavenArtifact.getType().equals(type.getValue())) {
 			return false;
 		}
+
+		if (scope.getValue() == null && !mavenArtifact.getScope().equals("compile")) {
+			return false;
+		}
+		if (type.getValue() == null && !mavenArtifact.getType().equals("jar")) {
+			return false;
+		}
 		return true;
 	}
 
