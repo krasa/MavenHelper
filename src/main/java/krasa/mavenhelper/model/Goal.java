@@ -1,6 +1,7 @@
 package krasa.mavenhelper.model;
 
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -36,6 +37,6 @@ public class Goal extends DomainObject {
 		String cmd = getCommandLine();
 		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext);
 
-		return ContainerUtil.newArrayList(StringUtil.tokenize(new StringTokenizer(cmd)));
+		return ContainerUtil.newArrayList(StringUtil.tokenize(new CommandLineTokenizer(cmd)));
 	}
 }
