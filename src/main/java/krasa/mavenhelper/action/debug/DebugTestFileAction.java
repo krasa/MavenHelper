@@ -5,8 +5,10 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClassOwner;
 import krasa.mavenhelper.action.RunTestFileAction;
+import krasa.mavenhelper.analyzer.ComparableVersion;
 import krasa.mavenhelper.icons.MyIcons;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
+import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
@@ -26,8 +28,23 @@ public class DebugTestFileAction extends RunTestFileAction {
 	@Override
 	protected List<String> getGoals(AnActionEvent e, PsiClassOwner psiFile, MavenProject mavenProject) {
 		List<String> goals = super.getGoals(e, psiFile, mavenProject);
-		goals.addAll(Debug.DEBUG_FORK_MODE);
+		addParams(mavenProject, goals);
 		return goals;
+	}
+
+	private void addParams(MavenProject mavenProject, List<String> goals) {
+		MavenPlugin surefire = mavenProject.findPlugin("org.apache.maven.plugins", "maven-surefire-plugin");
+		if (surefire != null) {
+			ComparableVersion version = new ComparableVersion(surefire.getVersion());
+			ComparableVersion minimumForMethodTest = new ComparableVersion("2.14");
+			if (minimumForMethodTest.compareTo(version) == -1) {
+				goals.addAll(Debug.DEBUG_FORK_MODE_LEGACY);
+			} else {
+				goals.addAll(Debug.DEBUG_FORK_MODE);
+			}
+		} else {
+			goals.addAll(Debug.DEBUG_FORK_MODE);
+		}
 	}
 
 	@Override

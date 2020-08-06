@@ -8,7 +8,9 @@ import java.util.List;
  */
 public class Debug {
 
-	public static final List<String> DEBUG_FORK_MODE = Arrays.asList("-DforkMode=never", "-DforkCount=0",
+	public static final List<String> DEBUG_FORK_MODE = Arrays.asList("-DforkCount=0", "-DreuseForks=false");
+
+	public static final List<String> DEBUG_FORK_MODE_LEGACY = Arrays.asList("-DforkMode=never", "-DforkCount=0",
 			"-DreuseForks=false");
 
 
