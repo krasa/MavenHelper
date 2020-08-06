@@ -36,8 +36,7 @@ public class DebugTestFileAction extends RunTestFileAction {
 		MavenPlugin surefire = mavenProject.findPlugin("org.apache.maven.plugins", "maven-surefire-plugin");
 		if (surefire != null) {
 			ComparableVersion version = new ComparableVersion(surefire.getVersion());
-			ComparableVersion minimumForMethodTest = new ComparableVersion("2.14");
-			if (minimumForMethodTest.compareTo(version) == -1) {
+			if (new ComparableVersion("2.14").compareTo(version) >= 1) {
 				goals.addAll(Debug.DEBUG_FORK_MODE_LEGACY);
 			} else {
 				goals.addAll(Debug.DEBUG_FORK_MODE);
