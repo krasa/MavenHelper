@@ -1,0 +1,54 @@
+#!groovy
+// The above triggers groovy syntax highlighting in vim
+buildscript {
+    repositories {
+        maven {
+            url 'https://jetbrains.bintray.com/intellij-plugin-service'
+        }
+    }
+}
+plugins {
+    id "org.jetbrains.intellij" version "0.4.26"
+    id "java"
+}
+
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'idea'
+
+group = 'krasa'
+description = 'MavenRunHelper'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+intellij {
+    version '202.7319.50'
+    plugins = ['java','maven','terminal','uml','maven-ext']
+    pluginName 'MavenRunHelper'
+    updateSinceUntilBuild false
+    type 'IU'
+    buildSearchableOptions.enabled = false
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url 'https://jetbrains.bintray.com/intellij-plugin-service'
+    }
+}
+
+dependencies {
+    compile "org.objenesis:objenesis:1.2"
+    compile "org.apache.maven.shared:maven-shared-utils:0.7"
+    compile 'commons-beanutils:commons-beanutils:1.9.3'
+    compile 'uk.com.robust-it:cloning:1.8.5'
+    // provided by the core:
+    testCompile 'net.bytebuddy:byte-buddy-dep:1.9.4'
+    testCompile 'org.assertj:assertj-core:3.16.1'
+    testCompile 'org.mockito:mockito-core:3.3.3'
+}
+
