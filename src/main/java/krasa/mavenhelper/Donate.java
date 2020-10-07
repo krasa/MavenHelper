@@ -1,13 +1,12 @@
 package krasa.mavenhelper;
 
+import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.diagnostic.Logger;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class Donate {
 	private static final Logger LOG = Logger.getInstance(Donate.class);

@@ -1,14 +1,12 @@
 package krasa.mavenhelper.action.debug;
 
-import krasa.mavenhelper.action.RunConfigurationAction;
-
-import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
-
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import krasa.mavenhelper.action.RunConfigurationAction;
+import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 
 /**
  * @author Vojtech Krasa

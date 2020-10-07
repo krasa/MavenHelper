@@ -1,12 +1,11 @@
 package krasa.mavenhelper.analyzer;
 
-import java.util.Enumeration;
-
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.util.Enumeration;
 
 public class TreeUtils {
 	public static void expandAll(JTree rightTree) {

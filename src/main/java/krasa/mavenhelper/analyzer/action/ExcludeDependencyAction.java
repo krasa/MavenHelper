@@ -1,28 +1,5 @@
 package krasa.mavenhelper.analyzer.action;
 
-import com.intellij.diagram.DiagramBuilder;
-import com.intellij.diagram.DiagramNode;
-import com.intellij.diagram.Utils;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.ui.components.JBList;
-import com.intellij.util.xml.DomManager;
-import com.intellij.util.xml.GenericDomValue;
-import com.intellij.util.xml.NanoXmlUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.dom.model.*;
-import org.jetbrains.idea.maven.ext.uml.MavenElement;
-import org.jetbrains.idea.maven.model.MavenArtifact;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.model.MavenId;
-import org.jetbrains.idea.maven.project.MavenProject;
-
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -31,12 +8,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xml.DomFileElement;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.*;
+import org.jetbrains.idea.maven.dom.model.*;
+import org.jetbrains.idea.maven.model.MavenArtifact;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
 
 /**
  * @author Vojtech Krasa

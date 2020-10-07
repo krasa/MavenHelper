@@ -1,8 +1,5 @@
 package krasa.mavenhelper.action;
 
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
-import org.jetbrains.plugins.terminal.TerminalView;
-
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -12,6 +9,8 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
+import org.jetbrains.plugins.terminal.TerminalView;
 
 public class OpenTerminalAction extends AnAction implements DumbAware {
 

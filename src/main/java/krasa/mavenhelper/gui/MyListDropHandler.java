@@ -1,11 +1,10 @@
 package krasa.mavenhelper.gui;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import com.intellij.ui.components.JBList;
 
 import javax.swing.*;
-
-import com.intellij.ui.components.JBList;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 
 /**
  * @author Vojtech Krasa

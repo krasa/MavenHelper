@@ -1,9 +1,5 @@
 package krasa.mavenhelper.analyzer.action;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.model.MavenArtifactNode;
-import org.jetbrains.idea.maven.project.MavenProject;
-
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -15,6 +11,9 @@ import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.KeyStrokeAdapter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.model.MavenArtifactNode;
+import org.jetbrains.idea.maven.project.MavenProject;
 
 /**
  * @author Vojtech Krasa

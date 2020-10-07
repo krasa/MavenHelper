@@ -9,7 +9,6 @@ import krasa.mavenhelper.action.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class Goal extends DomainObject {
 	private String commandLine;
