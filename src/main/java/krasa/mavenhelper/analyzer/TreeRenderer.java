@@ -78,7 +78,11 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 			}
 			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
-
+			if (showSize.isSelected()) {
+				long size = myTreeUserObject.getSize();
+				long totalSize = myTreeUserObject.getTotalSize();
+				append(" - " + size + " KB (" + totalSize + " KB)");
+			}
 
 			checkForBug(myTreeUserObject);
 			if (!omitted && conflict_AlternativeMethod) {
@@ -116,7 +120,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 			if (showSize.isSelected()) {
 				long size = myTreeUserObject.getSize();
-				long totalSize = myTreeUserObject.getTotalSize(treeNode);
+				long totalSize = myTreeUserObject.getTotalSize();
 				append(" - " + size + " KB (" + totalSize + " KB)");
 			}
 

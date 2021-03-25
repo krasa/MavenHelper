@@ -3,10 +3,6 @@ package krasa.mavenhelper.analyzer;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import java.util.Enumeration;
-
 /**
  * @author Vojtech Krasa
  */
@@ -48,17 +44,18 @@ public class MyTreeUserObject {
 		return size;
 	}
 
-	public long getTotalSize(DefaultMutableTreeNode artifact) {
+	public long getTotalSize() {
 		if (totalSize == null) {
-			Long size = getSize();
-			Enumeration<TreeNode> children = artifact.children();
-			while (children.hasMoreElements()) {
-				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
-				MyTreeUserObject child = (MyTreeUserObject) childNode.getUserObject();
-				size += child.getTotalSize(childNode);
-			}
-			totalSize = size;
+			totalSize = getTotalSize(mavenArtifactNode);
 		}
 		return totalSize;
+	}
+
+	private long getTotalSize(MavenArtifactNode current) {
+		long size = current.getArtifact().getFile().length() / 1024;
+		for (MavenArtifactNode dependency : current.getDependencies()) {
+			size += getTotalSize(dependency);
+		}
+		return size;
 	}
 }
