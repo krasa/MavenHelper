@@ -3,6 +3,7 @@ package krasa.mavenhelper.analyzer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
@@ -46,7 +47,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		runtimeBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, runtimeAttributes.getFgColor());
 	}
 
-	public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
+	public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 									  int row, boolean hasFocus) {
 		Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
 		if (!(userObject instanceof MyTreeUserObject))
@@ -109,6 +110,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			append(artifact.getArtifactId(), boldAttributes);
 			append(" : " + currentVersion, attributes);
 			append(" [" + classifier + artifact.getScope() + "]", attributes);
+
+			long totalSpace = artifact.getFile().length() / 1024;
+			append(" (" + totalSpace + " KB)");
 
 			if (error) {
 				String winner = getConflictWinner(mavenArtifactNode);

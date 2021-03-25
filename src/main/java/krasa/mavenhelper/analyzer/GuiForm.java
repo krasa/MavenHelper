@@ -342,6 +342,8 @@ public class GuiForm implements Disposable {
 				append(split[1], boldAttributes);
 				append(" : " + rightVersion, attributes);
 
+				long size = value.rightArtifact.getArtifact().getFile().length() / 1024;
+				append(" (" + size + " KB)");
 			}
 		});
 		rightTree = new MyHighlightingTree(project);

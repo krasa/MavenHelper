@@ -13,21 +13,21 @@ public class MyListNode {
 
 	protected final String key;
 	protected final List<MavenArtifactNode> value;
-	protected String rightVersion;
+	protected MavenArtifactNode rightArtifact;
 	protected boolean conflict;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
 		key = s.getKey();
 		value = s.getValue();
-		initRightVersion();
+		initRightArtifact();
 		initConflict();
 	}
 
-	private void initRightVersion() {
+	private void initRightArtifact() {
 		if (value != null && !value.isEmpty()) {
 			for (MavenArtifactNode mavenArtifactNode : value) {
 				if (mavenArtifactNode.getState() == MavenArtifactState.ADDED) {
-					rightVersion = mavenArtifactNode.getArtifact().getVersion();
+					rightArtifact = mavenArtifactNode;
 					break;
 				}
 			}
@@ -50,7 +50,7 @@ public class MyListNode {
 	}
 
 	public String getRightVersion() {
-		return rightVersion;
+		return rightArtifact.getArtifact().getVersion();
 	}
 
 	@Override
