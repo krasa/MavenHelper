@@ -350,8 +350,9 @@ public class GuiForm implements Disposable {
 				append(" : " + rightVersion, attributes);
 
 				if (showSize.isSelected()) {
-					long size = value.rightArtifact.getArtifact().getFile().length() / 1024;
-					append(" (" + size + " KB)");
+					long size = value.getSize();
+					long totalSize = value.getTotalSize();
+					append(" - " + size + " KB (" + totalSize + " KB)");
 				}
 			}
 		});

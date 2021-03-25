@@ -15,12 +15,36 @@ public class MyListNode {
 	protected final List<MavenArtifactNode> value;
 	protected MavenArtifactNode rightArtifact;
 	protected boolean conflict;
+	private Long size;
+	private Long totalSize;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
 		key = s.getKey();
 		value = s.getValue();
 		initRightArtifact();
 		initConflict();
+	}
+
+	public long getSize() {
+		if (size == null) {
+			size = rightArtifact.getArtifact().getFile().length() / 1024;
+		}
+		return size;
+	}
+
+	public long getTotalSize() {
+		if (totalSize == null) {
+			totalSize = getTotalSize(rightArtifact);
+		}
+		return totalSize;
+	}
+
+	private long getTotalSize(MavenArtifactNode current) {
+		long size = current.getArtifact().getFile().length() / 1024;
+		for (MavenArtifactNode dependency : current.getDependencies()) {
+			size += getTotalSize(dependency);
+		}
+		return size;
 	}
 
 	private void initRightArtifact() {
