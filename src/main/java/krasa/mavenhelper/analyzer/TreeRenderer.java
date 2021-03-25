@@ -51,7 +51,8 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 									  int row, boolean hasFocus) {
-		Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+		Object userObject = treeNode.getUserObject();
 		if (!(userObject instanceof MyTreeUserObject))
 			return;
 
@@ -114,8 +115,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			append(" [" + classifier + artifact.getScope() + "]", attributes);
 
 			if (showSize.isSelected()) {
-				long totalSpace = artifact.getFile().length() / 1024;
-				append(" (" + totalSpace + " KB)");
+				long size = myTreeUserObject.getSize();
+				long totalSize = myTreeUserObject.getTotalSize(treeNode);
+				append(" - " + size + " KB (" + totalSize + " KB)");
 			}
 
 			if (error) {

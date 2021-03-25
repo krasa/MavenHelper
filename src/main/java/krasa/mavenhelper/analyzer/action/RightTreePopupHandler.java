@@ -87,7 +87,10 @@ public class RightTreePopupHandler extends PopupHandler {
 				// After d3 is excluded; must remove d2 and also d1 from the tree. But when d2 is excluded, remove only
 				// d2.
 
-				// when d2 is excluded, remove d3 for d2, but not d3 for d1
+				if (selectedNode.getParent() == null) {
+					throw new IllegalStateException("selectedNode.getParent() == null " + selectedNode);
+				}
+
 				if (selectedNode.getParent() != getRoot()) {
 					removeNodeNearestToRoot(selectedNode);
 					return;
@@ -109,7 +112,8 @@ public class RightTreePopupHandler extends PopupHandler {
 			private void removeNodeNearestToRoot(DefaultMutableTreeNode nodeForRemoval) {
 				TreeNode nodeForRemovalNearestToRoot = nodeForRemoval;
 				while (nodeForRemovalNearestToRoot.getParent() != null
-					&& nodeForRemovalNearestToRoot.getParent() != getRoot()) {
+						&& nodeForRemovalNearestToRoot.getParent().getParent() != null //https://github.com/krasa/MavenHelper/issues/58
+						&& nodeForRemovalNearestToRoot.getParent() != getRoot()) {
 					nodeForRemovalNearestToRoot = nodeForRemovalNearestToRoot.getParent();
 				}
 				getModel().removeNodeFromParent((MutableTreeNode) nodeForRemovalNearestToRoot);
