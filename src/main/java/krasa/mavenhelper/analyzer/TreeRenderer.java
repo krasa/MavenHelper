@@ -19,6 +19,7 @@ import java.awt.*;
 public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final JCheckBox showGroupId;
+	private final JCheckBox showSize;
 	private final GuiForm guiForm;
 	private final SimpleTextAttributes errorBoldAttributes;
 
@@ -32,8 +33,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 	private final SimpleTextAttributes runtimeBoldAttributes;
 	public static final SimpleTextAttributes ERROR_BOLD = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
 
-	public TreeRenderer(JCheckBox showGroupId, GuiForm guiForm) {
+	public TreeRenderer(JCheckBox showGroupId, JCheckBox showSize, GuiForm guiForm) {
 		this.showGroupId = showGroupId;
+		this.showSize = showSize;
 		this.guiForm = guiForm;
 		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 
@@ -111,8 +113,10 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			append(" : " + currentVersion, attributes);
 			append(" [" + classifier + artifact.getScope() + "]", attributes);
 
-			long totalSpace = artifact.getFile().length() / 1024;
-			append(" (" + totalSpace + " KB)");
+			if (showSize.isSelected()) {
+				long totalSpace = artifact.getFile().length() / 1024;
+				append(" (" + totalSpace + " KB)");
+			}
 
 			if (error) {
 				String winner = getConflictWinner(mavenArtifactNode);

@@ -95,6 +95,7 @@ public class GuiForm implements Disposable {
 	private JPanel leftPanelWrapper;
 	private MyHighlightingTree leftTree;
 	private JCheckBox showGroupId;
+	private JCheckBox showSize;
 	private JPanel buttonsPanel;
 	private JButton donate;
 	private JButton reimport;
@@ -242,7 +243,7 @@ public class GuiForm implements Disposable {
 		rightTree.setRootVisible(false);
 		rightTree.setShowsRootHandles(true);
 		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
-		rightTree.setCellRenderer(new TreeRenderer(showGroupId, this));
+		rightTree.setCellRenderer(new TreeRenderer(showGroupId, showSize, this));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree);
 		rightTree.addMouseListener(rightTreePopupHandler);
@@ -255,7 +256,7 @@ public class GuiForm implements Disposable {
 		leftTree.setRootVisible(false);
 		leftTree.setShowsRootHandles(true);
 		leftTree.expandPath(new TreePath(leftTreeRoot.getPath()));
-		leftTree.setCellRenderer(new TreeRenderer(showGroupId, this));
+		leftTree.setCellRenderer(new TreeRenderer(showGroupId, showSize, this));
 		leftTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		leftTreePopupHandler = new LeftTreePopupHandler(project, mavenProject, leftTree);
 		leftTree.addMouseListener(leftTreePopupHandler);
@@ -269,6 +270,12 @@ public class GuiForm implements Disposable {
 				TreeUtils.nodesChanged(GuiForm.this.rightTreeModel);
 				TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
 			}
+		});
+
+		showSize.addActionListener((event) -> {
+			leftPanelList.repaint();
+			TreeUtils.nodesChanged(GuiForm.this.rightTreeModel);
+			TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
 		});
 
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
@@ -342,8 +349,10 @@ public class GuiForm implements Disposable {
 				append(split[1], boldAttributes);
 				append(" : " + rightVersion, attributes);
 
-				long size = value.rightArtifact.getArtifact().getFile().length() / 1024;
-				append(" (" + size + " KB)");
+				if (showSize.isSelected()) {
+					long size = value.rightArtifact.getArtifact().getFile().length() / 1024;
+					append(" (" + size + " KB)");
+				}
 			}
 		});
 		rightTree = new MyHighlightingTree(project);
