@@ -28,6 +28,8 @@ import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
+import krasa.mavenhelper.analyzer.action.ListKeyStrokeAdapter;
+import krasa.mavenhelper.analyzer.action.ListPopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +65,9 @@ public class GuiForm implements Disposable {
 
 	public static final String WARNING = "Your settings indicates, that conflicts will not be visible, see IDEA-133331\n"
 		+ "If your project is Maven2 compatible, you could try one of the following:\n"
-		+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
-		+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
-		+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
+			+ "-use IJ 2016.1+ and configure it to use external Maven 3.1.1+ (File | Settings | Build, Execution, Deployment | Build Tools | Maven | Maven home directory)\n"
+			+ "-press Apply Fix button to alter Maven VM options for importer (might cause trouble for IJ 2016.1+)\n"
+			+ "-turn off File | Settings | Build, Execution, Deployment | Build Tools | Maven | Importing | Use Maven3 to import project setting\n";
 	protected static final Comparator<MavenArtifactNode> BY_ARTIFACT_ID = new Comparator<MavenArtifactNode>() {
 		@Override
 		public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
@@ -73,11 +75,12 @@ public class GuiForm implements Disposable {
 		}
 	};
 	private static final String LAST_RADIO_BUTTON = "MavenHelper.lastRadioButton";
+	public static final SimpleTextAttributes SIZE_ATTRIBUTES = SimpleTextAttributes.GRAY_ATTRIBUTES;
 
 	private final Project project;
 	private final VirtualFile file;
 	private MavenProject mavenProject;
-	private JBList leftPanelList;
+	protected JBList leftPanelList;
 	private MyHighlightingTree rightTree;
 	private JPanel rootPanel;
 
@@ -101,12 +104,12 @@ public class GuiForm implements Disposable {
 	private JButton reimport;
 	protected JEditorPane intellijBugLabel;
 	protected JEditorPane falsePositive;
-	protected DefaultListModel listDataModel;
+	protected MyDefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected final DefaultTreeModel rightTreeModel;
 	protected final DefaultTreeModel leftTreeModel;
-	protected final DefaultMutableTreeNode rightTreeRoot;
-	protected final DefaultMutableTreeNode leftTreeRoot;
+	protected final MyDefaultMutableTreeNode rightTreeRoot;
+	protected final MyDefaultMutableTreeNode leftTreeRoot;
 	protected ListSpeedSearch myListSpeedSearch;
 	protected List<MavenArtifactNode> dependencyTree;
 	protected CardLayout leftPanelLayout;
@@ -122,6 +125,7 @@ public class GuiForm implements Disposable {
 	private boolean manualReimport;
 	private RightTreePopupHandler rightTreePopupHandler;
 	private LeftTreePopupHandler leftTreePopupHandler;
+	private ListPopupHandler leftPanelListPopupHandler;
 
 	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
@@ -131,7 +135,7 @@ public class GuiForm implements Disposable {
 		this.mavenProject = mavenProject;
 
 		intellijBugLabel.setText("<html>\n" +
-			"  <head>\n" +
+				"  <head>\n" +
 			"\n" +
 			"  </head>\n" +
 			"  <body>\n" +
@@ -234,10 +238,10 @@ public class GuiForm implements Disposable {
 		});
 		noConflictsWarningLabel.setText(WARNING);
 		noConflictsWarningLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
-		
+
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
-		rightTreeRoot = new DefaultMutableTreeNode();
+		rightTreeRoot = new MyDefaultMutableTreeNode();
 		rightTreeModel = new DefaultTreeModel(rightTreeRoot);
 		rightTree.setModel(rightTreeModel);
 		rightTree.setRootVisible(false);
@@ -245,12 +249,12 @@ public class GuiForm implements Disposable {
 		rightTree.expandPath(new TreePath(rightTreeRoot.getPath()));
 		rightTree.setCellRenderer(new TreeRenderer(showGroupId, showSize, this));
 		rightTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree);
+		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree, this);
 		rightTree.addMouseListener(rightTreePopupHandler);
 		rightTree.setMavenProject(mavenProject);
-		
+
 		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
-		leftTreeRoot = new DefaultMutableTreeNode();
+		leftTreeRoot = new MyDefaultMutableTreeNode();
 		leftTreeModel = new DefaultTreeModel(leftTreeRoot);
 		leftTree.setModel(leftTreeModel);
 		leftTree.setRootVisible(false);
@@ -261,8 +265,12 @@ public class GuiForm implements Disposable {
 		leftTreePopupHandler = new LeftTreePopupHandler(project, mavenProject, leftTree);
 		leftTree.addMouseListener(leftTreePopupHandler);
 		leftTree.setMavenProject(mavenProject);
-			
-			
+
+
+		leftPanelListPopupHandler = new ListPopupHandler(project, mavenProject, leftPanelList, this);
+		leftPanelList.addMouseListener(leftPanelListPopupHandler);
+		leftPanelList.addKeyListener(new ListKeyStrokeAdapter(this));
+
 		showGroupId.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -273,9 +281,7 @@ public class GuiForm implements Disposable {
 		});
 
 		showSize.addActionListener((event) -> {
-			leftPanelList.repaint();
-			TreeUtils.nodesChanged(GuiForm.this.rightTreeModel);
-			TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
+			updateLeftPanel();
 		});
 
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
@@ -322,10 +328,9 @@ public class GuiForm implements Disposable {
 		});
 	}
 
-	
 	private void createUIComponents() {
-		listDataModel = new DefaultListModel();
-		leftPanelList = new JBList(listDataModel);
+		listDataModel = new MyDefaultListModel();
+		leftPanelList = new JBList((ListModel) listDataModel);
 		leftPanelList.addListSelectionListener(new MyListSelectionListener());
 		// no generics in IJ12
 		leftPanelList.setCellRenderer(new ColoredListCellRenderer() {
@@ -352,7 +357,7 @@ public class GuiForm implements Disposable {
 				if (showSize.isSelected()) {
 					long size = value.getSize();
 					long totalSize = value.getTotalSize();
-					append(" - " + size + " KB (" + totalSize + " KB)");
+					append(" - " + size + " KB (" + totalSize + " KB)", SIZE_ATTRIBUTES);
 				}
 			}
 		});
@@ -360,21 +365,23 @@ public class GuiForm implements Disposable {
 		leftTree = new MyHighlightingTree(project);
 	}
 
-	public static String sortByVersion(List<MavenArtifactNode> value) {
-		Collections.sort(value, new Comparator<MavenArtifactNode>() {
-			@Override
-			public int compare(MavenArtifactNode o1, MavenArtifactNode o2) {
-				DefaultArtifactVersion version = new DefaultArtifactVersion(o1.getArtifact().getVersion());
-				DefaultArtifactVersion version1 = new DefaultArtifactVersion(o2.getArtifact().getVersion());
-				return version1.compareTo(version);
-			}
-		});
-		return value.get(0).getArtifact().getVersion();
-	}
-
 	@Override
 	public void dispose() {
 		myProjectService.unregister(myEventListener);
+	}
+
+	public void switchToLeftTree(MavenArtifactNode myArtifact) {
+		allDependenciesAsTreeRadioButton.setSelected(true);
+		searchField.setText(myArtifact.getArtifact().getArtifactId());
+		updateLeftPanel();
+
+		TreeUtils.selectRows(leftTree, leftTreeRoot, myArtifact);
+		leftTree.requestFocus();
+	}
+
+	public void switchToLeftTree() {
+		MyListNode selectedValue = (MyListNode) leftPanelList.getSelectedValue();
+		switchToLeftTree(selectedValue.getRightArtifact());
 	}
 
 	private class LeftTreeSelectionListener implements TreeSelectionListener {
@@ -412,7 +419,7 @@ public class GuiForm implements Disposable {
 		for (MavenArtifactNode mavenArtifactNode : mavenArtifactNodes) {
 			MyTreeUserObject userObject = new MyTreeUserObject(mavenArtifactNode);
 			userObject.showOnlyVersion = true;
-			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
+			final DefaultMutableTreeNode newNode = new MyDefaultMutableTreeNode(userObject);
 			fillRightTree(mavenArtifactNode, newNode);
 			rightTreeRoot.add(newNode);
 		}
@@ -425,7 +432,7 @@ public class GuiForm implements Disposable {
 		if (parent == null) {
 			return;
 		}
-		final DefaultMutableTreeNode parentDependencyNode = new DefaultMutableTreeNode(new MyTreeUserObject(parent));
+		final DefaultMutableTreeNode parentDependencyNode = new MyDefaultMutableTreeNode(new MyTreeUserObject(parent));
 		node.add(parentDependencyNode);
 		parentDependencyNode.setParent(node);
 		fillRightTree(parent, parentDependencyNode);
@@ -467,9 +474,12 @@ public class GuiForm implements Disposable {
 				final List<MavenArtifactNode> nodes = s.getValue();
 				if (nodes.size() > 1 && hasConflicts(nodes)) {
 					if (contains(searchFieldText, s.getKey())) {
-						listDataModel.addElement(new MyListNode(s));
+						listDataModel.add(new MyListNode(s));
 					}
 				}
+			}
+			if (showSize.isSelected()) {
+				listDataModel.sort(MyDefaultListModel.DEEP_SIZE);
 			}
 			showNoConflictsLabel = listDataModel.isEmpty();
 			BuildNumber build = ApplicationInfoEx.getInstanceEx().getBuild();
@@ -518,13 +528,19 @@ public class GuiForm implements Disposable {
 		} else if (allDependenciesAsListRadioButton.isSelected()) {  //list
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
 				if (contains(searchFieldText, s.getKey())) {
-					listDataModel.addElement(new MyListNode(s));
+					listDataModel.add(new MyListNode(s));
 				}
+			}
+			if (showSize.isSelected()) {
+				listDataModel.sort(MyDefaultListModel.DEEP_SIZE);
 			}
 			showNoConflictsLabel = false;
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else { // tree
 			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText);
+			if (showSize.isSelected()) {
+				leftTreeRoot.sortBySize(MyDefaultMutableTreeNode.DEEP_SIZE);
+			}
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
 			TreeUtils.expandAll(leftTree);
 
@@ -558,7 +574,7 @@ public class GuiForm implements Disposable {
 				directMatch = true;
 				treeUserObject.highlight = true;
 			}
-			final DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(treeUserObject);
+			final DefaultMutableTreeNode newNode = new MyDefaultMutableTreeNode(treeUserObject);
 			boolean childAdded = fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
 
 			if (!search || directMatch || childAdded) {
@@ -566,7 +582,6 @@ public class GuiForm implements Disposable {
 				hasAddedNodes = true;
 			}
 		}
-
 		return hasAddedNodes;
 	}
 

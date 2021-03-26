@@ -33,11 +33,11 @@ public class JumpToSourceAction extends BaseAction {
 				KeyboardShortcut key = (KeyboardShortcut) shortcut;
 				String s = KeyStrokeAdapter.toString(key.getFirstKeyStroke());
 				if (s != null) {
-					return "Jump To Source [" + s.toUpperCase() + "]";
+					return "Jump to Source [" + s.toUpperCase() + "]";
 				}
 			}
 		}
-		return "Jump To Source";
+		return "Jump to Source";
 	}
 
 	@Override

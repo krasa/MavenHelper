@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupHandler;
+import krasa.mavenhelper.analyzer.GuiForm;
 import krasa.mavenhelper.analyzer.MyTreeUserObject;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -24,12 +25,14 @@ public class RightTreePopupHandler extends PopupHandler {
 	private final Project project;
 	private final MavenProject mavenProject;
 	protected final JTree tree;
+	private final GuiForm guiForm;
 	private JPopupMenu popup;
 
-	public RightTreePopupHandler(Project project, MavenProject mavenProject, JTree tree) {
+	public RightTreePopupHandler(Project project, MavenProject mavenProject, JTree tree, GuiForm guiForm) {
 		this.project = project;
 		this.mavenProject = mavenProject;
 		this.tree = tree;
+		this.guiForm = guiForm;
 	}
 
 	private DefaultMutableTreeNode getRoot() {
@@ -51,8 +54,10 @@ public class RightTreePopupHandler extends PopupHandler {
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
 
 		if (myTreeUserObject.getMavenArtifactNode().getParent() == null) {
+			actionGroup.add(new JumpToLeftTreeAction(project, mavenProject, mavenArtifactNode, guiForm));
 			actionGroup.add(new JumpToSourceAction(project, mavenProject, mavenArtifactNode));
 		} else {
+			actionGroup.add(new JumpToLeftTreeAction(project, mavenProject, mavenArtifactNode, guiForm));
 			actionGroup.add(new JumpToSourceAction(project, mavenProject, mavenArtifactNode));
 			actionGroup.add(getExcludeAction(selectedNode, mavenArtifactNode));
 		}

@@ -81,7 +81,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			if (showSize.isSelected()) {
 				long size = myTreeUserObject.getSize();
 				long totalSize = myTreeUserObject.getTotalSize();
-				append(" - " + size + " KB (" + totalSize + " KB)");
+				append(" - " + size + " KB (" + totalSize + " KB)", GuiForm.SIZE_ATTRIBUTES);
 			}
 
 			checkForBug(myTreeUserObject);
@@ -121,7 +121,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			if (showSize.isSelected()) {
 				long size = myTreeUserObject.getSize();
 				long totalSize = myTreeUserObject.getTotalSize();
-				append(" - " + size + " KB (" + totalSize + " KB)");
+				append(" - " + size + " KB (" + totalSize + " KB)", GuiForm.SIZE_ATTRIBUTES);
 			}
 
 			if (error) {

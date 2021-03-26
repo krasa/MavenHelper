@@ -25,6 +25,10 @@ public class MyListNode {
 		initConflict();
 	}
 
+	public MavenArtifactNode getRightArtifact() {
+		return rightArtifact;
+	}
+
 	public long getSize() {
 		if (size == null) {
 			size = rightArtifact.getArtifact().getFile().length() / 1024;
