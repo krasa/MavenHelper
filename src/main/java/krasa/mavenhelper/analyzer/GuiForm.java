@@ -5,26 +5,17 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.BuildNumber;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.text.VersionComparatorUtil;
-import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
@@ -39,7 +30,6 @@ import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectChanges;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.server.MavenServerManager;
 import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
 
 import javax.swing.*;
@@ -94,7 +84,6 @@ public class GuiForm implements Disposable {
 	private JButton refreshButton;
 	private JSplitPane splitPane;
 	private SearchTextField searchField;
-	private JButton applyMavenVmOptionsFixButton;
 	private JPanel leftPanelWrapper;
 	private MyHighlightingTree leftTree;
 	private JCheckBox showGroupId;
@@ -222,21 +211,6 @@ public class GuiForm implements Disposable {
 		}
 
 		noConflictsWarningLabel.setBackground(null);
-		applyMavenVmOptionsFixButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
-				int baselineVersion = ApplicationInfoEx.getInstanceEx().getBuild().getBaselineVersion();
-				if (baselineVersion >= 140) {
-					mavenEmbedderVMOptions += " -Didea.maven3.use.compat.resolver";
-				} else {
-					mavenEmbedderVMOptions += " -Dmaven3.use.compat.resolver";
-				}
-				MavenServerManager.getInstance().setMavenEmbedderVMOptions(mavenEmbedderVMOptions);
-				mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
-				refreshButton.getActionListeners()[0].actionPerformed(e);
-			}
-		});
 		noConflictsWarningLabel.setText(WARNING);
 		noConflictsWarningLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 
@@ -489,48 +463,6 @@ public class GuiForm implements Disposable {
 			}
 			sortList();
 			showNoConflictsLabel = listDataModel.isEmpty();
-			BuildNumber build = ApplicationInfoEx.getInstanceEx().getBuild();
-			int baselineVersion = build.getBaselineVersion();
-			MavenServerManager server = MavenServerManager.getInstance();
-			boolean useMaven2 = server.isUseMaven2();
-			boolean containsCompatResolver139 = server.getMavenEmbedderVMOptions().contains("-Dmaven3.use.compat.resolver");
-			boolean containsCompatResolver140 = server.getMavenEmbedderVMOptions().contains("-Didea.maven3.use.compat.resolver");
-			boolean newIDE = VersionComparatorUtil.compare(build.asStringWithoutProductCode(), "145.258") >= 0;
-			boolean newMaven = VersionComparatorUtil.compare(server.getCurrentMavenVersion(), "3.1.1") >= 0;
-
-			if (showNoConflictsLabel && baselineVersion >= 139 && baselineVersion < 202) {
-				boolean containsProperty = (baselineVersion == 139 && containsCompatResolver139) || (baselineVersion >= 140 && containsCompatResolver140);
-				conflictsWarning = !containsProperty && !useMaven2;
-
-				if (conflictsWarning && newIDE) {
-					conflictsWarning = conflictsWarning && !newMaven;
-				}
-			}
-
-			if (!conflictsWarning && newIDE && newMaven && containsCompatResolver140) {
-				if (!notificationShown) {
-					notificationShown = true;
-					final Notification notification = ApplicationService.NOTIFICATION.createNotification(
-						"Fix your Maven VM options for importer", "<html>Your settings causes problems in multi-module Maven projects.<br> " +
-							" <a href=\"fix\">Remove -Didea.maven3.use.compat.resolver</a> ", NotificationType.WARNING, new NotificationListener() {
-							@Override
-							public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
-								notification.expire();
-								String mavenEmbedderVMOptions = MavenServerManager.getInstance().getMavenEmbedderVMOptions();
-								MavenServerManager.getInstance().setMavenEmbedderVMOptions(
-									mavenEmbedderVMOptions.replace("-Didea.maven3.use.compat.resolver", ""));
-								mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
-							}
-						});
-					ApplicationManager.getApplication().invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							Notifications.Bus.notify(notification, project);
-						}
-					});
-				}
-			}
-
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {  //list
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
@@ -562,7 +494,6 @@ public class GuiForm implements Disposable {
 		buttonsPanel.setVisible(allDependenciesAsTreeRadioButton.isSelected());
 		filter.setVisible(allDependenciesAsTreeRadioButton.isSelected());
 		noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
-		applyMavenVmOptionsFixButton.setVisible(conflictsWarning);
 		noConflictsLabel.setVisible(showNoConflictsLabel);
 	}
 

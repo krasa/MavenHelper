@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.10.193.000.0</version>
+	<version>4.11.203.000.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -36,6 +36,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.11
+            <br> - Shallow/deep dependency size, sorting, highlighting without filtering, small fixes</a>
             <br>4.10
             <br> - Fixed command line tokenization</a>
             <br> - Adding '-DforkMode=never' only for maven-surefire-plugin older than 2.14</a>
@@ -108,7 +110,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="193.000"/>
+	<idea-version since-build="203.000"/>
 
 	<application-components>
 	</application-components>
@@ -118,7 +120,7 @@
 
 	<actions>
 		<!-- Add your actions here -->
-        <action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
+		<action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
                 text="Open Terminal at the Current Maven Module Path"
                 icon="/krasa/mavenhelper/icons/OpenTerminal.svg">
 			<add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
@@ -148,6 +150,7 @@
 
 
 	<extensions defaultExtensionNs="com.intellij">
+		<notificationGroup id="Maven Helper" displayType="STICKY_BALLOON" isLogByDefault="true"/>
 		<!-- Add your extensions here -->
 		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
 		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper"
