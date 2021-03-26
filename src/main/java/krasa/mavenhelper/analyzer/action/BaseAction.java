@@ -18,6 +18,8 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericDomValue;
+import org.jetbrains.idea.maven.dom.model.MavenDomDependency;
+import org.jetbrains.idea.maven.dom.model.MavenDomExclusion;
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomShortArtifactCoordinates;
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -125,10 +127,10 @@ public abstract class BaseAction extends DumbAwareAction {
 				return (XmlFile) psiFile;
 			} else {
 				Object o = psiFile != null ? psiFile.getVirtualFile() : "";
-				LOG.error("Not XmlFile " + psiFile + " " + o+"; artifact="+artifact);
+				LOG.error("Not XmlFile " + psiFile + " " + o + "; artifact=" + artifact);
 			}
 		}
-		LOG.error("XmlFile null for virtualFile="+virtualFile + "; artifact="+artifact);
+		LOG.error("XmlFile null for virtualFile=" + virtualFile + "; artifact=" + artifact);
 
 		return null;
 	}
@@ -157,14 +159,53 @@ public abstract class BaseAction extends DumbAwareAction {
 		return file;
 	}
 
-	protected boolean isSameDependency(MavenArtifact parent, MavenDomShortArtifactCoordinates mavenDomDependency) {
-		GenericDomValue artifactID = mavenDomDependency.getArtifactId();
-		GenericDomValue<String> groupId = mavenDomDependency.getGroupId();
-		return isSameDependency(parent, artifactID, groupId);
+	protected boolean isSameDependency(MavenArtifact mavenArtifact, MavenDomDependency domDependency) {
+		GenericDomValue<String> artifactID = domDependency.getArtifactId();
+		GenericDomValue<String> groupId = domDependency.getGroupId();
+		GenericDomValue<String> classifier = domDependency.getClassifier();
+		GenericDomValue<String> scope = domDependency.getScope();
+		GenericDomValue<String> version = domDependency.getVersion();
+		GenericDomValue<String> type = domDependency.getType();
+
+		if (artifactID.getValue() !=null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
+			return false;
+		}
+		if (groupId.getValue() !=null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
+			return false;
+		}
+		if (scope.getValue() !=null && !mavenArtifact.getScope().equals(scope.getValue())) {
+			return false;
+		}
+		if (version.getValue() !=null && !mavenArtifact.getVersion().equals(version.getValue())) {
+			return false;
+		}
+		if (classifier.getValue() !=null && !mavenArtifact.getClassifier().equals(classifier.getValue())) {
+			return false;
+		}
+		if (type.getValue() !=null && !mavenArtifact.getType().equals(type.getValue())) {
+			return false;
+		}
+
+		if (scope.getValue() == null && !mavenArtifact.getScope().equals("compile")) {
+			return false;
+		}
+		if (type.getValue() == null && !mavenArtifact.getType().equals("jar")) {
+			return false;
+		}
+		return true;
 	}
 
-	protected boolean isSameDependency(MavenArtifact parent, GenericDomValue artifactID, GenericDomValue<String> groupId) {
-		return artifactID != null && groupId != null && parent.getArtifactId().equals(artifactID.getValue()) && parent.getGroupId().equals(groupId.getValue());
+	protected boolean isSameDependency(MavenArtifact mavenArtifact, MavenDomExclusion domDependency) {
+		GenericDomValue<String> artifactID = domDependency.getArtifactId();
+		GenericDomValue<String> groupId = domDependency.getGroupId();
+
+		if (artifactID.getValue() !=null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
+			return false;
+		}
+		if (groupId.getValue() !=null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
+			return false;
+		}
+		return true;
 	}
 
 }
