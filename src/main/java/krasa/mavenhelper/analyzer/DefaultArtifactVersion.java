@@ -66,7 +66,7 @@ public class DefaultArtifactVersion {
 
 	public int compareTo(DefaultArtifactVersion otherVersion) {
 		if (otherVersion instanceof DefaultArtifactVersion) {
-			return this.comparable.compareTo(((DefaultArtifactVersion) otherVersion).comparable);
+			return this.comparable.compareTo(otherVersion.comparable);
 		} else {
 			return compareTo(new DefaultArtifactVersion(otherVersion.toString()));
 		}

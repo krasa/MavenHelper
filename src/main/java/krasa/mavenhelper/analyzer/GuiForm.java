@@ -104,6 +104,7 @@ public class GuiForm implements Disposable {
 	private JButton reimport;
 	protected JEditorPane intellijBugLabel;
 	protected JEditorPane falsePositive;
+	private JCheckBox filter;
 	protected MyDefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
 	protected final DefaultTreeModel rightTreeModel;
@@ -274,14 +275,22 @@ public class GuiForm implements Disposable {
 		showGroupId.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				leftPanelList.repaint();
-				TreeUtils.nodesChanged(GuiForm.this.rightTreeModel);
-				TreeUtils.nodesChanged(GuiForm.this.leftTreeModel);
+				RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
+				updateLeftPanel();
+				restoreSelection.restore();
 			}
 		});
 
 		showSize.addActionListener((event) -> {
+			RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
 			updateLeftPanel();
+			restoreSelection.restore();
+		});
+
+		filter.addActionListener((event) -> {
+			RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
+			updateLeftPanel();
+			restoreSelection.restore();
 		});
 
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
@@ -478,9 +487,7 @@ public class GuiForm implements Disposable {
 					}
 				}
 			}
-			if (showSize.isSelected()) {
-				listDataModel.sort(MyDefaultListModel.DEEP_SIZE);
-			}
+			sortList();
 			showNoConflictsLabel = listDataModel.isEmpty();
 			BuildNumber build = ApplicationInfoEx.getInstanceEx().getBuild();
 			int baselineVersion = build.getBaselineVersion();
@@ -531,16 +538,12 @@ public class GuiForm implements Disposable {
 					listDataModel.add(new MyListNode(s));
 				}
 			}
-			if (showSize.isSelected()) {
-				listDataModel.sort(MyDefaultListModel.DEEP_SIZE);
-			}
+			sortList();
 			showNoConflictsLabel = false;
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else { // tree
 			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText);
-			if (showSize.isSelected()) {
-				leftTreeRoot.sortBySize(MyDefaultMutableTreeNode.DEEP_SIZE);
-			}
+			sortTree();
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
 			TreeUtils.expandAll(leftTree);
 
@@ -557,14 +560,34 @@ public class GuiForm implements Disposable {
 			leftPanelLayout.show(leftPanelWrapper, "noConflictsWarningLabel");
 		}
 		buttonsPanel.setVisible(allDependenciesAsTreeRadioButton.isSelected());
+		filter.setVisible(allDependenciesAsTreeRadioButton.isSelected());
 		noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
 		applyMavenVmOptionsFixButton.setVisible(conflictsWarning);
 		noConflictsLabel.setVisible(showNoConflictsLabel);
 	}
 
+	private void sortTree() {
+		if (showSize.isSelected()) {
+			leftTreeRoot.sortBySize(MyDefaultMutableTreeNode.DEEP_SIZE);
+		} else if (showGroupId.isSelected()) {
+			leftTreeRoot.sortBySize(MyDefaultMutableTreeNode.GROUP_ID);
+		} else {
+			leftTreeRoot.sortBySize(MyDefaultMutableTreeNode.ARTIFACT_ID);
+		}
+	}
+
+	private void sortList() {
+		if (showSize.isSelected()) {
+			listDataModel.sort(MyDefaultListModel.DEEP_SIZE);
+		} else if (showGroupId.isSelected()) {
+			listDataModel.sort(MyDefaultListModel.GROUP_ID);
+		} else {
+			listDataModel.sort(MyDefaultListModel.ARTIFACT_ID);
+		}
+	}
+
 	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree, String searchFieldText) {
 		boolean search = StringUtils.isNotBlank(searchFieldText);
-		Collections.sort(dependencyTree, BY_ARTIFACT_ID);
 		boolean hasAddedNodes = false;
 
 		for (MavenArtifactNode mavenArtifactNode : dependencyTree) {
@@ -577,7 +600,7 @@ public class GuiForm implements Disposable {
 			final DefaultMutableTreeNode newNode = new MyDefaultMutableTreeNode(treeUserObject);
 			boolean childAdded = fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
 
-			if (!search || directMatch || childAdded) {
+			if (!search || !filter.isSelected() || directMatch || childAdded) {
 				parent.add(newNode);
 				hasAddedNodes = true;
 			}
