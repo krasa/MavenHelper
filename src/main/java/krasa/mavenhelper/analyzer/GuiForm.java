@@ -330,19 +330,16 @@ public class GuiForm implements Disposable {
 					attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 					boldAttributes = errorBoldAttributes;
 				}
-
+				if (showSize.isSelected()) {
+					Utils.appendSize(this, value.getSize(), value.getTotalSize());
+				}
 				if (showGroupId.isSelected()) {
 					append(split[0] + " : ", attributes);
 				}
 				append(split[1], boldAttributes);
 				append(" : " + rightVersion, attributes);
-
-				if (showSize.isSelected()) {
-					long size = value.getSize();
-					long totalSize = value.getTotalSize();
-					append(" - " + size + " KB (" + totalSize + " KB)", SIZE_ATTRIBUTES);
-				}
 			}
+
 		});
 		rightTree = new MyHighlightingTree(project);
 		leftTree = new MyHighlightingTree(project);

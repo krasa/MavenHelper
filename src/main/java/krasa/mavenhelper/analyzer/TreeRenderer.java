@@ -71,6 +71,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		boolean error = omitted || conflict_AlternativeMethod;
 		String currentVersion = artifact.getVersion();
 
+		if (showSize.isSelected()) {
+			Utils.appendSize(this, myTreeUserObject.getSize(), myTreeUserObject.getTotalSize());
+		}
 
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
@@ -78,11 +81,6 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
 			}
 			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
-			if (showSize.isSelected()) {
-				long size = myTreeUserObject.getSize();
-				long totalSize = myTreeUserObject.getTotalSize();
-				append(" - " + size + " KB (" + totalSize + " KB)", GuiForm.SIZE_ATTRIBUTES);
-			}
 
 			checkForBug(myTreeUserObject);
 			if (!omitted && conflict_AlternativeMethod) {
@@ -117,12 +115,6 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			append(artifact.getArtifactId(), boldAttributes);
 			append(" : " + currentVersion, attributes);
 			append(" [" + classifier + artifact.getScope() + "]", attributes);
-
-			if (showSize.isSelected()) {
-				long size = myTreeUserObject.getSize();
-				long totalSize = myTreeUserObject.getTotalSize();
-				append(" - " + size + " KB (" + totalSize + " KB)", GuiForm.SIZE_ATTRIBUTES);
-			}
 
 			if (error) {
 				String winner = getConflictWinner(mavenArtifactNode);

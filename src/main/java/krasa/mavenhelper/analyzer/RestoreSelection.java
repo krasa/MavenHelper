@@ -35,7 +35,7 @@ public class RestoreSelection {
 		if (selectionPath != null) {
 			Object[] path = selectionPath.getPath();
 			MyDefaultMutableTreeNode root = (MyDefaultMutableTreeNode) leftTree.getModel().getRoot();
-			MyDefaultMutableTreeNode matchingNode = TreeUtils.getMatchingPath(path, root, 1);
+			MyDefaultMutableTreeNode matchingNode = TreeUtils.getMatchingNode(path, root, 1);
 			if (matchingNode != null && matchingNode != root) {
 				leftTree.getSelectionModel().addSelectionPath(new TreePath(matchingNode.getPath()));
 				leftTree.scrollPathToVisible(new TreePath(matchingNode.getPath()));

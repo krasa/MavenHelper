@@ -46,7 +46,7 @@ public class TreeUtils {
 			}
 		}
 		Collections.reverse(path);
-		MyDefaultMutableTreeNode matchingNode = getMatchingPath(path, root, 0);
+		MyDefaultMutableTreeNode matchingNode = getMatchingNode(path, root, 0);
 		if (matchingNode != null && matchingNode != root) {
 			leftTree.getSelectionModel().addSelectionPath(new TreePath(matchingNode.getPath()));
 			leftTree.scrollPathToVisible(new TreePath(matchingNode.getPath()));
@@ -54,7 +54,7 @@ public class TreeUtils {
 	}
 
 
-	public static MyDefaultMutableTreeNode getMatchingPath(List<MavenArtifactNode> path, MyDefaultMutableTreeNode root, int i) {
+	public static MyDefaultMutableTreeNode getMatchingNode(List<MavenArtifactNode> path, MyDefaultMutableTreeNode root, int i) {
 		if (path.size() <= i) {
 			return root;
 		}
@@ -65,14 +65,14 @@ public class TreeUtils {
 			MyDefaultMutableTreeNode currentNode = children1.nextElement();
 			MyTreeUserObject userObject = currentNode.getUserObject();
 			if (userObject.getMavenArtifactNode().equals(old)) {
-				return getMatchingPath(path, currentNode, i + 1);
+				return getMatchingNode(path, currentNode, i + 1);
 			}
 		}
 		return null;
 	}
 
 
-	public static MyDefaultMutableTreeNode getMatchingPath(Object[] path, MyDefaultMutableTreeNode root, int i) {
+	public static MyDefaultMutableTreeNode getMatchingNode(Object[] path, MyDefaultMutableTreeNode root, int i) {
 		if (path.length <= i) {
 			return root;
 		}
@@ -84,7 +84,7 @@ public class TreeUtils {
 			MyTreeUserObject userObject = currentNode.getUserObject();
 			MyTreeUserObject userObject1 = old.getUserObject();
 			if (userObject.getMavenArtifactNode().equals(userObject1.getMavenArtifactNode())) {
-				return getMatchingPath(path, currentNode, i + 1);
+				return getMatchingNode(path, currentNode, i + 1);
 			}
 		}
 		return null;
