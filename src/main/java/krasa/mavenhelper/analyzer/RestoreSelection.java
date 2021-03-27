@@ -35,29 +35,12 @@ public class RestoreSelection {
 		if (selectionPath != null) {
 			Object[] path = selectionPath.getPath();
 			MyDefaultMutableTreeNode root = (MyDefaultMutableTreeNode) leftTree.getModel().getRoot();
-			MyDefaultMutableTreeNode matchingNode = getMatchingPath(path, root, 1);
+			MyDefaultMutableTreeNode matchingNode = TreeUtils.getMatchingPath(path, root, 1);
 			if (matchingNode != null && matchingNode != root) {
 				leftTree.getSelectionModel().addSelectionPath(new TreePath(matchingNode.getPath()));
+				leftTree.scrollPathToVisible(new TreePath(matchingNode.getPath()));
 			}
 		}
-	}
-
-	private MyDefaultMutableTreeNode getMatchingPath(Object[] path, MyDefaultMutableTreeNode root, int i) {
-		if (path.length <= i) {
-			return root;
-		}
-		MyDefaultMutableTreeNode old = (MyDefaultMutableTreeNode) path[i];
-
-		Enumeration<MyDefaultMutableTreeNode> children1 = root.getChildren();
-		while (children1.hasMoreElements()) {
-			MyDefaultMutableTreeNode currentNode = children1.nextElement();
-			MyTreeUserObject userObject = currentNode.getUserObject();
-			MyTreeUserObject userObject1 = old.getUserObject();
-			if (userObject.getMavenArtifactNode().equals(userObject1.getMavenArtifactNode())) {
-				return getMatchingPath(path, currentNode, i + 1);
-			}
-		}
-		return null;
 	}
 
 	private void matches(MyDefaultMutableTreeNode o, MyDefaultMutableTreeNode root) {

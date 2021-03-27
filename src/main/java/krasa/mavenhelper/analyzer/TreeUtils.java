@@ -7,10 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 public class TreeUtils {
 	public static void expandAll(JTree rightTree) {
@@ -38,22 +35,61 @@ public class TreeUtils {
 		}
 	}
 
-	public static boolean selectRows(MyHighlightingTree leftTree, DefaultMutableTreeNode root, MavenArtifactNode myArtifact) {
-		MyTreeUserObject userObject = (MyTreeUserObject) root.getUserObject();
-		if (userObject != null && userObject.getMavenArtifactNode().equals(myArtifact)) {
-			leftTree.getSelectionModel().addSelectionPath(new TreePath(root.getPath()));
-			return true;
-		}
-
-		Enumeration<TreeNode> children = root.children();
-		while (children.hasMoreElements()) {
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) children.nextElement();
-			if (selectRows(leftTree, treeNode, myArtifact)) {
-				return true;
+	public static void selectRows(MyHighlightingTree leftTree, MyDefaultMutableTreeNode root, MavenArtifactNode myArtifact) {
+		List<MavenArtifactNode> path = new ArrayList<>();
+		MavenArtifactNode node = myArtifact;
+		while (node != null) {
+			path.add(node);
+			node = node.getParent();
+			if (path.size() > 1000) {
+				throw new RuntimeException(path.toString());
 			}
 		}
-		return false;
+		Collections.reverse(path);
+		MyDefaultMutableTreeNode matchingNode = getMatchingPath(path, root, 0);
+		if (matchingNode != null && matchingNode != root) {
+			leftTree.getSelectionModel().addSelectionPath(new TreePath(matchingNode.getPath()));
+			leftTree.scrollPathToVisible(new TreePath(matchingNode.getPath()));
+		}
 	}
+
+
+	public static MyDefaultMutableTreeNode getMatchingPath(List<MavenArtifactNode> path, MyDefaultMutableTreeNode root, int i) {
+		if (path.size() <= i) {
+			return root;
+		}
+		MavenArtifactNode old = path.get(i);
+
+		Enumeration<MyDefaultMutableTreeNode> children1 = root.getChildren();
+		while (children1.hasMoreElements()) {
+			MyDefaultMutableTreeNode currentNode = children1.nextElement();
+			MyTreeUserObject userObject = currentNode.getUserObject();
+			if (userObject.getMavenArtifactNode().equals(old)) {
+				return getMatchingPath(path, currentNode, i + 1);
+			}
+		}
+		return null;
+	}
+
+
+	public static MyDefaultMutableTreeNode getMatchingPath(Object[] path, MyDefaultMutableTreeNode root, int i) {
+		if (path.length <= i) {
+			return root;
+		}
+		MyDefaultMutableTreeNode old = (MyDefaultMutableTreeNode) path[i];
+
+		Enumeration<MyDefaultMutableTreeNode> children1 = root.getChildren();
+		while (children1.hasMoreElements()) {
+			MyDefaultMutableTreeNode currentNode = children1.nextElement();
+			MyTreeUserObject userObject = currentNode.getUserObject();
+			MyTreeUserObject userObject1 = old.getUserObject();
+			if (userObject.getMavenArtifactNode().equals(userObject1.getMavenArtifactNode())) {
+				return getMatchingPath(path, currentNode, i + 1);
+			}
+		}
+		return null;
+	}
+
 
 	public static String sortByVersion(List<MavenArtifactNode> value) {
 		Collections.sort(value, new Comparator<MavenArtifactNode>() {
@@ -66,4 +102,6 @@ public class TreeUtils {
 		});
 		return value.get(0).getArtifact().getVersion();
 	}
+
+
 }
