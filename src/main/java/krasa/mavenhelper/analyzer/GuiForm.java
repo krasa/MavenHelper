@@ -321,7 +321,7 @@ public class GuiForm implements Disposable {
 			protected void customizeCellRenderer(JList jList, Object o, int i, boolean b, boolean b2) {
 				MyListNode value = (MyListNode) o;
 				String rightVersion = value.getRightVersion();
-				final String[] split = value.key.split(":");
+				final String[] split = value.artifactKey.split(":");
 				boolean conflict = value.isConflict();
 
 				SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
@@ -389,8 +389,7 @@ public class GuiForm implements Disposable {
 			}
 
 			final MyListNode myListNode = (MyListNode) leftPanelList.getSelectedValue();
-			List<MavenArtifactNode> artifacts = myListNode.value;
-			fillRightTree(artifacts);
+			fillRightTree(myListNode.getArtifacts());
 		}
 	}
 

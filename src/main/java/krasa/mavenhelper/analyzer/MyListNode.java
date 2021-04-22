@@ -1,5 +1,6 @@
 package krasa.mavenhelper.analyzer;
 
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.model.MavenArtifactState;
 
@@ -10,19 +11,25 @@ import java.util.Map;
  * @author Vojtech Krasa
  */
 public class MyListNode {
+	private static final Logger LOG = Logger.getInstance(MyListNode.class);
 
-	protected final String key;
-	protected final List<MavenArtifactNode> value;
+	protected final String artifactKey;
+	private List<MavenArtifactNode> artifacts;
+
 	protected MavenArtifactNode rightArtifact;
 	protected boolean conflict;
 	private Long size;
 	private Long totalSize;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
-		key = s.getKey();
-		value = s.getValue();
+		artifactKey = s.getKey();
+		artifacts = s.getValue();
 		initRightArtifact();
 		initConflict();
+	}
+
+	public List<MavenArtifactNode> getArtifacts() {
+		return artifacts;
 	}
 
 	public MavenArtifactNode getRightArtifact() {
@@ -52,19 +59,31 @@ public class MyListNode {
 	}
 
 	private void initRightArtifact() {
-		if (value != null && !value.isEmpty()) {
-			for (MavenArtifactNode mavenArtifactNode : value) {
+		if (artifacts != null && !artifacts.isEmpty()) {
+			for (MavenArtifactNode mavenArtifactNode : artifacts) {
 				if (mavenArtifactNode.getState() == MavenArtifactState.ADDED) {
 					rightArtifact = mavenArtifactNode;
 					break;
 				}
 			}
+			if (rightArtifact == null) {
+				StringBuilder sb = new StringBuilder(artifactKey + "[");
+				for (MavenArtifactNode artifact : artifacts) {
+					sb.append(artifact.getArtifact());
+					sb.append("-");
+					sb.append(artifact.getState());
+					sb.append(";");
+				}
+				sb.append("]");
+
+				LOG.error(sb);
+			}
 		}
 	}
 
 	private void initConflict() {
-		if (value != null && !value.isEmpty()) {
-			for (MavenArtifactNode mavenArtifactNode : value) {
+		if (artifacts != null && !artifacts.isEmpty()) {
+			for (MavenArtifactNode mavenArtifactNode : artifacts) {
 				if (Utils.isOmitted(mavenArtifactNode) || Utils.isConflictAlternativeMethod(mavenArtifactNode)) {
 					conflict = true;
 					break;
@@ -83,7 +102,7 @@ public class MyListNode {
 
 	@Override
 	public String toString() {
-		return key;
+		return artifactKey;
 	}
 
 	@Override
@@ -95,7 +114,7 @@ public class MyListNode {
 
 		MyListNode that = (MyListNode) o;
 
-		if (key != null ? !key.equals(that.key) : that.key != null)
+		if (artifactKey != null ? !artifactKey.equals(that.artifactKey) : that.artifactKey != null)
 			return false;
 
 		return true;
@@ -103,6 +122,6 @@ public class MyListNode {
 
 	@Override
 	public int hashCode() {
-		return key != null ? key.hashCode() : 0;
+		return artifactKey != null ? artifactKey.hashCode() : 0;
 	}
 }
