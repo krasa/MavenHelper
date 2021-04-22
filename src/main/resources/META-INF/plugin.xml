@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.11.203.000.2</version>
+	<version>4.12.203.000.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -36,6 +36,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.12
+            <br> - NPE fix
             <br>4.11
             <br> - Shallow/deep dependency size, sorting, highlighting without filtering, small fixes</a>
             <br>4.10
