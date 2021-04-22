@@ -41,6 +41,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		return goal;
 	}
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final DataContext context = e.getDataContext();
 

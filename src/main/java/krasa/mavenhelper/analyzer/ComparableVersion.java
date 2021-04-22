@@ -93,34 +93,38 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 			this.value = new BigInteger(str);
 		}
 
+		@Override
 		public int getType() {
 			return INTEGER_ITEM;
 		}
 
+		@Override
 		public boolean isNull() {
 			return BIG_INTEGER_ZERO.equals(value);
 		}
 
+		@Override
 		public int compareTo(Item item) {
 			if (item == null) {
 				return BIG_INTEGER_ZERO.equals(value) ? 0 : 1; // 1.0 == 1, 1.1 > 1
 			}
 
 			switch (item.getType()) {
-			case INTEGER_ITEM:
-				return value.compareTo(((IntegerItem) item).value);
+				case INTEGER_ITEM:
+					return value.compareTo(((IntegerItem) item).value);
 
-			case STRING_ITEM:
-				return 1; // 1.1 > 1-sp
+				case STRING_ITEM:
+					return 1; // 1.1 > 1-sp
 
-			case LIST_ITEM:
-				return 1; // 1.1 > 1-1
+				case LIST_ITEM:
+					return 1; // 1.1 > 1-1
 
-			default:
-				throw new RuntimeException("invalid item: " + item.getClass());
+				default:
+					throw new RuntimeException("invalid item: " + item.getClass());
 			}
 		}
 
+		@Override
 		public String toString() {
 			return value.toString();
 		}
@@ -160,18 +164,20 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 				case 'b':
 					value = "beta";
 					break;
-				case 'm':
-					value = "milestone";
-					break;
+					case 'm':
+						value = "milestone";
+						break;
 				}
 			}
 			this.value = ALIASES.getProperty(value, value);
 		}
 
+		@Override
 		public int getType() {
 			return STRING_ITEM;
 		}
 
+		@Override
 		public boolean isNull() {
 			return (comparableQualifier(value).compareTo(RELEASE_VERSION_INDEX) == 0);
 		}
@@ -185,7 +191,7 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 		 * just returning an Integer with the index here is faster, but requires a lot of if/then/else to check for -1
 		 * or QUALIFIERS.size and then resort to lexical ordering. Most comparisons are decided by the first character,
 		 * so this is still fast. If more characters are needed then it requires a lexical sort anyway.
-		 * 
+		 *
 		 * @param qualifier
 		 * @return an equivalent value that can be used with lexical comparison
 		 */
@@ -195,26 +201,28 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 			return i == -1 ? (_QUALIFIERS.size() + "-" + qualifier) : String.valueOf(i);
 		}
 
+		@Override
 		public int compareTo(Item item) {
 			if (item == null) {
 				// 1-rc < 1, 1-ga > 1
 				return comparableQualifier(value).compareTo(RELEASE_VERSION_INDEX);
 			}
 			switch (item.getType()) {
-			case INTEGER_ITEM:
-				return -1; // 1.any < 1.1 ?
+				case INTEGER_ITEM:
+					return -1; // 1.any < 1.1 ?
 
-			case STRING_ITEM:
-				return comparableQualifier(value).compareTo(comparableQualifier(((StringItem) item).value));
+				case STRING_ITEM:
+					return comparableQualifier(value).compareTo(comparableQualifier(((StringItem) item).value));
 
-			case LIST_ITEM:
-				return -1; // 1.any < 1-1
+				case LIST_ITEM:
+					return -1; // 1.any < 1-1
 
-			default:
-				throw new RuntimeException("invalid item: " + item.getClass());
+				default:
+					throw new RuntimeException("invalid item: " + item.getClass());
 			}
 		}
 
+		@Override
 		public String toString() {
 			return value;
 		}
@@ -225,16 +233,18 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 	 * with '-(number)' in the version specification).
 	 */
 	private static class ListItem extends ArrayList<Item> implements Item {
+		@Override
 		public int getType() {
 			return LIST_ITEM;
 		}
 
+		@Override
 		public boolean isNull() {
 			return (size() == 0);
 		}
 
 		void normalize() {
-			for (ListIterator<Item> iterator = listIterator(size()); iterator.hasPrevious();) {
+			for (ListIterator<Item> iterator = listIterator(size()); iterator.hasPrevious(); ) {
 				Item item = iterator.previous();
 				if (item.isNull()) {
 					iterator.remove(); // remove null trailing items: 0, "", empty list
@@ -244,6 +254,7 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 			}
 		}
 
+		@Override
 		public int compareTo(Item item) {
 			if (item == null) {
 				if (size() == 0) {
@@ -253,38 +264,39 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 				return first.compareTo(null);
 			}
 			switch (item.getType()) {
-			case INTEGER_ITEM:
-				return -1; // 1-1 < 1.0.x
+				case INTEGER_ITEM:
+					return -1; // 1-1 < 1.0.x
 
-			case STRING_ITEM:
-				return 1; // 1-1 > 1-sp
+				case STRING_ITEM:
+					return 1; // 1-1 > 1-sp
 
-			case LIST_ITEM:
-				Iterator<Item> left = iterator();
-				Iterator<Item> right = ((ListItem) item).iterator();
+				case LIST_ITEM:
+					Iterator<Item> left = iterator();
+					Iterator<Item> right = ((ListItem) item).iterator();
 
-				while (left.hasNext() || right.hasNext()) {
-					Item l = left.hasNext() ? left.next() : null;
-					Item r = right.hasNext() ? right.next() : null;
+					while (left.hasNext() || right.hasNext()) {
+						Item l = left.hasNext() ? left.next() : null;
+						Item r = right.hasNext() ? right.next() : null;
 
-					// if this is shorter, then invert the compare and mul with -1
-					int result = l == null ? -1 * r.compareTo(l) : l.compareTo(r);
+						// if this is shorter, then invert the compare and mul with -1
+						int result = l == null ? -1 * r.compareTo(l) : l.compareTo(r);
 
-					if (result != 0) {
-						return result;
+						if (result != 0) {
+							return result;
+						}
 					}
-				}
 
-				return 0;
+					return 0;
 
-			default:
-				throw new RuntimeException("invalid item: " + item.getClass());
+				default:
+					throw new RuntimeException("invalid item: " + item.getClass());
 			}
 		}
 
+		@Override
 		public String toString() {
 			StringBuilder buffer = new StringBuilder("(");
-			for (Iterator<Item> iter = iterator(); iter.hasNext();) {
+			for (Iterator<Item> iter = iterator(); iter.hasNext(); ) {
 				buffer.append(iter.next());
 				if (iter.hasNext()) {
 					buffer.append(',');
@@ -377,18 +389,22 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
 		return isDigit ? new IntegerItem(buf) : new StringItem(buf, false);
 	}
 
+	@Override
 	public int compareTo(ComparableVersion o) {
 		return items.compareTo(o.items);
 	}
 
+	@Override
 	public String toString() {
 		return value;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		return (o instanceof ComparableVersion) && canonical.equals(((ComparableVersion) o).canonical);
 	}
 
+	@Override
 	public int hashCode() {
 		return canonical.hashCode();
 	}

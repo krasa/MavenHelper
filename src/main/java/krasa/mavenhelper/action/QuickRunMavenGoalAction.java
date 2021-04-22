@@ -83,6 +83,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		return mavenProject != null;
 	}
 
+	@Override
 	protected JBPopupFactory.ActionSelectionAid getAidMethod() {
 		return JBPopupFactory.ActionSelectionAid.SPEEDSEARCH;
 	}
@@ -97,6 +98,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 	private void registerActions(final ListPopupImpl popup) {
 		if (ApplicationSettings.get().isEnableDelete()) {
 			popup.registerAction("delete", KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), new AbstractAction() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					JList list = popup.getList();
 					int selectedIndex = list.getSelectedIndex();

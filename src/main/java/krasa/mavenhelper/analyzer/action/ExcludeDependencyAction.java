@@ -71,8 +71,10 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 	public void actionPerformed(AnActionEvent e) {
 		// CommandProcessor for undo and formatting
 		CommandProcessor.getInstance().executeCommand(myProject, new Runnable() {
+			@Override
 			public void run() {
 				ApplicationManager.getApplication().runWriteAction(new Runnable() {
+					@Override
 					public void run() {
 						exclude();
 					}

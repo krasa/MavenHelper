@@ -16,6 +16,7 @@ class MyListDropHandler extends TransferHandler {
 		this.list = list;
 	}
 
+	@Override
 	public boolean canImport(TransferHandler.TransferSupport support) {
 		if (!support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			return false;
@@ -28,6 +29,7 @@ class MyListDropHandler extends TransferHandler {
 		}
 	}
 
+	@Override
 	public boolean importData(TransferHandler.TransferSupport support) {
 		if (!canImport(support)) {
 			return false;

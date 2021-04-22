@@ -35,6 +35,7 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 		this.mavenProject = mavenProject;
 	}
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		ApplicationService instance = ApplicationService.getInstance();
 		ApplicationSettings state = instance.getState();

@@ -19,23 +19,29 @@ class MyDragListener implements DragSourceListener, DragGestureListener {
 
 	}
 
+	@Override
 	public void dragGestureRecognized(DragGestureEvent dge) {
 		StringSelection transferable = new StringSelection(Integer.toString(list.getSelectedIndex()));
 		ds.startDrag(dge, DragSource.DefaultMoveDrop, transferable, this);
 	}
 
+	@Override
 	public void dragEnter(DragSourceDragEvent dsde) {
 	}
 
+	@Override
 	public void dragExit(DragSourceEvent dse) {
 	}
 
+	@Override
 	public void dragOver(DragSourceDragEvent dsde) {
 	}
 
+	@Override
 	public void dragDropEnd(DragSourceDropEvent dsde) {
 	}
 
+	@Override
 	public void dropActionChanged(DragSourceDragEvent dsde) {
 	}
 }

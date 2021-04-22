@@ -20,6 +20,7 @@ public class OpenTerminalAction extends AnAction implements DumbAware {
 		pluginEnabled = isPluginEnabled();
 	}
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		Project project = getEventProject(e);
 		if (project == null) {

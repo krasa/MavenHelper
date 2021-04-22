@@ -21,6 +21,7 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager;
 public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 	private static final Logger LOG = Logger.getInstance("#krasa.mavenrun.analyzer.MyFileEditorProvider");
 
+	@Override
 	public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
 		return isPomFile(project, file);
 	}
@@ -37,31 +38,37 @@ public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 		return false;
 	}
 
+	@Override
 	@NotNull
 	public FileEditor createEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
 		LOG.assertTrue(accept(project, file));
 		return new UIFormEditor(project, file);
 	}
 
+	@Override
 	public void disposeEditor(@NotNull final FileEditor editor) {
 		Disposer.dispose(editor);
 	}
 
+	@Override
 	@NotNull
 	public FileEditorState readState(@NotNull final Element element, @NotNull final Project project,
-			@NotNull final VirtualFile file) {
+									 @NotNull final VirtualFile file) {
 		return UIFormEditor.MY_EDITOR_STATE;
 	}
 
+	@Override
 	public void writeState(@NotNull final FileEditorState state, @NotNull final Project project,
-			@NotNull final Element element) {
+						   @NotNull final Element element) {
 	}
 
+	@Override
 	@NotNull
 	public String getEditorTypeId() {
 		return "MavenHelperPluginDependencyAnalyzer";
 	}
 
+	@Override
 	@NotNull
 	public FileEditorPolicy getPolicy() {
 		return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;

@@ -30,6 +30,7 @@ public class ListPopupHandler extends PopupHandler {
 		this.guiForm = guiForm;
 	}
 
+	@Override
 	@SuppressWarnings("Duplicates")
 	public void invokePopup(final Component comp, final int x, final int y) {
 		final MyListNode selectedNode = (MyListNode) list.getSelectedValue();

@@ -47,15 +47,18 @@ public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction impleme
 		p.setVisible(isVisible(e));
 	}
 
+	@Override
 	protected boolean isAvailable(AnActionEvent e) {
 		return MavenActionUtil.hasProject(e.getDataContext());
 	}
 
+	@Override
 	protected boolean isVisible(AnActionEvent e) {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		return mavenProject != null;
 	}
 
+	@Override
 	protected JBPopupFactory.ActionSelectionAid getAidMethod() {
 		return JBPopupFactory.ActionSelectionAid.SPEEDSEARCH;
 	}

@@ -19,27 +19,32 @@ public class MyConfigurable implements Configurable {
 		this.state = applicationService.getState();
 	}
 
+	@Override
 	@Nls
 	public String getDisplayName() {
 		return "Maven Helper";
 	}
 
+	@Override
 	@Nullable
 	public String getHelpTopic() {
 		return null;
 	}
 
+	@Override
 	@Nullable
 	public JComponent createComponent() {
 		form = new ApplicationSettingsForm(state);
 		return form.getRootComponent();
 	}
 
-	
+
+	@Override
 	public boolean isModified() {
 		return form != null && form.isSettingsModified(state);
 	}
 
+	@Override
 	public void apply() throws ConfigurationException {
 		applicationService.unRegisterActions();
 		state = form.getSettings().clone();
@@ -47,12 +52,14 @@ public class MyConfigurable implements Configurable {
 		applicationService.registerActions();
 	}
 
+	@Override
 	public void reset() {
 		if (form != null) {
 			form.importFrom(state);
 		}
 	}
 
+	@Override
 	public void disposeUIResources() {
 		form = null;
 	}

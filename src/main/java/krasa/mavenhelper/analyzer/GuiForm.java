@@ -486,6 +486,7 @@ public class GuiForm implements Disposable {
 
 		if (conflictsWarning) {
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					noConflictsWarningLabelScrollPane.getVerticalScrollBar().setValue(0);
 				}

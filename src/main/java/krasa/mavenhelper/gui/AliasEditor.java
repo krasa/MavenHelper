@@ -86,10 +86,11 @@ public class AliasEditor extends DialogWrapper {
 		return goalEditor.createCenterPanel();
 	}
 
+	@Override
 	@Nullable
 	protected String getDimensionServiceKey() {
 //		return null;
 		return GoalEditor.DIMENSION;
 	}
-	
+
 }

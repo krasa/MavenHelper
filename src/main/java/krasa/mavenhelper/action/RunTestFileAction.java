@@ -41,6 +41,7 @@ public class RunTestFileAction extends DumbAwareAction {
 		super(text, description, icon);
 	}
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {

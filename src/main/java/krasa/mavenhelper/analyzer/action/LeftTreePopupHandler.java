@@ -39,6 +39,7 @@ public class LeftTreePopupHandler extends PopupHandler {
 		return (DefaultTreeModel) tree.getModel();
 	}
 
+	@Override
 	@SuppressWarnings("Duplicates")
 	public void invokePopup(final Component comp, final int x, final int y) {
 		final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();

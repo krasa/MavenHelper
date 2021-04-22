@@ -49,6 +49,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		runtimeBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, runtimeAttributes.getFgColor());
 	}
 
+	@Override
 	public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 									  int row, boolean hasFocus) {
 		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;

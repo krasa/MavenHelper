@@ -308,6 +308,7 @@ public class GoalEditor extends DialogWrapper {
 	private JComponent getLinkLabel(final String text, String description) {
 		JButton jButton = new JButton(text);
 		jButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				append(text);
 
@@ -345,6 +346,7 @@ public class GoalEditor extends DialogWrapper {
 
 		JButton jButton = new JButton(text);
 		jButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ListPopup popup = newListPopup(goalsAsStrings, shortcut);
 				popup.showUnderneathOf(jButton);
@@ -396,6 +398,7 @@ public class GoalEditor extends DialogWrapper {
 		return myEditor.getDocument().getText();
 	}
 
+	@Override
 	@Nullable
 	protected String getDimensionServiceKey() {
 //		return null;
