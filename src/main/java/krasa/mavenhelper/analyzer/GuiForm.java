@@ -337,7 +337,9 @@ public class GuiForm implements Disposable {
 					append(split[0] + " : ", attributes);
 				}
 				append(split[1], boldAttributes);
-				append(" : " + rightVersion, attributes);
+				if (rightVersion != null) {
+					append(" : " + rightVersion, attributes);
+				}
 			}
 
 		});
@@ -361,7 +363,10 @@ public class GuiForm implements Disposable {
 
 	public void switchToLeftTree() {
 		MyListNode selectedValue = (MyListNode) leftPanelList.getSelectedValue();
-		switchToLeftTree(selectedValue.getRightArtifact());
+		MavenArtifactNode rightArtifact = selectedValue.getRightArtifact();
+		if (rightArtifact != null) {
+			switchToLeftTree(rightArtifact);
+		}
 	}
 
 	private class LeftTreeSelectionListener implements TreeSelectionListener {

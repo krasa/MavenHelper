@@ -37,6 +37,9 @@ public class ListPopupHandler extends PopupHandler {
 			return;
 		}
 		final MavenArtifactNode mavenArtifactNode = selectedNode.getRightArtifact();
+		if (mavenArtifactNode == null) {
+			return;
+		}
 
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(new JumpToLeftTreeListAction(project, mavenProject, mavenArtifactNode, guiForm));

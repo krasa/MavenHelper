@@ -25,7 +25,7 @@ public class RestoreSelection {
 		if (selectedListNode != null) {
 			MyDefaultListModel model = (MyDefaultListModel) leftPanelList.getModel();
 			for (MyListNode o : model) {
-				if (o.getRightArtifact().equals(selectedListNode.rightArtifact)) {
+				if (o.getRightArtifact() != null && o.getRightArtifact().equals(selectedListNode.rightArtifact)) {
 					leftPanelList.setSelectedValue(o, true);
 					break;
 				}

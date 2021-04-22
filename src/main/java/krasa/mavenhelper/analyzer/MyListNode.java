@@ -1,6 +1,7 @@
 package krasa.mavenhelper.analyzer;
 
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.model.MavenArtifactState;
 
@@ -15,11 +16,13 @@ public class MyListNode {
 
 	protected final String artifactKey;
 	private List<MavenArtifactNode> artifacts;
-
+	@Nullable
 	protected MavenArtifactNode rightArtifact;
 	protected boolean conflict;
 	private Long size;
 	private Long totalSize;
+	private String groupId;
+	private String artifactId;
 
 	public MyListNode(Map.Entry<String, List<MavenArtifactNode>> s) {
 		artifactKey = s.getKey();
@@ -32,13 +35,18 @@ public class MyListNode {
 		return artifacts;
 	}
 
+	@Nullable
 	public MavenArtifactNode getRightArtifact() {
 		return rightArtifact;
 	}
 
 	public long getSize() {
 		if (size == null) {
-			size = rightArtifact.getArtifact().getFile().length() / 1024;
+			if (rightArtifact != null) {
+				size = rightArtifact.getArtifact().getFile().length() / 1024;
+			} else {
+				size = -1L;
+			}
 		}
 		return size;
 	}
@@ -51,6 +59,9 @@ public class MyListNode {
 	}
 
 	private long getTotalSize(MavenArtifactNode current) {
+		if (current == null) {
+			return -1;
+		}
 		long size = current.getArtifact().getFile().length() / 1024;
 		for (MavenArtifactNode dependency : current.getDependencies()) {
 			size += getTotalSize(dependency);
@@ -61,23 +72,30 @@ public class MyListNode {
 	private void initRightArtifact() {
 		if (artifacts != null && !artifacts.isEmpty()) {
 			for (MavenArtifactNode mavenArtifactNode : artifacts) {
+
+				groupId = mavenArtifactNode.getArtifact().getGroupId();
+				artifactId = mavenArtifactNode.getArtifact().getArtifactId();
+
 				if (mavenArtifactNode.getState() == MavenArtifactState.ADDED) {
 					rightArtifact = mavenArtifactNode;
 					break;
 				}
 			}
-			if (rightArtifact == null) {
-				StringBuilder sb = new StringBuilder(artifactKey + "[");
-				for (MavenArtifactNode artifact : artifacts) {
-					sb.append(artifact.getArtifact());
-					sb.append("-");
-					sb.append(artifact.getState());
-					sb.append(";");
-				}
-				sb.append("]");
+			if (LOG.isDebugEnabled()) {
+				if (rightArtifact == null) {
+					StringBuilder sb = new StringBuilder(artifactKey + "[");
+					for (MavenArtifactNode artifact : artifacts) {
+						sb.append(artifact.getArtifact());
+						sb.append("-");
+						sb.append(artifact.getState());
+						sb.append(";");
+					}
+					sb.append("]");
 
-				LOG.error(sb);
+					LOG.debug(sb.toString());
+				}
 			}
+
 		}
 	}
 
@@ -96,7 +114,11 @@ public class MyListNode {
 		return conflict;
 	}
 
+	@Nullable
 	public String getRightVersion() {
+		if (rightArtifact == null) {
+			return null;
+		}
 		return rightArtifact.getArtifact().getVersion();
 	}
 
@@ -123,5 +145,13 @@ public class MyListNode {
 	@Override
 	public int hashCode() {
 		return artifactKey != null ? artifactKey.hashCode() : 0;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public String getArtifactId() {
+		return artifactId;
 	}
 }
