@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.12.203.000.0</version>
+	<version>4.12.203.000.1</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -18,6 +18,11 @@
         </li> 
         </ul>
         <br>    
+        Sponsored by:<br> 
+        <p><a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_mavenhelper&amp;utm_medium=banner"><img src="https://alt-images.codestream.com/codestream_logo_vojta_mavenhelper.png"></a><br>
+        Manage pull requests and conduct code reviews in your IDE with full source-tree context. Comment on any line, not just the diffs. Use jump-to-definition, your favorite keybindings, and code intelligence with more of your workflow.<br>
+        <a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_mavenhelper&amp;utm_medium=banner">Learn More</a></p>
+        <br><br>
         Usage:<br>
 		<ul>
         <li>Right click in Editor | Run Maven<br>
