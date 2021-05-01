@@ -23,9 +23,11 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 			return false;
 		}
 	};
+	private final VirtualFile file;
 	private GuiForm myEditor;
 
 	public UIFormEditor(final Project project, final VirtualFile file) {
+		this.file = file;
 		final MavenProject mavenProject = MavenProjectsManager.getInstance(project).findProject(file);
 		if (mavenProject == null) {
 			throw new RuntimeException("Report this bug please. MavenProject not found for file " + file.getPath());
@@ -44,6 +46,11 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 		if (myEditor != null) {
 			myEditor.dispose();
 		}
+	}
+
+	@Override
+	public VirtualFile getFile() {
+		return file;
 	}
 
 	@Override
