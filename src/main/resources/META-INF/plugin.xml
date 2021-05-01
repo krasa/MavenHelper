@@ -7,14 +7,12 @@
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
 	<description><![CDATA[
-	    A must have plugin for working with Maven.<br><br>
-		Provides:<br>
+	    A must have plugin for working with Maven.<br>
 		<ul>
 		<li>easy way for analyzing and excluding conflicting dependencies</li>
         <li>actions to run/debug maven goals for a module that contains the current file or on the root module</li>
-              <li>action to open terminal at the current maven module path</li> 
+	    <li>action to open terminal at the current maven module path</li> 
         <li>actions to run/debug the current test file.
-        <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
         </li> 
         </ul>
         <br>    
@@ -36,8 +34,10 @@
         </li><li>Open pom file, click on 'Dependency Analyzer' tab, right click in the tree for context actions.<br>
         </li>
 	    </ul>
+	   <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
 	       
-        <br>
+        <br> <br>
+        <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/MavenHelper/">GitHub</a> | <a href="https://github.com/krasa/MavenHelper/issues">Issues</a>
       ]]></description>
 
 	<change-notes><![CDATA[
