@@ -42,7 +42,7 @@
 
 	<change-notes><![CDATA[
             <br>4.13
-            <br> - freeze fix
+            <br> - workaround for WSL2 freeze <a href="https://youtrack.jetbrains.com/issue/IDEA-266405">IDEA-266405</a>
             <br>4.12
             <br> - NPE fix
             <br>4.11
