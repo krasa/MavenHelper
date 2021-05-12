@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.model.MavenPlugin;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.project.actions.ReimportProjectAction;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenPluginInfo;
@@ -66,7 +65,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 			addGoals(result, mavenProject);
 			separator(result);
 
-			List<DefaultActionGroup> mavenActionGroups = getPlugins(project, mavenProject);
+			List<DefaultActionGroup> mavenActionGroups = getPlugins(mavenProject);
 
 			addPluginAwareActions(result, mavenActionGroups, mavenProject);
 			separator(result);
@@ -88,7 +87,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private void addRunConfigurations(List<AnAction> result, Project project, final MavenProjectInfo mavenProject) {
 		final List<RunnerAndConfigurationSettings> configurationSettings = RunManager.getInstance(project).getConfigurationSettingsList(
-			MavenRunConfigurationType.getInstance());
+				MavenRunConfigurationType.getInstance());
 
 		String directory = PathUtil.getCanonicalPath(mavenProject.mavenProject.getDirectory());
 
@@ -160,12 +159,12 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		}
 	}
 
-	private List<DefaultActionGroup> getPlugins(Project project, MavenProjectInfo mavenProject) {
+	private List<DefaultActionGroup> getPlugins(MavenProjectInfo mavenProject) {
 		List<DefaultActionGroup> mavenActionGroups = new ArrayList<DefaultActionGroup>();
 		for (MavenPlugin mavenPlugin : mavenProject.mavenProject.getDeclaredPlugins()) {
 			DefaultActionGroup plugin = new DefaultActionGroup(mavenPlugin.getArtifactId(), true);
 			plugin.getTemplatePresentation().setIcon(getIcon());
-			addPluginGoals(project, mavenPlugin, plugin, mavenProject);
+			addPluginGoals(mavenPlugin, plugin, mavenProject);
 			mavenActionGroups.add(plugin);
 		}
 		return mavenActionGroups;
@@ -179,9 +178,8 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		return MyIcons.PHASES_CLOSED;
 	}
 
-	private void addPluginGoals(Project project, MavenPlugin mavenPlugin, DefaultActionGroup pluginGroup, MavenProjectInfo mavenProject) {
-		MavenPluginInfo pluginInfo = MavenArtifactUtil.readPluginInfo(
-			MavenProjectsManager.getInstance(project).getLocalRepository(), mavenPlugin.getMavenId());
+	private void addPluginGoals(MavenPlugin mavenPlugin, DefaultActionGroup pluginGroup, MavenProjectInfo mavenProject) {
+		MavenPluginInfo pluginInfo = MavenArtifactUtil.readPluginInfo(mavenProject.mavenProject.getLocalRepository(), mavenPlugin.getMavenId());
 		if (pluginInfo != null) {
 			for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
 				pluginGoalsSet.add(mojo.getDisplayName());
@@ -198,6 +196,6 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	public boolean hideIfNoVisibleChildren() {
 		return true;
 	}
-	
+
 
 }

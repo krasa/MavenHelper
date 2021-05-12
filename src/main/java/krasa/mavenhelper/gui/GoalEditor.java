@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenPluginInfo;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
@@ -108,8 +107,7 @@ public class GoalEditor extends DialogWrapper {
 				if (mavenProject != null) {
 					List<ListItem> listItems = new ArrayList<>();
 					for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {
-						MavenPluginInfo pluginInfo = MavenArtifactUtil.readPluginInfo(
-							MavenProjectsManager.getInstance(project).getLocalRepository(), mavenPlugin.getMavenId());
+						MavenPluginInfo pluginInfo = MavenArtifactUtil.readPluginInfo(mavenProject.getLocalRepository(), mavenPlugin.getMavenId());
 						if (pluginInfo != null) {
 							boolean first = true;
 							for (MavenPluginInfo.Mojo mojo : pluginInfo.getMojos()) {
