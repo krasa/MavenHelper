@@ -1,11 +1,6 @@
 package krasa.mavenhelper.action;
 
-import com.intellij.execution.ProgramRunnerUtil;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.BaseRunConfigurationAction;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -168,10 +163,9 @@ public class RunTestFileAction extends DumbAwareAction {
 			return;
 		}
 
-		final ConfigurationContext context = ConfigurationContext.getFromContext(e.getDataContext());
-		RunnerAndConfigurationSettings configuration = context.getConfiguration();
-
-		boolean isTest = configuration != null;
+		//TODO #71  perhaps by com.intellij.execution.actions.BaseRunConfigurationAction.fullUpdate
+		PsiFile psiFile = PlatformDataKeys.PSI_FILE.getData(e.getDataContext());
+		boolean isTest = psiFile != null;
 		boolean available = isAvailable(e);
 		boolean visible = isVisible(e);
 
@@ -179,13 +173,14 @@ public class RunTestFileAction extends DumbAwareAction {
 		p.setEnabled(isTest && available);
 		p.setVisible(isTest && available);
 		if (isTest && available && visible) {
-			RunConfiguration runConfiguration = configuration.getConfiguration();
-			if (runConfiguration instanceof LocatableConfiguration) {
-				String s = BaseRunConfigurationAction.suggestRunActionName((LocatableConfiguration) runConfiguration);
-				p.setText(getText(s));
+			VirtualFile virtualFile = psiFile.getVirtualFile();
+			String name;
+			if (virtualFile != null) {
+				name = virtualFile.getNameWithoutExtension();
 			} else {
-				p.setText(getText(ProgramRunnerUtil.shortenName(configuration.getName(), 0)));
+				name = psiFile.getName();
 			}
+			p.setText(getText(name));
 		}
 	}
 

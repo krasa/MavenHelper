@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.13.203.000.0</version>
+	<version>4.14.212.000.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -41,6 +41,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.14
+            <br> - Test action temporary fix for IJ 2012.2
             <br>4.13
             <br> - workaround for WSL2 freeze <a href="https://youtrack.jetbrains.com/issue/IDEA-266405">IDEA-266405</a>
             <br>4.12
