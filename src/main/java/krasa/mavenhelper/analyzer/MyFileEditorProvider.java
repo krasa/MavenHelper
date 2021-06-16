@@ -28,12 +28,12 @@ public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 
 	private boolean isPomFile(@NotNull final Project project, @NotNull final VirtualFile file) {
 		final String path = file.getPath();
-		if (!path.endsWith("/" + MavenConstants.POM_XML))
+		if (!path.endsWith("/" + MavenConstants.POM_XML) && !path.endsWith("\\" + MavenConstants.POM_XML))
 			return false;
 		MavenProjectsManager instance = MavenProjectsManager.getInstance(project);
 		final MavenProject mavenProject = instance == null ? null : instance.findProject(file);
 		if (mavenProject != null) {
-			return mavenProject.getPath().equals(path);
+			return mavenProject.getFile().equals(file);
 		}
 		return false;
 	}
