@@ -5,9 +5,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ColorPicker;
 import com.intellij.ui.DoubleClickListener;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
+import java.util.ArrayList;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -42,13 +45,17 @@ public class ApplicationSettingsForm {
 	private JSplitPane split;
 	private JCheckBox enableDelete;
 	private JCheckBox resolveWorkspaceArtifactsCheckBox;
+	private JLabel searchBackgroundColorNameLabel;
+	private JLabel searchBackgroundColorPickerLabel;
+	private JLabel conflictsForegroundColorNameLabel;
+	private JLabel conflictsForegroundColorPickerLabel;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
 
 	public ApplicationSettingsForm(ApplicationSettings original) {
 		this.settings = original.clone();
-		aliasTable = new AliasTable();
+		aliasTable = new AliasTable(this.settings);
 		myPathVariablesPanel.add(
 			ToolbarDecorator.createDecorator(aliasTable)
 				.setAddAction(new AnActionButtonRunnable() {
@@ -164,6 +171,44 @@ public class ApplicationSettingsForm {
 
 		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
 		Donate.init(rootComponent, donate);
+
+		searchBackgroundColorPickerLabel.setPreferredSize(new Dimension(20, 20));
+		searchBackgroundColorPickerLabel.setOpaque(true);
+		searchBackgroundColorPickerLabel.setBackground(new JBColor(new Color(settings.getSearchBackgroundColor()), new Color(settings.getSearchBackgroundColor())));
+
+		conflictsForegroundColorPickerLabel.setPreferredSize(new Dimension(20, 20));
+		conflictsForegroundColorPickerLabel.setOpaque(true);
+		conflictsForegroundColorPickerLabel.setBackground(new JBColor(new Color(settings.getConflictsForegroundColor()), new Color(settings.getConflictsForegroundColor())));
+
+		searchBackgroundColorPickerLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Color color = ColorPicker.showDialog(rootComponent, "ColorPicker", new JBColor(new Color(settings.getSearchBackgroundColor()), new Color(settings.getSearchBackgroundColor())), true, new ArrayList<>(), true);
+				if (color != null) {
+					searchBackgroundColorPickerLabel.setBackground(color);
+					settings.setSearchBackgroundColor(color.getRGB());
+				} else {
+					searchBackgroundColorPickerLabel.setBackground(new JBColor(new Color(settings.getSearchBackgroundColor()), new Color(settings.getSearchBackgroundColor())));
+					settings.setSearchBackgroundColor(settings.getSearchBackgroundColor());
+				}
+				super.mouseClicked(e);
+			}
+		});
+
+		conflictsForegroundColorPickerLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Color color = ColorPicker.showDialog(rootComponent, "ColorPicker", new JBColor(new Color(settings.getConflictsForegroundColor()), new Color(settings.getConflictsForegroundColor())), true, new ArrayList<>(), true);
+				if (color != null) {
+					conflictsForegroundColorPickerLabel.setBackground(color);
+					settings.setConflictsForegroundColor(color.getRGB());
+				} else {
+					conflictsForegroundColorPickerLabel.setBackground(new JBColor(new Color(settings.getConflictsForegroundColor()), new Color(settings.getConflictsForegroundColor())));
+					settings.setConflictsForegroundColor(settings.getConflictsForegroundColor());
+				}
+				super.mouseClicked(e);
+			}
+		});
 	}
 
 
