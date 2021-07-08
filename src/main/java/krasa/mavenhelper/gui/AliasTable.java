@@ -26,7 +26,7 @@ public class AliasTable extends JBTable {
 
 	private final List<Alias> myAliases = new ArrayList<>();
 
-	public AliasTable() {
+	public AliasTable(ApplicationSettings original) {
 		setModel(myTableModel);
 		TableColumn column = getColumnModel().getColumn(NAME_COLUMN);
 		column.setCellRenderer(new DefaultTableCellRenderer() {
@@ -35,7 +35,7 @@ public class AliasTable extends JBTable {
 				final Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				final String macroValue = getAliasValueAt(row);
 				component.setForeground(macroValue.length() == 0
-					? JBColor.RED
+					? new JBColor(original.getConflictsForegroundColor(), original.getConflictsForegroundColor())
 					: isSelected ? table.getSelectionForeground() : table.getForeground());
 				return component;
 			}

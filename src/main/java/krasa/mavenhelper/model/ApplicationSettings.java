@@ -2,6 +2,8 @@ package krasa.mavenhelper.model;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.rits.cloning.Cloner;
 import krasa.mavenhelper.ApplicationService;
@@ -29,6 +31,10 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private Aliases aliases = new Aliases();
 	private boolean enableDelete = true;
 	private boolean resolveWorkspaceArtifacts = false;
+	private int searchBackgroundColor = JBColor.CYAN.getRGB();
+	private int conflictsForegroundColor = JBColor.RED.getRGB();
+	private SimpleTextAttributes errorAttributes = new SimpleTextAttributes(0, new JBColor(this.getConflictsForegroundColor(), this.getConflictsForegroundColor()));
+	private SimpleTextAttributes errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, this.getErrorAttributes().getFgColor());
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -199,5 +205,31 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	public void setResolveWorkspaceArtifacts(boolean resolveWorkspaceArtifacts) {
 		this.resolveWorkspaceArtifacts = resolveWorkspaceArtifacts;
+	}
+
+	public int getSearchBackgroundColor() {
+		return searchBackgroundColor;
+	}
+
+	public void setSearchBackgroundColor(int searchBackgroundColor) {
+		this.searchBackgroundColor = searchBackgroundColor;
+	}
+
+	public int getConflictsForegroundColor() {
+		return conflictsForegroundColor;
+	}
+
+	public void setConflictsForegroundColor(int conflictsForegroundColor) {
+		this.conflictsForegroundColor = conflictsForegroundColor;
+		this.errorAttributes = new SimpleTextAttributes(0, new JBColor(conflictsForegroundColor, conflictsForegroundColor));
+		this.errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, this.errorAttributes.getFgColor());
+	}
+
+	public SimpleTextAttributes getErrorAttributes() {
+		return errorAttributes;
+	}
+
+	public SimpleTextAttributes getErrorBoldAttributes() {
+		return errorBoldAttributes;
 	}
 }

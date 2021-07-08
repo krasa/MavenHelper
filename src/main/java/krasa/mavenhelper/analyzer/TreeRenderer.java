@@ -3,6 +3,7 @@ package krasa.mavenhelper.analyzer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import krasa.mavenhelper.ApplicationService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -21,7 +22,6 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 	private final JCheckBox showGroupId;
 	private final JCheckBox showSize;
 	private final GuiForm guiForm;
-	private final SimpleTextAttributes errorBoldAttributes;
 
 	private final SimpleTextAttributes testAttributes;
 	private final SimpleTextAttributes testBoldAttributes;
@@ -31,13 +31,12 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final SimpleTextAttributes runtimeAttributes;
 	private final SimpleTextAttributes runtimeBoldAttributes;
-	public static final SimpleTextAttributes ERROR_BOLD = SimpleTextAttributes.ERROR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
+	public static final SimpleTextAttributes ERROR_BOLD = ApplicationService.getInstance().getState().getErrorAttributes().derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
 
 	public TreeRenderer(JCheckBox showGroupId, JCheckBox showSize, GuiForm guiForm) {
 		this.showGroupId = showGroupId;
 		this.showSize = showSize;
 		this.guiForm = guiForm;
-		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
 
 		testAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, new JBColor(new Color(4, 111, 0), new Color(0x69AF80)));
 		testBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, testAttributes.getFgColor());
@@ -79,7 +78,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 			if (error) {
-				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
+				attributes = ApplicationService.getInstance().getState().getErrorAttributes();
 			}
 			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
 
@@ -91,8 +90,8 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			SimpleTextAttributes attributes;
 			SimpleTextAttributes boldAttributes;
 			if (error) {
-				attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
-				boldAttributes = errorBoldAttributes;
+				attributes = ApplicationService.getInstance().getState().getErrorAttributes();
+				boldAttributes = ApplicationService.getInstance().getState().getErrorBoldAttributes();
 			} else if ("test".equals(myTreeUserObject.getArtifact().getScope())) {
 				attributes = testAttributes;
 				boldAttributes = testBoldAttributes;

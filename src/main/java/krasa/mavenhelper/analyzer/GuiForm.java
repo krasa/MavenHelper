@@ -16,6 +16,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
@@ -133,7 +134,7 @@ public class GuiForm implements Disposable {
 			"  </body>\n" +
 			"</html>\n");
 		intellijBugLabel.setBackground(rootPanel.getBackground());
-		intellijBugLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		intellijBugLabel.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
 		intellijBugLabel.setVisible(false);
 		intellijBugLabel.addHyperlinkListener(e -> {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -151,7 +152,7 @@ public class GuiForm implements Disposable {
 			"  </body>\n" +
 			"</html>\n");
 		falsePositive.setBackground(rootPanel.getBackground());
-		falsePositive.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		falsePositive.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
 		falsePositive.setVisible(false);
 		falsePositive.addHyperlinkListener(e -> {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -212,7 +213,7 @@ public class GuiForm implements Disposable {
 
 		noConflictsWarningLabel.setBackground(null);
 		noConflictsWarningLabel.setText(WARNING);
-		noConflictsWarningLabel.setForeground(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		noConflictsWarningLabel.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
 
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
@@ -273,7 +274,7 @@ public class GuiForm implements Disposable {
 		actionGroup.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, leftTree));
 		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons", actionGroup, true);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
-		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
 
 		String lastRadioButton = PropertiesComponent.getInstance().getValue(LAST_RADIO_BUTTON);
 		if ("tree".equals(lastRadioButton)) {
@@ -327,7 +328,7 @@ public class GuiForm implements Disposable {
 				SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 				SimpleTextAttributes boldAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
 				if (conflict && allDependenciesAsListRadioButton.isSelected()) {
-					attributes = SimpleTextAttributes.ERROR_ATTRIBUTES;
+					attributes = ApplicationService.getInstance().getState().getErrorAttributes();
 					boldAttributes = errorBoldAttributes;
 				}
 				if (showSize.isSelected()) {
