@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClassOwner;
@@ -157,7 +158,11 @@ public class RunTestFileAction extends DumbAwareAction {
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
-		if (DumbService.isDumb(getEventProject(e))) {
+		Project eventProject = getEventProject(e);
+		if (eventProject == null) {
+			return;
+		}
+		if (DumbService.isDumb(eventProject)) {
 			Presentation p = e.getPresentation();
 			p.setVisible(false);
 			return;
