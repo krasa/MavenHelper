@@ -476,7 +476,7 @@ public class GuiForm implements Disposable {
 			showNoConflictsLabel = false;
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else { // tree
-			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText);
+			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText, false);
 			sortTree();
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
 			TreeUtils.expandAll(leftTree);
@@ -520,7 +520,7 @@ public class GuiForm implements Disposable {
 		}
 	}
 
-	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree, String searchFieldText) {
+	private boolean fillLeftTree(DefaultMutableTreeNode parent, List<MavenArtifactNode> dependencyTree, String searchFieldText, boolean parentMatched) {
 		boolean search = StringUtils.isNotBlank(searchFieldText);
 		boolean hasAddedNodes = false;
 
@@ -532,9 +532,9 @@ public class GuiForm implements Disposable {
 				treeUserObject.highlight = true;
 			}
 			final DefaultMutableTreeNode newNode = new MyDefaultMutableTreeNode(treeUserObject);
-			boolean childAdded = fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText);
+			boolean childAdded = fillLeftTree(newNode, mavenArtifactNode.getDependencies(), searchFieldText, directMatch || parentMatched);
 
-			if (!search || !filter.isSelected() || directMatch || childAdded) {
+			if (!search || !filter.isSelected() || directMatch || childAdded || parentMatched) {
 				parent.add(newNode);
 				hasAddedNodes = true;
 			}
