@@ -4,6 +4,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import krasa.mavenhelper.ApplicationService;
+import krasa.mavenhelper.model.ApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -75,10 +76,11 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			Utils.appendSize(this, myTreeUserObject.getSize(), myTreeUserObject.getTotalSize());
 		}
 
+		ApplicationSettings state = ApplicationService.getInstance().getState();
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 			if (error) {
-				attributes = ApplicationService.getInstance().getState().getErrorAttributes();
+				attributes = state.getErrorAttributes();
 			}
 			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
 
@@ -90,8 +92,8 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			SimpleTextAttributes attributes;
 			SimpleTextAttributes boldAttributes;
 			if (error) {
-				attributes = ApplicationService.getInstance().getState().getErrorAttributes();
-				boldAttributes = ApplicationService.getInstance().getState().getErrorBoldAttributes();
+				attributes = state.getErrorAttributes();
+				boldAttributes = state.getErrorBoldAttributes();
 			} else if ("test".equals(myTreeUserObject.getArtifact().getScope())) {
 				attributes = testAttributes;
 				boldAttributes = testBoldAttributes;
