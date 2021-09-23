@@ -70,12 +70,12 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		boolean omitted = Utils.isOmitted(mavenArtifactNode);
 		boolean conflict_AlternativeMethod = Utils.isConflictAlternativeMethod(mavenArtifactNode);
 		boolean error = omitted || conflict_AlternativeMethod;
+		boolean added = "ADDED".equals(mavenArtifactNode.getState().name());
 		String currentVersion = artifact.getVersion();
 
 		if (showSize.isSelected()) {
 			Utils.appendSize(this, myTreeUserObject.getSize(), myTreeUserObject.getTotalSize());
 		}
-
 		ApplicationSettings state = ApplicationService.getInstance().getState();
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
@@ -87,6 +87,9 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 			checkForBug(myTreeUserObject);
 			if (!omitted && conflict_AlternativeMethod) {
 				conflict_AlternativeMethod(mavenArtifactNode, attributes, getConflictWinner(mavenArtifactNode));
+			}
+			if (added) {
+				append(" *");
 			}
 		} else {
 			SimpleTextAttributes attributes;
