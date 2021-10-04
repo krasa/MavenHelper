@@ -3,14 +3,8 @@ package krasa.mavenhelper.gui;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.ColorPicker;
-import com.intellij.ui.DoubleClickListener;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import java.util.ArrayList;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -21,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.List;
 
@@ -170,7 +165,7 @@ public class ApplicationSettingsForm {
 		pluginAwareGoals.addKeyListener(keyAdapter);
 
 		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
-		Donate.init(rootComponent, donate);
+		Donate.init(donate);
 
 		searchBackgroundColorPickerLabel.setPreferredSize(new Dimension(20, 20));
 		searchBackgroundColorPickerLabel.setOpaque(true);

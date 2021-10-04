@@ -44,7 +44,7 @@ public class ListPopupHandler extends PopupHandler {
 
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(new JumpToLeftTreeListAction(project, mavenProject, mavenArtifactNode, guiForm));
-		popup = ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent();
+		popup = ActionManager.getInstance().createActionPopupMenu("MavenHelper", actionGroup).getComponent();
 		popup.show(comp, x, y);
 	}
 

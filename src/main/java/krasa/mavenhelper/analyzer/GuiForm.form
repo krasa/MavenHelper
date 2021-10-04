@@ -185,21 +185,6 @@
                       <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </hspacer>
-                  <component id="be5ad" class="javax.swing.JButton" binding="donate">
-                    <constraints>
-                      <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <background color="-2697514"/>
-                      <font/>
-                      <hideActionText value="false"/>
-                      <horizontalTextPosition value="0"/>
-                      <icon value="krasa/mavenhelper/icons/donate.gif"/>
-                      <text value=""/>
-                      <toolTipText value="Donate via PayPal"/>
-                      <verticalAlignment value="0"/>
-                    </properties>
-                  </component>
                   <component id="b88dc" class="javax.swing.JButton" binding="reimport">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -207,6 +192,14 @@
                     <properties>
                       <text value="Reimport"/>
                       <toolTipText value="Reimport All Maven Projects"/>
+                    </properties>
+                  </component>
+                  <component id="b8a5e" class="javax.swing.JButton" binding="donate">
+                    <constraints>
+                      <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Donate"/>
                     </properties>
                   </component>
                 </children>

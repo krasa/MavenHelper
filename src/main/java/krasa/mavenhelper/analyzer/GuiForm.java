@@ -273,6 +273,7 @@ public class GuiForm implements Disposable {
 		actionGroup.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, leftTree));
 		actionGroup.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, leftTree));
 		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons", actionGroup, true);
+		actionToolbar.setTargetComponent(rootPanel);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
 		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
 
@@ -284,7 +285,7 @@ public class GuiForm implements Disposable {
 		} else {
 			conflictsRadioButton.setSelected(true);
 		}
-		Donate.init(rootPanel, donate);
+		Donate.init(donate);
 
 
 		myEventListener = new MyProjectService.MyEventListener() {

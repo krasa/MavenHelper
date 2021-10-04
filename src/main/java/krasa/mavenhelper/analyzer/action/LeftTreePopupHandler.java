@@ -93,7 +93,7 @@ public class LeftTreePopupHandler extends PopupHandler {
 				}
 			});
 		}
-		popup = ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent();
+		popup = ActionManager.getInstance().createActionPopupMenu("MavenHelper", actionGroup).getComponent();
 		popup.show(comp, x, y);
 	}
 
