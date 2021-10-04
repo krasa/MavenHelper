@@ -42,7 +42,7 @@
 
 	<change-notes><![CDATA[
             <br>4.17
-            <br> - experimental: added '*' to the tree which identifies the main dependency which determines the version
+            <br> - main dependency which determines the version will be bold in the right tree
             <br>4.16
             <br> - Added search background color and conflict foreground color settings
             <br> - left tree filtering improvement

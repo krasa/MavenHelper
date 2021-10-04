@@ -79,17 +79,21 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		ApplicationSettings state = ApplicationService.getInstance().getState();
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+			SimpleTextAttributes versionAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
+			if (added) {
+				versionAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
+			}
+
 			if (error) {
 				attributes = state.getErrorAttributes();
+				versionAttributes = state.getErrorAttributes();
 			}
-			append(currentVersion + " [" + classifier + artifact.getScope() + "]", attributes);
+			append(currentVersion, versionAttributes);
+			append(" [" + classifier + artifact.getScope() + "]", attributes);
 
 			checkForBug(myTreeUserObject);
 			if (!omitted && conflict_AlternativeMethod) {
 				conflict_AlternativeMethod(mavenArtifactNode, attributes, getConflictWinner(mavenArtifactNode));
-			}
-			if (added) {
-				append(" *");
 			}
 		} else {
 			SimpleTextAttributes attributes;
