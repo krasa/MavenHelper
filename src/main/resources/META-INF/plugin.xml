@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.17.212.000.0</version>
+	<version>4.18.212.000.0</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -41,6 +41,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+            <br>4.18
+            <br> - maven-shared-utils update
             <br>4.17
             <br> - main dependency which determines the version will be bold in the right tree
             <br>4.16
