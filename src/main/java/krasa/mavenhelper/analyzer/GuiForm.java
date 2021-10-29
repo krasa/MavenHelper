@@ -16,8 +16,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import krasa.mavenhelper.ApplicationService;
 import krasa.mavenhelper.Donate;
+import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.MyProjectService;
 import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenhelper.analyzer.action.ListKeyStrokeAdapter;
@@ -70,6 +70,7 @@ public class GuiForm implements Disposable {
 
 	private final Project project;
 	private final VirtualFile file;
+	private final MavenHelperApplicationService applicationService = MavenHelperApplicationService.getInstance();
 	private MavenProject mavenProject;
 	protected JBList leftPanelList;
 	private MyHighlightingTree rightTree;
@@ -134,7 +135,7 @@ public class GuiForm implements Disposable {
 			"  </body>\n" +
 			"</html>\n");
 		intellijBugLabel.setBackground(rootPanel.getBackground());
-		intellijBugLabel.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
+		intellijBugLabel.setForeground(applicationService.getState().getErrorAttributes().getFgColor());
 		intellijBugLabel.setVisible(false);
 		intellijBugLabel.addHyperlinkListener(e -> {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -152,7 +153,7 @@ public class GuiForm implements Disposable {
 			"  </body>\n" +
 			"</html>\n");
 		falsePositive.setBackground(rootPanel.getBackground());
-		falsePositive.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
+		falsePositive.setForeground(applicationService.getState().getErrorAttributes().getFgColor());
 		falsePositive.setVisible(false);
 		falsePositive.addHyperlinkListener(e -> {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -213,7 +214,7 @@ public class GuiForm implements Disposable {
 
 		noConflictsWarningLabel.setBackground(null);
 		noConflictsWarningLabel.setText(WARNING);
-		noConflictsWarningLabel.setForeground(ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
+		noConflictsWarningLabel.setForeground(applicationService.getState().getErrorAttributes().getFgColor());
 
 		leftPanelLayout = (CardLayout) leftPanelWrapper.getLayout();
 
@@ -275,7 +276,7 @@ public class GuiForm implements Disposable {
 		ActionToolbar actionToolbar = ActionManagerEx.getInstance().createActionToolbar("krasa.MavenHelper.buttons", actionGroup, true);
 		actionToolbar.setTargetComponent(rootPanel);
 		buttonsPanel.add(actionToolbar.getComponent(), "1");
-		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, ApplicationService.getInstance().getState().getErrorAttributes().getFgColor());
+		errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, applicationService.getState().getErrorAttributes().getFgColor());
 
 		String lastRadioButton = PropertiesComponent.getInstance().getValue(LAST_RADIO_BUTTON);
 		if ("tree".equals(lastRadioButton)) {
@@ -329,7 +330,7 @@ public class GuiForm implements Disposable {
 				SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 				SimpleTextAttributes boldAttributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
 				if (conflict && allDependenciesAsListRadioButton.isSelected()) {
-					attributes = ApplicationService.getInstance().getState().getErrorAttributes();
+					attributes = applicationService.getState().getErrorAttributes();
 					boldAttributes = errorBoldAttributes;
 				}
 				if (showSize.isSelected()) {

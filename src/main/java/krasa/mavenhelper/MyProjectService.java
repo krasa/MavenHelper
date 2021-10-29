@@ -1,6 +1,5 @@
 package krasa.mavenhelper;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,7 @@ public class MyProjectService {
 	private List<MyEventListener> myEventListeners = new CopyOnWriteArrayList<>();
 
 	public static MyProjectService getInstance(Project project) {
-		return ServiceManager.getService(project, MyProjectService.class);
+		return project.getService(MyProjectService.class);
 	}
 
 	public MyProjectService(Project project) {

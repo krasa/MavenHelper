@@ -13,7 +13,7 @@ public class ShortcutStartupActivity implements StartupActivity {
 	@Override
 	public void runActivity(@NotNull Project project) {
 		if (!registered) {
-			ApplicationService.getInstance().initShortcuts();
+			MavenHelperApplicationService.getInstance().initShortcuts();
 			registered = true;
 		}
 	}

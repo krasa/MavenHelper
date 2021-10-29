@@ -1,8 +1,8 @@
 package krasa.mavenhelper;
 
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,8 +20,8 @@ import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "MavenRunHelper", storages = {@Storage("mavenRunHelper.xml")})
-public class ApplicationService implements PersistentStateComponent<ApplicationSettings> {
-	static final Logger LOG = Logger.getInstance(ApplicationService.class);
+public class MavenHelperApplicationService implements PersistentStateComponent<ApplicationSettings> {
+	static final Logger LOG = Logger.getInstance(MavenHelperApplicationService.class);
 
 	public static final String RUN_MAVEN = "Run Maven";
 	public static final String DEBUG_MAVEN = "Debug Maven";
@@ -122,8 +122,8 @@ public class ApplicationService implements PersistentStateComponent<ApplicationS
 	}
 
 
-	public static ApplicationService getInstance() {
-		return ServiceManager.getService(ApplicationService.class);
+	public static MavenHelperApplicationService getInstance() {
+		return ApplicationManager.getApplication().getService(MavenHelperApplicationService.class);
 	}
 
 }

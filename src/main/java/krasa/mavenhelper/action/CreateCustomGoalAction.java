@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import krasa.mavenhelper.ApplicationService;
+import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.gui.GoalEditor;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
@@ -37,7 +37,7 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		ApplicationService instance = ApplicationService.getInstance();
+		MavenHelperApplicationService instance = MavenHelperApplicationService.getInstance();
 		ApplicationSettings state = instance.getState();
 
 		DataContext context = e.getDataContext();

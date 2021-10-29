@@ -3,7 +3,7 @@ package krasa.mavenhelper.analyzer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
-import krasa.mavenhelper.ApplicationService;
+import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.model.ApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 
 	private final SimpleTextAttributes runtimeAttributes;
 	private final SimpleTextAttributes runtimeBoldAttributes;
-	public static final SimpleTextAttributes ERROR_BOLD = ApplicationService.getInstance().getState().getErrorAttributes().derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
+	public static final SimpleTextAttributes ERROR_BOLD = MavenHelperApplicationService.getInstance().getState().getErrorAttributes().derive(SimpleTextAttributes.STYLE_BOLD, null, null, null);
 
 	public TreeRenderer(JCheckBox showGroupId, JCheckBox showSize, GuiForm guiForm) {
 		this.showGroupId = showGroupId;
@@ -76,7 +76,7 @@ public class TreeRenderer extends ColoredTreeCellRenderer {
 		if (showSize.isSelected()) {
 			Utils.appendSize(this, myTreeUserObject.getSize(), myTreeUserObject.getTotalSize());
 		}
-		ApplicationSettings state = ApplicationService.getInstance().getState();
+		ApplicationSettings state = MavenHelperApplicationService.getInstance().getState();
 		if (myTreeUserObject.showOnlyVersion) {
 			SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
 			SimpleTextAttributes versionAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;

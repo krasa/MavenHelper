@@ -20,7 +20,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.ui.popup.list.ListPopupModel;
-import krasa.mavenhelper.ApplicationService;
+import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.action.debug.DebugConfigurationAction;
 import krasa.mavenhelper.action.debug.DebugGoalAction;
 import krasa.mavenhelper.action.debug.DebugTestFileAction;
@@ -107,7 +107,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 					if (selectedItem != null && selectedItem.getAction() instanceof MyActionGroup) {
 						MyActionGroup action = (MyActionGroup) selectedItem.getAction();
-						boolean deleted = ApplicationService.getInstance().getState().removeGoal(action.getGoal());
+						boolean deleted = MavenHelperApplicationService.getInstance().getState().removeGoal(action.getGoal());
 
 						if (deleted) {
 							model.deleteItem(selectedItem);
@@ -272,7 +272,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			return new DumbAwareAction("Delete", null, AllIcons.General.Remove) {
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-					ApplicationService.getInstance().getState().removeGoal(goal);
+					MavenHelperApplicationService.getInstance().getState().removeGoal(goal);
 				}
 			};
 		}

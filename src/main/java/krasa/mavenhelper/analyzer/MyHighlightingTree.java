@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.UIUtil;
-import krasa.mavenhelper.ApplicationService;
+import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.analyzer.action.BaseAction;
 import krasa.mavenhelper.model.ApplicationSettings;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ public class MyHighlightingTree extends Tree implements DataProvider {
 	public Color getFileColorFor(Object object) {
 		if (object instanceof MyTreeUserObject) {
 			if (((MyTreeUserObject) object).isHighlight()) {
-				ApplicationSettings state = ApplicationService.getInstance().getState();
+				ApplicationSettings state = MavenHelperApplicationService.getInstance().getState();
 				if (UIUtil.isUnderDarcula()) {
 					return darker(new JBColor(new Color(state.getSearchBackgroundColor()), new Color(state.getSearchBackgroundColor())), 8);
 				} else {

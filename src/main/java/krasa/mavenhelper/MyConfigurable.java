@@ -12,10 +12,10 @@ import javax.swing.*;
 public class MyConfigurable implements Configurable {
 	private ApplicationSettingsForm form;
 	public ApplicationSettings state;
-	private ApplicationService applicationService;
+	private MavenHelperApplicationService applicationService;
 
 	public MyConfigurable() {
-		this.applicationService = ApplicationService.getInstance();
+		this.applicationService = MavenHelperApplicationService.getInstance();
 		this.state = applicationService.getState();
 	}
 

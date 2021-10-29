@@ -2,7 +2,7 @@
 
 	<id>MavenRunHelper</id>
 	<name>Maven Helper</name>
-	<version>4.18.212.000.0</version>
+	<version>4.18.212.000.1</version>
 
 	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -171,6 +171,7 @@
 
 
 	<extensions defaultExtensionNs="com.intellij">
+		<applicationService serviceImplementation="krasa.mavenhelper.MavenHelperApplicationService"/>
 		<notificationGroup id="Maven Helper" displayType="STICKY_BALLOON" isLogByDefault="true"/>
 		<!-- Add your extensions here -->
 		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
@@ -178,8 +179,6 @@
 								 displayName="Maven Helper"/>
 		<projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
 		<postStartupActivity implementation="krasa.mavenhelper.ShortcutStartupActivity"/>
-		<applicationService serviceImplementation="krasa.mavenhelper.ApplicationService"/>
-
 	</extensions>
 
 	<depends>org.jetbrains.idea.maven</depends>
