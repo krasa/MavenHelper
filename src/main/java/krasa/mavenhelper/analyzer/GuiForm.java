@@ -119,7 +119,7 @@ public class GuiForm implements Disposable {
 	private LeftTreePopupHandler leftTreePopupHandler;
 	private ListPopupHandler leftPanelListPopupHandler;
 
-	public GuiForm(final Project project, VirtualFile file, final MavenProject mavenProject) {
+	public GuiForm(@NotNull Project project, VirtualFile file, final MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
 		mavenProjectsManager = MavenProjectsManager.getInstance(project);
@@ -128,8 +128,8 @@ public class GuiForm implements Disposable {
 
 		intellijBugLabel.setText("<html>\n" +
 				"  <head>\n" +
-			"\n" +
-			"  </head>\n" +
+				"\n" +
+				"  </head>\n" +
 			"  <body>\n" +
 			"      1) An artifact is in conflict, its version is probably wrongly resolved due to a <a href=\"https://youtrack.jetbrains.com/issue/IDEA-215596\">bug in IntelliJ</a>." +
 			"  </body>\n" +
@@ -229,6 +229,7 @@ public class GuiForm implements Disposable {
 		rightTreePopupHandler = new RightTreePopupHandler(project, mavenProject, rightTree, this);
 		rightTree.addMouseListener(rightTreePopupHandler);
 		rightTree.setMavenProject(mavenProject);
+		rightTree.setProject(project);
 
 		leftTree.addTreeSelectionListener(new LeftTreeSelectionListener());
 		leftTreeRoot = new MyDefaultMutableTreeNode();
@@ -242,6 +243,7 @@ public class GuiForm implements Disposable {
 		leftTreePopupHandler = new LeftTreePopupHandler(project, mavenProject, leftTree);
 		leftTree.addMouseListener(leftTreePopupHandler);
 		leftTree.setMavenProject(mavenProject);
+		leftTree.setProject(project);
 
 
 		leftPanelListPopupHandler = new ListPopupHandler(project, mavenProject, leftPanelList, this);
@@ -346,8 +348,8 @@ public class GuiForm implements Disposable {
 			}
 
 		});
-		rightTree = new MyHighlightingTree(project);
-		leftTree = new MyHighlightingTree(project);
+		rightTree = new MyHighlightingTree();
+		leftTree = new MyHighlightingTree();
 	}
 
 	@Override

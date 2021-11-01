@@ -26,7 +26,7 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 	private final VirtualFile file;
 	private GuiForm myEditor;
 
-	public UIFormEditor(final Project project, final VirtualFile file) {
+	public UIFormEditor(@NotNull Project project, final VirtualFile file) {
 		this.file = file;
 		final MavenProject mavenProject = MavenProjectsManager.getInstance(project).findProject(file);
 		if (mavenProject == null) {

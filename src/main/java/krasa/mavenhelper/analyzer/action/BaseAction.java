@@ -18,6 +18,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericDomValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomDependency;
 import org.jetbrains.idea.maven.dom.model.MavenDomExclusion;
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
@@ -40,7 +41,7 @@ public abstract class BaseAction extends DumbAwareAction {
 	protected final MavenProject myMavenProject;
 	protected final MavenArtifactNode myArtifact;
 
-	public BaseAction(Project myProject, MavenProject myMavenProject, MavenArtifactNode myTreeNode, final String text) {
+	public BaseAction(@NotNull Project myProject, MavenProject myMavenProject, MavenArtifactNode myTreeNode, final String text) {
 		super(text);
 		this.myProject = myProject;
 		this.myMavenProject = myMavenProject;
@@ -137,12 +138,12 @@ public abstract class BaseAction extends DumbAwareAction {
 	/**
 	 * org.jetbrains.idea.maven.navigator.MavenProjectsStructure.DependencyNode#getNavigatable()
 	 */
-	public static Navigatable getNavigatable(MavenArtifactNode myArtifactNode, Project project, MavenProject mavenProject) {
+	public static Navigatable getNavigatable(MavenArtifactNode myArtifactNode, @NotNull Project project, MavenProject mavenProject) {
 		final VirtualFile file = getVirtualFile(myArtifactNode, project, mavenProject);
 		return file == null ? null : MavenNavigationUtil.createNavigatableForDependency(project, file, myArtifactNode.getArtifact());
 	}
 
-	private static VirtualFile getVirtualFile(MavenArtifactNode myArtifactNode, Project project, MavenProject mavenProject) {
+	private static VirtualFile getVirtualFile(MavenArtifactNode myArtifactNode, @NotNull Project project, MavenProject mavenProject) {
 		final MavenArtifactNode parent = myArtifactNode.getParent();
 		final VirtualFile file;
 		if (parent == null) {

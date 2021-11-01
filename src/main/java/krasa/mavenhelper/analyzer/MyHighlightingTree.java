@@ -19,12 +19,15 @@ import static com.intellij.ui.ColorUtil.darker;
 import static com.intellij.ui.ColorUtil.softer;
 
 public class MyHighlightingTree extends Tree implements DataProvider {
-	private final Project project;
+	private Project project;
 	private MavenProject mavenProject;
 
-	public MyHighlightingTree(Project project) {
-		this.project = project;
+	public MyHighlightingTree() {
 		setOpaque(false);
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public void setMavenProject(MavenProject mavenProject) {
@@ -57,6 +60,9 @@ public class MyHighlightingTree extends Tree implements DataProvider {
 		if (CommonDataKeys.NAVIGATABLE.is(s)) {
 			final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
 			if (selectedNode == null) {
+				return null;
+			}
+			if (project == null) {
 				return null;
 			}
 			final MyTreeUserObject myTreeUserObject = (MyTreeUserObject) selectedNode.getUserObject();
