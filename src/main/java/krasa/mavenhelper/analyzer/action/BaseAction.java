@@ -170,7 +170,8 @@ public abstract class BaseAction extends DumbAwareAction {
 			String s1 = mavenArtifact.getArtifactId() + ":" +
 					mavenArtifact.getGroupId() + ":" +
 					mavenArtifact.getScope() + ":" +
-					mavenArtifact.getVersion() + ":" +
+					mavenArtifact.getVersion() + "/" +
+					mavenArtifact.getBaseVersion() + ":" +
 					mavenArtifact.getClassifier() + ":" +
 					mavenArtifact.getType() + ":" +
 					mavenArtifact.getScope() + ":" +
