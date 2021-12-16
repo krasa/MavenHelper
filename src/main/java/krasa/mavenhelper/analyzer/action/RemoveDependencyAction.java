@@ -32,7 +32,11 @@ public class RemoveDependencyAction extends BaseAction {
 			boolean found = false;
 
 			for (MavenDomDependency mavenDomDependency : dependencies.getDependencies()) {
-				if (isSameDependency(myArtifact.getArtifact(), mavenDomDependency)) {
+				boolean sameDependency = isSameDependency(myArtifact.getArtifact(), mavenDomDependency);
+				if (!sameDependency) {
+					debugLog(myArtifact.getArtifact(), mavenDomDependency);
+				}
+				if (sameDependency) {
 					found = true;
 					mavenDomDependency.undefine();
 					dependencyDeleted();

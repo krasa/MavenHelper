@@ -36,7 +36,11 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 			boolean found = false;
 
 			for (MavenDomDependency mavenDomDependency : dependencies.getDependencies()) {
-				if (isSameDependency(oldestParent.getArtifact(), mavenDomDependency)) {
+				boolean sameDependency = isSameDependency(oldestParent.getArtifact(), mavenDomDependency);
+				if (!sameDependency) {
+					debugLog(oldestParent.getArtifact(), mavenDomDependency);
+				}
+				if (sameDependency) {
 					found = true;
 					final MavenDomExclusions exclusions = mavenDomDependency.getExclusions();
 					for (MavenDomExclusion mavenDomExclusion : exclusions.getExclusions()) {
@@ -60,6 +64,7 @@ public abstract class ExcludeDependencyAction extends BaseAction {
 			}
 		}
 	}
+
 
 	private void createExclusion(MavenArtifact artifactToExclude, MavenDomExclusions exclusions) {
 		MavenDomExclusion exclusion = exclusions.addExclusion();

@@ -159,6 +159,33 @@ public abstract class BaseAction extends DumbAwareAction {
 		return file;
 	}
 
+	protected void debugLog(MavenArtifact mavenArtifact, MavenDomDependency domDependency) {
+		if (LOG.isDebugEnabled()) {
+			String s = string(domDependency.getArtifactId()) + ":" +
+					string(domDependency.getGroupId()) + ":" +
+					string(domDependency.getClassifier()) + ":" +
+					string(domDependency.getScope()) + ":" +
+					string(domDependency.getVersion()) + ":" +
+					string(domDependency.getType());
+			String s1 = mavenArtifact.getArtifactId() + ":" +
+					mavenArtifact.getGroupId() + ":" +
+					mavenArtifact.getScope() + ":" +
+					mavenArtifact.getVersion() + ":" +
+					mavenArtifact.getClassifier() + ":" +
+					mavenArtifact.getType() + ":" +
+					mavenArtifact.getScope() + ":" +
+					mavenArtifact.getType();
+			LOG.debug("Dependency not matched: " + s1 + " != " + s);
+		}
+	}
+
+	private String string(GenericDomValue<String> artifactID) {
+		if (artifactID == null) {
+			return null;
+		}
+		return String.valueOf(artifactID.getValue());
+	}
+
 	protected boolean isSameDependency(MavenArtifact mavenArtifact, MavenDomDependency domDependency) {
 		GenericDomValue<String> artifactID = domDependency.getArtifactId();
 		GenericDomValue<String> groupId = domDependency.getGroupId();
@@ -167,22 +194,22 @@ public abstract class BaseAction extends DumbAwareAction {
 		GenericDomValue<String> version = domDependency.getVersion();
 		GenericDomValue<String> type = domDependency.getType();
 
-		if (artifactID.getValue() !=null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
+		if (artifactID.getValue() != null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
 			return false;
 		}
-		if (groupId.getValue() !=null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
+		if (groupId.getValue() != null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
 			return false;
 		}
-		if (scope.getValue() !=null && !mavenArtifact.getScope().equals(scope.getValue())) {
+		if (scope.getValue() != null && !mavenArtifact.getScope().equals(scope.getValue())) {
 			return false;
 		}
-		if (version.getValue() !=null && !mavenArtifact.getVersion().equals(version.getValue())) {
+		if (version.getValue() != null && !mavenArtifact.getVersion().equals(version.getValue())) {
 			return false;
 		}
-		if (classifier.getValue() !=null && !mavenArtifact.getClassifier().equals(classifier.getValue())) {
+		if (classifier.getValue() != null && !mavenArtifact.getClassifier().equals(classifier.getValue())) {
 			return false;
 		}
-		if (type.getValue() !=null && !mavenArtifact.getType().equals(type.getValue())) {
+		if (type.getValue() != null && !mavenArtifact.getType().equals(type.getValue())) {
 			return false;
 		}
 
@@ -199,10 +226,10 @@ public abstract class BaseAction extends DumbAwareAction {
 		GenericDomValue<String> artifactID = domDependency.getArtifactId();
 		GenericDomValue<String> groupId = domDependency.getGroupId();
 
-		if (artifactID.getValue() !=null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
+		if (artifactID.getValue() != null && !mavenArtifact.getArtifactId().equals(artifactID.getValue())) {
 			return false;
 		}
-		if (groupId.getValue() !=null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
+		if (groupId.getValue() != null && !mavenArtifact.getGroupId().equals(groupId.getValue())) {
 			return false;
 		}
 		return true;
