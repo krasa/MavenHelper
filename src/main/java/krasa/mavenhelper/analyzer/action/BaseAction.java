@@ -29,6 +29,8 @@ import org.jetbrains.idea.maven.navigator.MavenNavigationUtil;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
+import java.util.Objects;
+
 /**
  * @author Vojtech Krasa
  */
@@ -161,22 +163,24 @@ public abstract class BaseAction extends DumbAwareAction {
 
 	protected void debugLog(MavenArtifact mavenArtifact, MavenDomDependency domDependency) {
 		if (LOG.isDebugEnabled()) {
-			String s = string(domDependency.getArtifactId()) + ":" +
-					string(domDependency.getGroupId()) + ":" +
-					string(domDependency.getClassifier()) + ":" +
-					string(domDependency.getScope()) + ":" +
-					string(domDependency.getVersion()) + ":" +
-					string(domDependency.getType());
-			String s1 = mavenArtifact.getArtifactId() + ":" +
-					mavenArtifact.getGroupId() + ":" +
-					mavenArtifact.getScope() + ":" +
-					mavenArtifact.getVersion() + "/" +
-					mavenArtifact.getBaseVersion() + ":" +
-					mavenArtifact.getClassifier() + ":" +
-					mavenArtifact.getType() + ":" +
-					mavenArtifact.getScope() + ":" +
-					mavenArtifact.getType();
-			LOG.debug("Dependency not matched: " + s1 + " != " + s);
+			if (Objects.equals(string(domDependency.getArtifactId()), mavenArtifact.getArtifactId()) && Objects.equals(string(domDependency.getGroupId()), mavenArtifact.getGroupId())) {
+				String s = string(domDependency.getArtifactId()) + ":" +
+						string(domDependency.getGroupId()) + ":" +
+						string(domDependency.getClassifier()) + ":" +
+						string(domDependency.getScope()) + ":" +
+						string(domDependency.getVersion()) + ":" +
+						string(domDependency.getType());
+				String s1 = mavenArtifact.getArtifactId() + ":" +
+						mavenArtifact.getGroupId() + ":" +
+						mavenArtifact.getScope() + ":" +
+						mavenArtifact.getVersion() + "/" +
+						mavenArtifact.getBaseVersion() + ":" +
+						mavenArtifact.getClassifier() + ":" +
+						mavenArtifact.getType() + ":" +
+						mavenArtifact.getScope() + ":" +
+						mavenArtifact.getType();
+				LOG.debug("Dependency not matched: " + s1 + " != " + s);
+			}
 		}
 	}
 
