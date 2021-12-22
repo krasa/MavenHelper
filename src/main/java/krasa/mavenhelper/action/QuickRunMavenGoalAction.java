@@ -296,7 +296,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 			@Override
 			public void update(@NotNull AnActionEvent e) {
-				createAction.update(getAnActionEvent(e));
+//				createAction.update(getAnActionEvent(e));
 			}
 
 			@NotNull
