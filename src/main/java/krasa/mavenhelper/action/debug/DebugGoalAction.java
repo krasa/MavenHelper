@@ -3,6 +3,7 @@ package krasa.mavenhelper.action.debug;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
 import krasa.mavenhelper.action.MavenProjectInfo;
+import krasa.mavenhelper.action.ProgramRunnerUtils;
 import krasa.mavenhelper.action.RunGoalAction;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -35,6 +36,6 @@ public class DebugGoalAction extends RunGoalAction {
 	}
 
 	private void runInternal(final Project project, final MavenRunnerParameters params) {
-		MavenDebugConfigurationType.debugConfiguration(project, params, null);
+		ProgramRunnerUtils.debugConfiguration(project, params, null);
 	}
 }

@@ -1,16 +1,15 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.execution.Executor;
-import com.intellij.execution.ProgramRunnerUtil;
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
 /**
  * @author Vojtech Krasa
  */
-public class RunConfigurationAction extends AnAction {
+public class RunConfigurationAction extends DumbAwareAction {
 
 	protected final Executor myExecutor;
 	protected final boolean myEnabled;
@@ -31,8 +30,7 @@ public class RunConfigurationAction extends AnAction {
 	@Override
 	public void actionPerformed(AnActionEvent event) {
 		if (!myEnabled) return;
-
-		ProgramRunnerUtil.executeConfiguration(mySettings, myExecutor);
+		ProgramRunnerUtils.executeConfiguration(myProject, myExecutor, mySettings);
 	}
 
 	@Override

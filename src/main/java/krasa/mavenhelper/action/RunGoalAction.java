@@ -8,7 +8,6 @@ import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
@@ -64,8 +63,9 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	protected void run(MavenRunnerParameters params, Project project) {
-		MavenRunConfigurationType.runConfiguration(project, params, null);
+		ProgramRunnerUtils.run(project, params);
 	}
+
 
 	@Override
 	public void update(AnActionEvent e) {

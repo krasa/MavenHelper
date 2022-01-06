@@ -5,6 +5,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import krasa.mavenhelper.action.ProgramRunnerUtils;
 import krasa.mavenhelper.action.RunConfigurationAction;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 
@@ -23,7 +24,7 @@ public class DebugConfigurationAction extends RunConfigurationAction {
 		final RunnerAndConfigurationSettings configurationSettings = clone(mySettings);
 		addForkMode(configurationSettings);
 
-		MavenDebugConfigurationType.debugConfiguration(myProject, null, configurationSettings, myExecutor);
+		ProgramRunnerUtils.executeDebugConfiguration(myProject, myExecutor, configurationSettings);
 	}
 
 	private RunnerAndConfigurationSettings clone(RunnerAndConfigurationSettings configSettings) {

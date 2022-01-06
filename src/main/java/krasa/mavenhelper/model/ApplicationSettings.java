@@ -35,6 +35,8 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private int conflictsForegroundColor = JBColor.RED.getRGB();
 	private SimpleTextAttributes errorAttributes = new SimpleTextAttributes(0, new JBColor(this.getConflictsForegroundColor(), this.getConflictsForegroundColor()));
 	private SimpleTextAttributes errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, this.getErrorAttributes().getFgColor());
+	private boolean useTerminalCommand;
+	private String terminalCommand = "mvnd";
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -231,5 +233,21 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	public SimpleTextAttributes getErrorBoldAttributes() {
 		return errorBoldAttributes;
+	}
+
+	public boolean isUseTerminalCommand() {
+		return useTerminalCommand;
+	}
+
+	public void setUseTerminalCommand(final boolean useTerminalCommand) {
+		this.useTerminalCommand = useTerminalCommand;
+	}
+
+	public String getTerminalCommand() {
+		return terminalCommand;
+	}
+
+	public void setTerminalCommand(final String terminalCommand) {
+		this.terminalCommand = terminalCommand;
 	}
 }

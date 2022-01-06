@@ -16,7 +16,6 @@ import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.execution.MavenRunConfigurationType;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -58,7 +57,8 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	protected void run(DataContext context, MavenRunnerParameters params) {
-		MavenRunConfigurationType.runConfiguration(MavenActionUtil.getProject(context), params, null);
+		Project project = MavenActionUtil.getProject(context);
+		ProgramRunnerUtils.run(project, params);
 	}
 
 	protected List<String> getGoals(AnActionEvent e, PsiClassOwner psiFile, MavenProject mavenProject) {
@@ -68,10 +68,10 @@ public class RunTestFileAction extends DumbAwareAction {
 		if (skipTests || isExcludedFromSurefire(psiFile, mavenProject)) {
 			MavenPlugin failsafePlugin = mavenProject.findPlugin("org.apache.maven.plugins", "maven-failsafe-plugin");
 			if (failsafePlugin != null) {
-                addFailSafeParameters(e, psiFile, goals, failsafePlugin);
-            } else {
-                addSurefireParameters(e, psiFile, goals);
-            }
+				addFailSafeParameters(e, psiFile, goals, failsafePlugin);
+			} else {
+				addSurefireParameters(e, psiFile, goals);
+			}
 			goals.add("verify");
 		} else {
 			addSurefireParameters(e, psiFile, goals);
@@ -91,9 +91,9 @@ public class RunTestFileAction extends DumbAwareAction {
 		ComparableVersion minimumForMethodTest = new ComparableVersion("2.7.3");
 		if (minimumForMethodTest.compareTo(version) == 1) {
 			goals.add("-Dit.test=" + Utils.getTestArgumentWithoutMethod(e, psiFile));
-        } else {
+		} else {
 			goals.add("-Dit.test=" + Utils.getTestArgument(psiFile, ConfigurationContext.getFromContext(e.getDataContext())));
-        }
+		}
 	}
 
 	private boolean isExcludedFromSurefire(PsiClassOwner psiFile, MavenProject mavenProject) {

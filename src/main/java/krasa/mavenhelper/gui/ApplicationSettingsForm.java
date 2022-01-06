@@ -44,6 +44,8 @@ public class ApplicationSettingsForm {
 	private JLabel searchBackgroundColorPickerLabel;
 	private JLabel conflictsForegroundColorNameLabel;
 	private JLabel conflictsForegroundColorPickerLabel;
+	private JTextField terminalCommand;
+	private JCheckBox useTerminalCommand;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -52,8 +54,8 @@ public class ApplicationSettingsForm {
 		this.settings = original.clone();
 		aliasTable = new AliasTable(this.settings);
 		myPathVariablesPanel.add(
-			ToolbarDecorator.createDecorator(aliasTable)
-				.setAddAction(new AnActionButtonRunnable() {
+				ToolbarDecorator.createDecorator(aliasTable)
+						.setAddAction(new AnActionButtonRunnable() {
 					@Override
 					public void run(AnActionButton button) {
 						aliasTable.addAlias();
@@ -352,18 +354,25 @@ public class ApplicationSettingsForm {
 		useIgnoredPoms.setSelected(data.isUseIgnoredPoms());
 		enableDelete.setSelected(data.isEnableDelete());
 		resolveWorkspaceArtifactsCheckBox.setSelected(data.isResolveWorkspaceArtifacts());
+		useTerminalCommand.setSelected(data.isUseTerminalCommand());
+		terminalCommand.setText(data.getTerminalCommand());
 	}
 
 	public void getData(ApplicationSettings data) {
 		data.setUseIgnoredPoms(useIgnoredPoms.isSelected());
 		data.setEnableDelete(enableDelete.isSelected());
 		data.setResolveWorkspaceArtifacts(resolveWorkspaceArtifactsCheckBox.isSelected());
+		data.setUseTerminalCommand(useTerminalCommand.isSelected());
+		data.setTerminalCommand(terminalCommand.getText());
 	}
 
-	public boolean isModified(ApplicationSettings data) {      
+	public boolean isModified(ApplicationSettings data) {
 		if (useIgnoredPoms.isSelected() != data.isUseIgnoredPoms()) return true;
 		if (enableDelete.isSelected() != data.isEnableDelete()) return true;
 		if (resolveWorkspaceArtifactsCheckBox.isSelected() != data.isResolveWorkspaceArtifacts()) return true;
+		if (useTerminalCommand.isSelected() != data.isUseTerminalCommand()) return true;
+		if (terminalCommand.getText() != null ? !terminalCommand.getText().equals(data.getTerminalCommand()) : data.getTerminalCommand() != null)
+			return true;
 		return false;
 	}
 }

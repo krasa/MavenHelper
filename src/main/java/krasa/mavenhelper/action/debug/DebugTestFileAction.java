@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClassOwner;
+import krasa.mavenhelper.action.ProgramRunnerUtils;
 import krasa.mavenhelper.action.RunTestFileAction;
 import krasa.mavenhelper.analyzer.ComparableVersion;
 import krasa.mavenhelper.icons.MyIcons;
@@ -52,6 +53,6 @@ public class DebugTestFileAction extends RunTestFileAction {
 	}
 
 	private void runInternal(final Project project, final MavenRunnerParameters params) {
-		MavenDebugConfigurationType.debugConfiguration(project, params, null);
+		ProgramRunnerUtils.debugConfiguration(project, params, null);
 	}
 }
