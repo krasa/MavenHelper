@@ -42,7 +42,7 @@
 
 	<change-notes><![CDATA[
             <br>4.20
-            <br> - Running goals with custom command (mvnd) via terminal
+            <br> - Option to run goals with a custom command (mvnd) via terminal
             <br>4.19
             <br> - Fixed - Slow operations are prohibited on EDT
             <br>4.18

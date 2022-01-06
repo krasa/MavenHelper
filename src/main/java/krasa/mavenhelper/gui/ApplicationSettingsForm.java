@@ -1,6 +1,7 @@
 package krasa.mavenhelper.gui;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.*;
@@ -46,6 +47,7 @@ public class ApplicationSettingsForm {
 	private JLabel conflictsForegroundColorPickerLabel;
 	private JTextField terminalCommand;
 	private JCheckBox useTerminalCommand;
+	private JButton terminalFeedback;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -168,6 +170,12 @@ public class ApplicationSettingsForm {
 
 		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
 		Donate.init(donate);
+		terminalFeedback.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BrowserUtil.browse("https://github.com/krasa/MavenHelper/issues/85");
+			}
+		});
 
 		searchBackgroundColorPickerLabel.setPreferredSize(new Dimension(20, 20));
 		searchBackgroundColorPickerLabel.setOpaque(true);
