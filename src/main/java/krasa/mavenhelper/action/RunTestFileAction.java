@@ -12,6 +12,7 @@ import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.analyzer.ComparableVersion;
 import krasa.mavenhelper.icons.MyIcons;
+import krasa.mavenhelper.model.ApplicationSettings;
 import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ public class RunTestFileAction extends DumbAwareAction {
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), null, goals,
 						MavenActionUtil.getProjectsManager(context).getExplicitProfiles());
+				params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 				run(context, params);
 			} else {
 				Messages.showWarningDialog(e.getProject(), "Cannot run for current file", "Maven Test File");
