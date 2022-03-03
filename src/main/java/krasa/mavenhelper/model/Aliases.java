@@ -28,6 +28,9 @@ public class Aliases extends DomainObject {
 	}
 
 	public boolean add(Alias o) {
+		if (aliases.stream().anyMatch(alias -> alias.getFrom().equals(o.getFrom()))) {
+			return false;
+		}
 		return aliases.add(o);
 	}
 

@@ -7,8 +7,6 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import krasa.mavenhelper.model.Goal;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
 import java.util.List;
@@ -45,17 +43,6 @@ public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction impleme
 		Presentation p = e.getPresentation();
 		p.setEnabled(isAvailable(e));
 		p.setVisible(isVisible(e));
-	}
-
-	@Override
-	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
-	}
-
-	@Override
-	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		return mavenProject != null;
 	}
 
 	@Override

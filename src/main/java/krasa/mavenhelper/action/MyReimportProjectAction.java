@@ -3,12 +3,11 @@ package krasa.mavenhelper.action;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.project.actions.ReimportProjectAction;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -26,18 +25,17 @@ class MyReimportProjectAction extends ReimportProjectAction {
 		final DataContext context = e.getDataContext();
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 		if (projectsManager != null) {
-			perform(projectsManager, Arrays.asList(mavenProject.mavenProject), e);
+			perform(projectsManager, List.of(mavenProject.mavenProject), e);
 		}
 	}
 
 	@Override
 	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
+		return mavenProject.getMavenProject() != null;
 	}
 
 	@Override
 	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		return mavenProject != null;
+		return mavenProject.getMavenProject() != null;
 	}
 }

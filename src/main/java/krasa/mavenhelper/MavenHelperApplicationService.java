@@ -119,6 +119,7 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 	@Override
 	public void loadState(ApplicationSettings state) {
 		settings = state;
+		ApplicationSettings.addDefaultAliases(settings.getAliases());
 	}
 
 

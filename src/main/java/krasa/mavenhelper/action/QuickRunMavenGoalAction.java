@@ -282,7 +282,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			private final MavenProjectInfo mavenProject;
 			private CreateAction createAction;
 
-			public MyCreateAction(Goal goal, MavenProjectInfo mavenProject) {
+			public MyCreateAction(@NotNull Goal goal, @NotNull MavenProjectInfo mavenProject) {
 				super("Create Run Configuration");
 				this.goal = goal;
 				this.mavenProject = mavenProject;
@@ -309,7 +309,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 							PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 							ConfigurationContext fromContext = ConfigurationContext.getFromContext(e.getDataContext());
 							PsiFile psiFile = PsiManager.getInstance(e.getProject()).findFile(mavenProject.mavenProject.getFile());
-							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext));
+							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext, mavenProject));
 						}
 						return e.getDataContext().getData(s);
 					}

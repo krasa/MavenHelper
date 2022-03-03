@@ -26,10 +26,6 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 	public CreateCustomGoalAction() {
 	}
 
-	public CreateCustomGoalAction(boolean runGoal) {
-		this.runGoal = runGoal;
-	}
-
 	public CreateCustomGoalAction(@Nullable String text, @NotNull MavenProjectInfo mavenProject) {
 		super(text);
 		this.mavenProject = mavenProject;
@@ -37,6 +33,9 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		if (mavenProject == null) {
+			mavenProject = new MavenProjectInfo(e.getDataContext());
+		}
 		MavenHelperApplicationService instance = MavenHelperApplicationService.getInstance();
 		ApplicationSettings state = instance.getState();
 

@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
+import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,9 +33,9 @@ public class Goal extends DomainObject {
 		return Utils.limitLength(commandLine);
 	}
 
-	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext) {
+	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext, @NotNull MavenProjectInfo mavenProject) {
 		String cmd = getCommandLine();
-		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext);
+		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProject);
 
 		return ContainerUtil.newArrayList(StringUtil.tokenize(new CommandLineTokenizer(cmd)));
 	}

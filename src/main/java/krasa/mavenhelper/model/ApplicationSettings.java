@@ -7,10 +7,13 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.rits.cloning.Cloner;
 import krasa.mavenhelper.MavenHelperApplicationService;
+import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenConstants;
+import org.jetbrains.idea.maven.project.MavenProject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +23,7 @@ import java.util.Map;
 public class ApplicationSettings extends DomainObject implements Cloneable {
 	private static final Collection<String> BASIC_PHASES = MavenConstants.BASIC_PHASES;
 	public static final String CURRENT_CLASS_MACRO = "<<<CURRENT_CLASS>>>";
+	public static final String CURRENT_MODULE_NAME = "<<<CURRENT_MODULE_NAME>>>";
 	public static final String CURRENT_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_CLASS_WITH_TEST_METHOD>>>";
 	public static final String CURRENT_FULL_CLASS_MACRO = "<<<CURRENT_FULL_CLASS>>>";
 	public static final String CURRENT_FULL_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_FULL_CLASS_WITH_TEST_METHOD>>>";
@@ -113,6 +117,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	@Transient
 	public static Aliases addDefaultAliases(Aliases aliases) {
+		aliases.add(new Alias("$moduleName$", CURRENT_MODULE_NAME));
 		aliases.add(new Alias("$class$", CURRENT_CLASS_MACRO));
 		aliases.add(new Alias("$classWithMethod$", CURRENT_CLASS_WITH_METHOD_MACRO));
 		aliases.add(new Alias("$fullClass$", CURRENT_FULL_CLASS_MACRO));
@@ -162,33 +167,48 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		return remove;
 	}
 
-	public String applyAliases(String commandLine, PsiFile psiFile, ConfigurationContext fromContext) {
+	public String applyAliases(@NotNull String commandLine, @Nullable PsiFile psiFile, @Nullable ConfigurationContext fromContext, @NotNull MavenProjectInfo mavenProjectInfo) {
 		String s = aliases.applyAliases(commandLine);
-
-		if (s.contains(CURRENT_CLASS_MACRO)) {
-			String name = StringUtils.substringBefore(psiFile.getName(), ".");
-			s = s.replace(CURRENT_CLASS_MACRO, name);
-		}
-		if (s.contains(CURRENT_FULL_CLASS_MACRO)) {
-			s = s.replace(CURRENT_FULL_CLASS_MACRO, Utils.getQualifiedName(psiFile));
-		}
-		if (s.contains(CURRENT_CLASS_WITH_METHOD_MACRO)) {
-			String to = Utils.NOT_RESOLVED;
-			if (null != fromContext) {
-				String className = null != fromContext.getConfiguration()? fromContext.getConfiguration().getName() : Utils.NOT_RESOLVED;
-				to = className.replace(".", "#");
+		if (s.contains(CURRENT_MODULE_NAME)) {
+			MavenProject mavenProject = mavenProjectInfo.getMavenProject();
+			if (mavenProject == null) {
+				throw new RuntimeException("maven project not found");
 			}
-			if (Utils.NOT_RESOLVED.equals(to)) {
-				to = StringUtils.substringBefore(psiFile.getName(), ".");
+			String artifactId = mavenProject.getMavenId().getArtifactId();
+			if (artifactId == null) {
+				artifactId = mavenProject.getDisplayName();
 			}
-			s = s.replace(CURRENT_CLASS_WITH_METHOD_MACRO, to);
+			s = s.replace(CURRENT_MODULE_NAME, artifactId);
 		}
-		if (s.contains(CURRENT_FULL_CLASS_WITH_METHOD_MACRO)) {
-			String to = Utils.getTestArgument(psiFile, fromContext);
-			if (Utils.NOT_RESOLVED.equals(to)) {
-				to = Utils.getQualifiedName(psiFile);
+		if (psiFile != null) {
+			if (s.contains(CURRENT_CLASS_MACRO)) {
+				String name = StringUtils.substringBefore(psiFile.getName(), ".");
+				s = s.replace(CURRENT_CLASS_MACRO, name);
 			}
-			s = s.replace(CURRENT_FULL_CLASS_WITH_METHOD_MACRO, to);
+			if (s.contains(CURRENT_FULL_CLASS_MACRO)) {
+				s = s.replace(CURRENT_FULL_CLASS_MACRO, Utils.getQualifiedName(psiFile));
+			}
+			if (s.contains(CURRENT_CLASS_WITH_METHOD_MACRO)) {
+				String to = Utils.NOT_RESOLVED;
+				if (null != fromContext) {
+					String className = null != fromContext.getConfiguration() ? fromContext.getConfiguration().getName() : Utils.NOT_RESOLVED;
+					to = className.replace(".", "#");
+				}
+				if (Utils.NOT_RESOLVED.equals(to)) {
+					to = StringUtils.substringBefore(psiFile.getName(), ".");
+				}
+				s = s.replace(CURRENT_CLASS_WITH_METHOD_MACRO, to);
+			}
+			if (s.contains(CURRENT_FULL_CLASS_WITH_METHOD_MACRO)) {
+				String to = Utils.NOT_RESOLVED;
+				if (fromContext != null) {
+					to = Utils.getTestArgument(psiFile, fromContext);
+					if (Utils.NOT_RESOLVED.equals(to)) {
+						to = Utils.getQualifiedName(psiFile);
+					}
+				}
+				s = s.replace(CURRENT_FULL_CLASS_WITH_METHOD_MACRO, to);
+			}
 		}
 		return s;
 	}

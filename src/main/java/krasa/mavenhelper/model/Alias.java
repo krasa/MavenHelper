@@ -1,5 +1,4 @@
 package krasa.mavenhelper.model;
-
 public class Alias extends DomainObject {
 	private String from;
 	private String to;

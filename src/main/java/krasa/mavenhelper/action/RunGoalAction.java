@@ -55,7 +55,7 @@ public class RunGoalAction extends AnAction implements DumbAware {
 
 	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext) {
 		if (pomDir != null) {
-			List<String> goalsToRun = goal.parse(psiFile, configurationContext);
+			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProject);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
 			params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 			run(params, project);
