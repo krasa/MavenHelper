@@ -1,13 +1,12 @@
 package krasa.mavenhelper.analyzer.action;
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -92,12 +91,9 @@ public abstract class BaseAction extends DumbAwareAction {
 		String fileType = xmlFile.getFileType().toString();
 		String pluginName = "null";
 
-		PluginId pluginByClassName = PluginManagerCore.getPluginByClassName(xmlFile.getFileType().getClass().getCanonicalName());
-		if (pluginByClassName != null) {
-			IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginByClassName);
-			if (plugin != null) {
-				pluginName = plugin.getName();
-			}
+		PluginDescriptor pluginByClass = PluginManager.getPluginByClass(xmlFile.getFileType().getClass());
+		if (pluginByClass != null) {
+			pluginName = pluginByClass.getName();
 		}
 		if (!fileType.startsWith("com.intellij")) {
 			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "",
