@@ -31,7 +31,6 @@ import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenGoalLocation;
-import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
@@ -67,20 +66,20 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 	}
 
 	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.BGT; //MavenActionUtil.getMavenProject(e.getDataContext()) does not work on EDT
+	}
+
+	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
 		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e));
-		p.setVisible(isVisible(e));
+		p.setEnabled(isEnabled(e));
+		p.setVisible(MavenActionUtil.isMavenizedProject(e.getDataContext()));
 	}
 
-	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
-	}
-
-	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext()); //todo does not work
-		return mavenProject != null;
+	private boolean isEnabled(AnActionEvent e) {
+		return MavenActionUtil.hasProject(e.getDataContext()) && MavenActionUtil.getMavenProject(e.getDataContext()) != null;
 	}
 
 	@Override

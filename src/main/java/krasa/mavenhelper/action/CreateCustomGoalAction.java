@@ -2,8 +2,9 @@ package krasa.mavenhelper.action;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.MavenHelperApplicationService;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
-public class CreateCustomGoalAction extends AnAction implements DumbAware {
+public class CreateCustomGoalAction extends MyAnAction {
 	@Nullable
 	protected MavenProjectInfo mavenProject;
 	private boolean runGoal = true;
@@ -70,20 +71,9 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false, mavenProject1);
 	}
 
+
 	@Override
-	public void update(AnActionEvent e) {
-		super.update(e);
-		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e) && isVisible(e));
-//		p.setVisible(isVisible(e));
-	}
-
-
-	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
-	}
-
-	protected boolean isVisible(AnActionEvent e) {
+	protected boolean isEnabled(AnActionEvent e) {
 		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
 	}
 

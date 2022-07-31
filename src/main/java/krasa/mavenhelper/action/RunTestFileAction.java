@@ -169,6 +169,11 @@ public class RunTestFileAction extends DumbAwareAction {
 			p.setVisible(false);
 			return;
 		}
+		if (!MavenActionUtil.isMavenizedProject(e.getDataContext())) {
+			Presentation p = e.getPresentation();
+			p.setVisible(false);
+			return;
+		}
 
 		//TODO #71  perhaps by com.intellij.execution.actions.BaseRunConfigurationAction.fullUpdate
 		PsiFile psiFile = PlatformDataKeys.PSI_FILE.getData(e.getDataContext());

@@ -1,7 +1,9 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -37,13 +39,6 @@ public class QuickRunRootMavenGoalAction extends QuickRunMavenGoalAction impleme
 		}
 	}
 
-	@Override
-	public void update(AnActionEvent e) {
-		super.update(e);
-		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e));
-		p.setVisible(isVisible(e));
-	}
 
 	@Override
 	protected JBPopupFactory.ActionSelectionAid getAidMethod() {

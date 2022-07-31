@@ -1,8 +1,9 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.model.ApplicationSettings;
@@ -15,7 +16,7 @@ import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 import javax.swing.*;
 import java.util.List;
 
-public class RunGoalAction extends AnAction implements DumbAware {
+public class RunGoalAction extends MyAnAction {
 
 	private final Goal goal;
 	@Nullable
@@ -67,18 +68,8 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	@Override
-	public void update(AnActionEvent e) {
-		super.update(e);
-		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e) && isVisible(e));
-//		p.setVisible(isVisible(e));
-	}
-
-	protected boolean isAvailable(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext());
-	}
-
-	protected boolean isVisible(AnActionEvent e) {
+	protected boolean isEnabled(AnActionEvent e) {
 		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
 	}
+
 }

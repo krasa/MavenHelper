@@ -2,7 +2,7 @@
 
     <id>MavenRunHelper</id>
     <name>Maven Helper</name>
-    <version>4.21.213.3714.0</version>
+    <version>4.21.222.2964.0</version>
 
     <vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -140,7 +140,7 @@
 			]]>
     </change-notes>
 
-    <idea-version since-build="213.3714.440"/>
+    <idea-version since-build="222.2964.55"/>
 
     <application-components>
     </application-components>
