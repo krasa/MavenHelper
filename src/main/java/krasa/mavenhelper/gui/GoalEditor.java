@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.StatusText;
 import krasa.mavenhelper.action.Utils;
 import krasa.mavenhelper.model.Alias;
@@ -442,7 +443,16 @@ public class GoalEditor extends DialogWrapper {
 		settings.setAdditionalLinesCount(0);
 		settings.setRightMarginShown(false);
 
+
 		return editor;
+	}
+
+	@Override
+	protected void dispose() {
+		super.dispose();
+		if (myEditor != null) {
+			Disposer.dispose(myEditor.getDisposable());
+		}
 	}
 
 	@NotNull
