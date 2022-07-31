@@ -81,21 +81,26 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 				"EditorPopupMenu.Run");
 		DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"ProjectViewPopupMenuRunGroup");
-		clear(editorPopupMenu, projectViewPopupMenuRunGroup, name);
+		DefaultActionGroup mavenHelperBaseProjectMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
+				"MavenHelper.BaseProjectMenu");
 
-		add(actionGroup, editorPopupMenu, projectViewPopupMenuRunGroup);
+		clear(editorPopupMenu, projectViewPopupMenuRunGroup, mavenHelperBaseProjectMenu, name);
+
+		add(actionGroup, editorPopupMenu, mavenHelperBaseProjectMenu, projectViewPopupMenuRunGroup);
 	}
 
 	private void add(ActionGroup actionGroup, DefaultActionGroup editorPopupMenu,
-					 DefaultActionGroup projectViewPopupMenuRunGroup) {
+					 DefaultActionGroup projectViewPopupMenuRunGroup, DefaultActionGroup viewPopupMenuRunGroup) {
 		editorPopupMenu.add(actionGroup, Constraints.FIRST);
 		projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
+		viewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
 	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
-					   String name) {
+					   DefaultActionGroup mavenHelperBaseProjectMenu, String name) {
 		clear(editorPopupMenu, name);
 		clear(projectViewPopupMenuRunGroup, name);
+		clear(mavenHelperBaseProjectMenu, name);
 	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, String name) {
