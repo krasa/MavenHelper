@@ -15,9 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import java.io.File;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -51,12 +53,29 @@ public class Utils {
 				pomDir = getNearbyPOMDir(focusedFile);
 			}
 		} else {
-			MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
+			MavenProject mavenProject = Utils.getMavenProject(dataContext);
 			if (mavenProject != null) {
 				pomDir = mavenProject.getDirectory();
 			}
 		}
 		return pomDir;
+	}
+
+	@Nullable
+	public static MavenProject getMavenProject(DataContext context) {
+		MavenProject mavenProject = MavenActionUtil.getMavenProject(context);
+		if (mavenProject != null) {
+			return mavenProject;
+		}
+
+		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
+		if (projectsManager != null) {
+			List<MavenProject> projects = projectsManager.getProjects();
+			if (projects.size() == 1) {
+				return projects.get(0);
+			}
+		}
+		return null;
 	}
 
 	private static String getNearbyPOMDir(File focusFile) {

@@ -35,7 +35,6 @@ import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenPluginInfo;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,7 +103,7 @@ public class GoalEditor extends DialogWrapper {
 
 
 			if (dataContext != null) {
-				MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
+				MavenProject mavenProject = Utils.getMavenProject(dataContext);
 				if (mavenProject != null) {
 					List<ListItem> listItems = new ArrayList<>();
 					for (MavenPlugin mavenPlugin : mavenProject.getDeclaredPlugins()) {

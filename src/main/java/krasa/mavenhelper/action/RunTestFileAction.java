@@ -40,7 +40,7 @@ public class RunTestFileAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+		MavenProject mavenProject = Utils.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {
 
 			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
@@ -211,7 +211,7 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+		MavenProject mavenProject = Utils.getMavenProject(e.getDataContext());
 		return mavenProject != null;
 	}
 

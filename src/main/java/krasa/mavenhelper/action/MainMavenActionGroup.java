@@ -21,7 +21,6 @@ import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.actions.ReimportProjectAction;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.idea.maven.utils.MavenPluginInfo;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	@NotNull
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
-		return new MavenProjectInfo(MavenActionUtil.getMavenProject(dataContext), false);
+		return new MavenProjectInfo(Utils.getMavenProject(dataContext), false);
 	}
 
 	private void addRunConfigurations(List<AnAction> result, Project project, final MavenProjectInfo mavenProject) {

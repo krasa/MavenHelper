@@ -79,7 +79,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 	}
 
 	private boolean isEnabled(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext()) && MavenActionUtil.getMavenProject(e.getDataContext()) != null;
+		return MavenActionUtil.hasProject(e.getDataContext()) && Utils.getMavenProject(e.getDataContext()) != null;
 	}
 
 	@Override

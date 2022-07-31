@@ -14,7 +14,7 @@ public class RootMavenActionGroup extends MainMavenActionGroup {
 	@NotNull
 	@Override
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(dataContext);
+		MavenProject mavenProject = Utils.getMavenProject(dataContext);
 		if (mavenProject == null) {
 			return new MavenProjectInfo(null, false);
 		}

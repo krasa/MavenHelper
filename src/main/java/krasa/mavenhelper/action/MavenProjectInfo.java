@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 public class MavenProjectInfo {
 
@@ -17,7 +16,7 @@ public class MavenProjectInfo {
 	}
 
 	public MavenProjectInfo(DataContext dataContext) {
-		this(MavenActionUtil.getMavenProject(dataContext), false);
+		this(Utils.getMavenProject(dataContext), false);
 	}
 
 	@NotNull

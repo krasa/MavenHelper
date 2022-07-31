@@ -41,6 +41,7 @@ public abstract class MyAnAction extends DumbAwareAction {
 	}
 
 	protected boolean isEnabled(AnActionEvent e) {
-		return MavenActionUtil.hasProject(e.getDataContext()) && MavenActionUtil.getMavenProject(e.getDataContext()) != null;
+		return MavenActionUtil.hasProject(e.getDataContext()) && Utils.getMavenProject(e.getDataContext()) != null;
 	}
+
 }
