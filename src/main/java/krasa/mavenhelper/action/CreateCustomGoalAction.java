@@ -14,7 +14,6 @@ import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
@@ -33,15 +32,14 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		if (mavenProject == null) {
-			mavenProject = new MavenProjectInfo(e.getDataContext());
-		}
+		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(mavenProject, e);
+
 		MavenHelperApplicationService instance = MavenHelperApplicationService.getInstance();
 		ApplicationSettings state = instance.getState();
 
 		DataContext context = e.getDataContext();
 		Project project = MavenActionUtil.getProject(context);
-		String pomDir = Utils.getPomDirAsString(context, mavenProject);
+		String pomDir = Utils.getPomDirAsString(context, mavenProjectInfo);
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 		PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 		ConfigurationContext configurationContext = ConfigurationContext.getFromContext(e.getDataContext());
@@ -57,36 +55,36 @@ public class CreateCustomGoalAction extends AnAction implements DumbAware {
 				PropertiesComponent.getInstance().setValue(GoalEditor.SAVE, editor.isPersist(), true);
 				if (editor.isPersist()) {
 					state.getGoals().add(goal);
-					instance.registerAction(goal, getRunGoalAction(goal));
+					instance.registerAction(goal, getRunGoalAction(goal, null));
 				}
 
 				if (runGoal) {
-					getRunGoalAction(goal).actionPerformed(project, pomDir, projectsManager, data, configurationContext);
+					getRunGoalAction(goal, mavenProjectInfo).actionPerformed(project, pomDir, projectsManager, data, configurationContext, mavenProjectInfo);
 				}
 			}
 		}
 
 	}
 
-	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false, mavenProject);
+	protected RunGoalAction getRunGoalAction(Goal goal, MavenProjectInfo mavenProject1) {
+		return RunGoalAction.create(goal, MyIcons.PLUGIN_GOAL, false, mavenProject1);
 	}
 
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
 		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e));
-		p.setVisible(isVisible(e));
+		p.setEnabled(isAvailable(e) && isVisible(e));
+//		p.setVisible(isVisible(e));
 	}
+
 
 	protected boolean isAvailable(AnActionEvent e) {
 		return MavenActionUtil.hasProject(e.getDataContext());
 	}
 
 	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		return mavenProject != null;
+		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
 	}
 
 }

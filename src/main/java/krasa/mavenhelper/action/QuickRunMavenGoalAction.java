@@ -79,7 +79,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 	}
 
 	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
+		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext()); //todo does not work
 		return mavenProject != null;
 	}
 
@@ -237,12 +237,12 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
 			if (plugin) {
 				return new AnAction[]{
-					debug(goal, mavenProject)
+						debug(goal, mavenProject)
 				};
 
 			} else {
 				return new AnAction[]{
-					debug(goal, mavenProject), editAndRun(goal, mavenProject), delete(goal), new MyCreateAction(goal, mavenProject)
+						debug(goal, mavenProject), editAndRun(goal, mavenProject), delete(goal), new MyCreateAction(goal, mavenProject)
 				};
 			}
 		}

@@ -14,8 +14,8 @@ public class CreateCustomDebugGoalAction extends CreateCustomGoalAction {
 	}
 
 	@Override
-	protected RunGoalAction getRunGoalAction(Goal goal) {
-		return DebugGoalAction.createDebug(goal, MyIcons.ICON, false, mavenProject);
+	protected RunGoalAction getRunGoalAction(Goal goal, MavenProjectInfo mavenProject1) {
+		return DebugGoalAction.createDebug(goal, MyIcons.ICON, false, mavenProject1);
 	}
 
 }

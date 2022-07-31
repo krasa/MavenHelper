@@ -1,12 +1,12 @@
 <idea-plugin require-restart="true" version="2" url="https://github.com/krasa/MavenHelper">
 
-	<id>MavenRunHelper</id>
-	<name>Maven Helper</name>
-	<version>4.21.213.3714.0</version>
+    <id>MavenRunHelper</id>
+    <name>Maven Helper</name>
+    <version>4.21.213.3714.0</version>
 
-	<vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
+    <vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
-	<description><![CDATA[
+    <description><![CDATA[
 	    A must have plugin for working with Maven.<br>
 		<ul>
 		<li>easy way for analyzing and excluding conflicting dependencies</li>
@@ -40,7 +40,11 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/MavenHelper/">GitHub</a> | <a href="https://github.com/krasa/MavenHelper/issues">Issues</a>
       ]]></description>
 
-	<change-notes><![CDATA[
+    <change-notes><![CDATA[
+            <br>4.21
+            <br> - Added: $moduleName$ macro
+            <br> - Added: Resolve workspace artifacts settings
+            <br> - Supporting toolbar actions
             <br>4.20
             <br> - Option to run goals with a custom command (mvnd) via terminal
             <br>4.19
@@ -133,61 +137,61 @@
             <br>2.0 - fixed "no conflicts" field
             <br>...
 			]]>
-	</change-notes>
+    </change-notes>
 
-	<idea-version since-build="213.3714.440"/>
+    <idea-version since-build="213.3714.440"/>
 
-	<application-components>
-	</application-components>
+    <application-components>
+    </application-components>
 
-	<project-components>
-	</project-components>
+    <project-components>
+    </project-components>
 
-	<actions>
-		<!-- Add your actions here -->
-		<action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
+    <actions>
+        <!-- Add your actions here -->
+        <action id="MavenHelper.OpenTerminalAction" class="krasa.mavenhelper.action.OpenTerminalAction"
                 text="Open Terminal at the Current Maven Module Path"
                 icon="/krasa/mavenhelper/icons/OpenTerminal.svg">
-			<add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
-			<add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
-			<add-to-group group-id="RunMenu" anchor="first"/>
-<!--			<add-to-group group-id="RevealGroup" anchor="last"/>-->
-<!--  		 	<add-to-group group-id="TouchBarDefault_alt" anchor="last"/>-->
-		</action>
+            <add-to-group group-id="EditorPopupMenu.Run" anchor="first"/>
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="first"/>
+            <add-to-group group-id="RunMenu" anchor="first"/>
+            <!--			<add-to-group group-id="RevealGroup" anchor="last"/>-->
+            <!--  		 	<add-to-group group-id="TouchBarDefault_alt" anchor="last"/>-->
+        </action>
         <action id="MavenHelper.QuickRunMavenGoal" class="krasa.mavenhelper.action.QuickRunMavenGoalAction"
                 text="Run Maven Goal"
                 description="Run Maven Goal" icon="/krasa/mavenhelper/icons/runMaven.svg">
-			<add-to-group group-id="RunMenu" anchor="first"/>
-			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
-		</action>
+            <add-to-group group-id="RunMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt R"/>
+        </action>
         <action id="MavenHelper.QuickRunRootMavenGoal" class="krasa.mavenhelper.action.QuickRunRootMavenGoalAction"
                 text="Run Maven Goal on Root Module"
                 description="Run Maven Goal on Root Module" icon="/krasa/mavenhelper/icons/runMaven.svg">
-			<add-to-group group-id="RunMenu" anchor="first"/>
-			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
-		</action>
-		<action id="MavenHelper.CreateCustomGoalAction" class="krasa.mavenhelper.action.CreateCustomGoalAction"
-				text="Run New Maven Goal..."
-				description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.svg">
-			<add-to-group group-id="RunMenu" anchor="first"/>
-		</action>
-	</actions>
+            <add-to-group group-id="RunMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt R"/>
+        </action>
+        <action id="MavenHelper.CreateCustomGoalAction" class="krasa.mavenhelper.action.CreateCustomGoalAction"
+                text="Run New Maven Goal..."
+                description="Run New Maven Goal..." icon="/krasa/mavenhelper/icons/runMaven.svg">
+            <add-to-group group-id="RunMenu" anchor="first"/>
+        </action>
+    </actions>
 
 
-	<extensions defaultExtensionNs="com.intellij">
-		<applicationService serviceImplementation="krasa.mavenhelper.MavenHelperApplicationService"/>
-		<notificationGroup id="Maven Helper" displayType="STICKY_BALLOON" isLogByDefault="true"/>
-		<!-- Add your extensions here -->
-		<fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
-		<applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper"
-								 displayName="Maven Helper"/>
-		<projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
-		<postStartupActivity implementation="krasa.mavenhelper.ShortcutStartupActivity"/>
-	</extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="krasa.mavenhelper.MavenHelperApplicationService"/>
+        <notificationGroup id="Maven Helper" displayType="STICKY_BALLOON" isLogByDefault="true"/>
+        <!-- Add your extensions here -->
+        <fileEditorProvider implementation="krasa.mavenhelper.analyzer.MyFileEditorProvider"/>
+        <applicationConfigurable instance="krasa.mavenhelper.MyConfigurable" id="MavenRunHelper"
+                                 displayName="Maven Helper"/>
+        <projectService serviceImplementation="krasa.mavenhelper.MyProjectService"/>
+        <postStartupActivity implementation="krasa.mavenhelper.ShortcutStartupActivity"/>
+    </extensions>
 
-	<depends>org.jetbrains.idea.maven</depends>
-	<depends optional="true">org.jetbrains.plugins.terminal</depends>
-	<depends optional="true">com.jetbrains.sh</depends>
-	<depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.idea.maven</depends>
+    <depends optional="true">org.jetbrains.plugins.terminal</depends>
+    <depends optional="true">com.jetbrains.sh</depends>
+    <depends>com.intellij.modules.java</depends>
 
 </idea-plugin>

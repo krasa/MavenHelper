@@ -9,7 +9,6 @@ import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
-import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
@@ -43,19 +42,20 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final DataContext context = e.getDataContext();
+		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(mavenProject, e);
 
 		Project project = MavenActionUtil.getProject(context);
-		String pomDir = Utils.getPomDirAsString(context, mavenProject);
+		String pomDir = Utils.getPomDirAsString(context, mavenProjectInfo);
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 		PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 		ConfigurationContext configurationContext = ConfigurationContext.getFromContext(e.getDataContext());
 
-		actionPerformed(project, pomDir, projectsManager, data, configurationContext);
+		actionPerformed(project, pomDir, projectsManager, data, configurationContext, mavenProjectInfo);
 	}
 
-	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext) {
+	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext, MavenProjectInfo mavenProject1) {
 		if (pomDir != null) {
-			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProject);
+			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProject1);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
 			params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 			run(params, project);
@@ -66,13 +66,12 @@ public class RunGoalAction extends AnAction implements DumbAware {
 		ProgramRunnerUtils.run(project, params);
 	}
 
-
 	@Override
 	public void update(AnActionEvent e) {
 		super.update(e);
 		Presentation p = e.getPresentation();
-		p.setEnabled(isAvailable(e));
-		p.setVisible(isVisible(e));
+		p.setEnabled(isAvailable(e) && isVisible(e));
+//		p.setVisible(isVisible(e));
 	}
 
 	protected boolean isAvailable(AnActionEvent e) {
@@ -80,7 +79,6 @@ public class RunGoalAction extends AnAction implements DumbAware {
 	}
 
 	protected boolean isVisible(AnActionEvent e) {
-		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
-		return mavenProject != null;
+		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
 	}
 }

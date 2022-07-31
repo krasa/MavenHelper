@@ -41,8 +41,8 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 			actionId = getDebugActionId(goal);
 			registerAction(instance, actionId, DebugGoalAction.createDebug(goal, MyIcons.PLUGIN_GOAL, false, null));
 		}
-		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction());
-		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction());
+		registerAction(instance, "krasa.MavenHelper.RunTestFileAction", new RunTestFileAction().alwaysVisible());
+		registerAction(instance, "krasa.MavenHelper.DebugTestFileAction", new DebugTestFileAction().alwaysVisible());
 	}
 
 	public void unRegisterActions() {
@@ -87,13 +87,13 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 	}
 
 	private void add(ActionGroup actionGroup, DefaultActionGroup editorPopupMenu,
-			DefaultActionGroup projectViewPopupMenuRunGroup) {
+					 DefaultActionGroup projectViewPopupMenuRunGroup) {
 		editorPopupMenu.add(actionGroup, Constraints.FIRST);
 		projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
 	}
 
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
-			String name) {
+					   String name) {
 		clear(editorPopupMenu, name);
 		clear(projectViewPopupMenuRunGroup, name);
 	}

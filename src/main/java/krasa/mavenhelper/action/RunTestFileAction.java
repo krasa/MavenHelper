@@ -28,6 +28,7 @@ import java.util.List;
 
 public class RunTestFileAction extends DumbAwareAction {
 	private final Logger LOG = Logger.getInstance("#" + getClass().getCanonicalName());
+	protected boolean alwaysVisible;
 
 	public RunTestFileAction() {
 		super("Test file", "Run current File with Maven", MyIcons.MAVEN_LOGO);
@@ -44,8 +45,7 @@ public class RunTestFileAction extends DumbAwareAction {
 
 			PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 			if (psiFile instanceof PsiClassOwner) {
-				List<String> goals = getGoals(e, (PsiClassOwner) psiFile,
-						MavenActionUtil.getMavenProject(e.getDataContext()));
+				List<String> goals = getGoals(e, (PsiClassOwner) psiFile, mavenProject);
 
 				final DataContext context = e.getDataContext();
 				MavenRunnerParameters params = new MavenRunnerParameters(true, mavenProject.getDirectory(), null, goals,
@@ -178,7 +178,7 @@ public class RunTestFileAction extends DumbAwareAction {
 
 		Presentation p = e.getPresentation();
 		p.setEnabled(isTest && available);
-		p.setVisible(isTest && available);
+		p.setVisible(alwaysVisible || (isTest && available));
 		if (isTest && available && visible) {
 			VirtualFile virtualFile = psiFile.getVirtualFile();
 			String name;
@@ -208,5 +208,10 @@ public class RunTestFileAction extends DumbAwareAction {
 	protected boolean isVisible(AnActionEvent e) {
 		MavenProject mavenProject = MavenActionUtil.getMavenProject(e.getDataContext());
 		return mavenProject != null;
+	}
+
+	public AnAction alwaysVisible() {
+		alwaysVisible = true;
+		return this;
 	}
 }
