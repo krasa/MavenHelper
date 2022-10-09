@@ -49,7 +49,7 @@ public class MyConfigurable implements Configurable {
 		applicationService.unRegisterActions();
 		state = form.getSettings().clone();
 		applicationService.loadState(state);
-		applicationService.registerActions();
+		applicationService.initShortcuts();
 	}
 
 	@Override
