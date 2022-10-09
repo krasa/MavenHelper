@@ -244,7 +244,7 @@
             </constraints>
             <properties>
               <text value="Init Actions in Editor Popup Menu"/>
-              <toolTipText value=""/>
+              <toolTipText value="If enabled, extension will create new actions in editor popup menu. They can't be hided in other way.&#10;&#10;Require restart IDE to apply changes."/>
             </properties>
           </component>
           <component id="86331" class="javax.swing.JCheckBox" binding="initActionsInProjectCheckBox">
@@ -253,6 +253,7 @@
             </constraints>
             <properties>
               <text value="Init Actions in Project View"/>
+              <toolTipText value="If enabled, extension will create new actions in project view popup. They can't be hided in other way.&#10;&#10;Require restart IDE to apply changes."/>
             </properties>
           </component>
           <component id="78347" class="javax.swing.JCheckBox" binding="initActionsInMavenCheckBox">
@@ -260,7 +261,9 @@
               <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <hideActionText value="false"/>
               <text value="Init Actions in Maven 'BaseFolder' Menu"/>
+              <toolTipText value="If enabled, extension will create new actions in Maven 'BaseFolder' actions group. They can't be hided in other way.&#10;&#10;Require restart IDE to apply changes."/>
             </properties>
           </component>
         </children>
