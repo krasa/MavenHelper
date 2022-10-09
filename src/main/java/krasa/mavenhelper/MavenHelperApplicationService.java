@@ -77,26 +77,22 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 	}
 
 	private void addActionGroup(ActionGroup actionGroup, String name) {
+		DefaultActionGroup editorPopupMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
+				"EditorPopupMenu.Run");
+		DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
+				"ProjectViewPopupMenuRunGroup");
+		DefaultActionGroup mavenHelperBaseProjectMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
+				"MavenHelper.BaseProjectMenu");
+		clear(editorPopupMenu, projectViewPopupMenuRunGroup, mavenHelperBaseProjectMenu, name);
+
 		// Now it splatted to standalone blocks, so actions can be initialized separately.
 		if (settings.isInitializeEditorPopups()) {
-			DefaultActionGroup editorPopupMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
-					"EditorPopupMenu.Run");
-
-			clear(editorPopupMenu, name);
 			editorPopupMenu.add(actionGroup, Constraints.FIRST);
 		}
 		if (settings.isInitializeProjectPopups()) {
-			DefaultActionGroup projectViewPopupMenuRunGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
-					"ProjectViewPopupMenuRunGroup");
-
-			clear(projectViewPopupMenuRunGroup, name);
 			projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
 		}
 		if (settings.isInitializeMavenGroupPopups()) {
-			DefaultActionGroup mavenHelperBaseProjectMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
-					"MavenHelper.BaseProjectMenu");
-
-			clear(mavenHelperBaseProjectMenu, name);
 			mavenHelperBaseProjectMenu.add(actionGroup, Constraints.FIRST);
 		}
 	}
@@ -111,7 +107,6 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 	}
 
 	/** Saved for compatibility. */
-	@SuppressWarnings("unused")
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
 					   DefaultActionGroup mavenHelperBaseProjectMenu, String name) {
 		clear(editorPopupMenu, name);
