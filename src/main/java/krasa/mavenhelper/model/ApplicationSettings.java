@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenConstants;
+import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.MavenProject;
 
 import java.util.ArrayList;
@@ -41,6 +42,10 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	private SimpleTextAttributes errorBoldAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_BOLD, this.getErrorAttributes().getFgColor());
 	private boolean useTerminalCommand;
 	private String terminalCommand = "mvnd";
+
+	private boolean initializeEditorPopups = true;
+	private boolean initializeProjectPopups = true;
+	private boolean initializeMavenGroupPopups = true;
 
 	public ApplicationSettings() {
 		Goals pluginAwareGoals = new Goals();
@@ -127,7 +132,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	@Transient
 	public List<Goal> getAllGoals() {
-		List<Goal> allGoals = new ArrayList<Goal>(goals.size() + pluginAwareGoals.size());
+		List<Goal> allGoals = new ArrayList<>(goals.size() + pluginAwareGoals.size());
 		allGoals.addAll(goals.getGoals());
 		allGoals.addAll(pluginAwareGoals.getGoals());
 		return allGoals;
@@ -135,7 +140,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	@Transient
 	public List<String> getAllGoalsAsString() {
-		List<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<>();
 		List<Goal> allGoals = getAllGoals();
 		for (Goal allGoal : allGoals) {
 			strings.add(allGoal.getCommandLine());
@@ -156,7 +161,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	}
 
 	private String[] toArray(List<String> goalsAsStrings) {
-		return goalsAsStrings.toArray(new String[goalsAsStrings.size()]);
+		return goalsAsStrings.toArray(new String[0]);
 	}
 
 	public boolean removeGoal(Goal goal) {
@@ -174,11 +179,13 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 			if (mavenProject == null) {
 				throw new RuntimeException("maven project not found");
 			}
-			String artifactId = mavenProject.getMavenId().getArtifactId();
-			if (artifactId == null) {
-				artifactId = mavenProject.getDisplayName();
-			}
-			s = s.replace(CURRENT_MODULE_NAME, artifactId);
+				MavenId mavenId = mavenProject.getMavenId();
+				String artifactId = mavenId.getArtifactId();
+				if (artifactId == null) {
+					artifactId = mavenProject.getDisplayName();
+				}
+
+				s = s.replace(CURRENT_MODULE_NAME, artifactId);
 		}
 		if (s.contains(CURRENT_CLASS_MACRO)) {
 			String name = StringUtils.substringBefore(psiFile.getName(), ".");
@@ -264,5 +271,29 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 
 	public void setTerminalCommand(final String terminalCommand) {
 		this.terminalCommand = terminalCommand;
+	}
+
+	public boolean isInitializeEditorPopups() {
+		return initializeEditorPopups;
+	}
+
+	public void setInitializeEditorPopups(boolean initializeEditorPopups) {
+		this.initializeEditorPopups = initializeEditorPopups;
+	}
+
+	public boolean isInitializeProjectPopups() {
+		return initializeProjectPopups;
+	}
+
+	public void setInitializeProjectPopups(boolean initializeProjectPopups) {
+		this.initializeProjectPopups = initializeProjectPopups;
+	}
+
+	public boolean isInitializeMavenGroupPopups() {
+		return initializeMavenGroupPopups;
+	}
+
+	public void setInitializeMavenGroupPopups(boolean initializeMavenGroupPopups) {
+		this.initializeMavenGroupPopups = initializeMavenGroupPopups;
 	}
 }
