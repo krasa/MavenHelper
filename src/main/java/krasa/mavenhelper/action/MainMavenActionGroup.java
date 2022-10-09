@@ -160,12 +160,14 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private List<DefaultActionGroup> getPlugins(MavenProjectInfo mavenProject) {
 		List<DefaultActionGroup> mavenActionGroups = new ArrayList<DefaultActionGroup>();
-		for (MavenPlugin mavenPlugin : mavenProject.mavenProject.getDeclaredPlugins()) {
+        List<MavenPlugin> plugins = mavenProject.mavenProject.getDeclaredPlugins();
+		for (var mavenPlugin : plugins) {
 			DefaultActionGroup plugin = new DefaultActionGroup(mavenPlugin.getArtifactId(), true);
 			plugin.getTemplatePresentation().setIcon(getIcon());
 			addPluginGoals(mavenPlugin, plugin, mavenProject);
 			mavenActionGroups.add(plugin);
 		}
+
 		return mavenActionGroups;
 	}
 
