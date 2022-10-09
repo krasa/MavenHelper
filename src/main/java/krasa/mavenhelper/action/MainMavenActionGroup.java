@@ -32,7 +32,7 @@ import java.util.Set;
 public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	static final Logger LOG = Logger.getInstance(MainMavenActionGroup.class);
 
-	private Set<String> pluginGoalsSet = new HashSet<String>();
+	private Set<String> pluginGoalsSet = new HashSet<>();
 
 	public MainMavenActionGroup() {
 	}
@@ -53,7 +53,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	public AnAction[] getActions(DataContext dataContext, Project project) {
-		List<AnAction> result = new ArrayList<AnAction>();
+		List<AnAction> result = new ArrayList<>();
 		MavenProjectInfo mavenProject = getMavenProject(dataContext);
 		if (mavenProject.mavenProject != null) {
 			addTestFile(result);
@@ -159,7 +159,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	private List<DefaultActionGroup> getPlugins(MavenProjectInfo mavenProject) {
-		List<DefaultActionGroup> mavenActionGroups = new ArrayList<DefaultActionGroup>();
+		List<DefaultActionGroup> mavenActionGroups = new ArrayList<>();
         List<MavenPlugin> plugins = mavenProject.mavenProject.getDeclaredPlugins();
 		for (var mavenPlugin : plugins) {
 			DefaultActionGroup plugin = new DefaultActionGroup(mavenPlugin.getArtifactId(), true);
