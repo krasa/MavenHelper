@@ -2,7 +2,7 @@
 
     <id>MavenRunHelper</id>
     <name>Maven Helper</name>
-    <version>4.21.222.2964.0</version>
+    <version>4.22.222.2964.0</version>
 
     <vendor url="https://github.com/krasa/MavenHelper" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
@@ -41,6 +41,9 @@
       ]]></description>
 
     <change-notes><![CDATA[
+            <br>4.22
+            <br> - Settings for having actions in different menus.
+            <br> - Fixed Toolbar actions.
             <br>4.21
             <br> - Added: $moduleName$ macro
             <br> - Added: Resolve workspace artifacts settings
