@@ -83,12 +83,22 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 				"ProjectViewPopupMenuRunGroup");
 		DefaultActionGroup mavenHelperBaseProjectMenu = (DefaultActionGroup) ActionManager.getInstance().getAction(
 				"MavenHelper.BaseProjectMenu");
-
 		clear(editorPopupMenu, projectViewPopupMenuRunGroup, mavenHelperBaseProjectMenu, name);
 
-		add(actionGroup, editorPopupMenu, mavenHelperBaseProjectMenu, projectViewPopupMenuRunGroup);
+		// Now it splatted to standalone blocks, so actions can be initialized separately.
+		if (settings.isInitializeEditorPopups()) {
+			editorPopupMenu.add(actionGroup, Constraints.FIRST);
+		}
+		if (settings.isInitializeProjectPopups()) {
+			projectViewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
+		}
+		if (settings.isInitializeMavenGroupPopups()) {
+			mavenHelperBaseProjectMenu.add(actionGroup, Constraints.FIRST);
+		}
 	}
 
+	/** Saved for compatibility. */
+	@SuppressWarnings("unused")
 	private void add(ActionGroup actionGroup, DefaultActionGroup editorPopupMenu,
 					 DefaultActionGroup projectViewPopupMenuRunGroup, DefaultActionGroup viewPopupMenuRunGroup) {
 		editorPopupMenu.add(actionGroup, Constraints.FIRST);
@@ -96,6 +106,7 @@ public class MavenHelperApplicationService implements PersistentStateComponent<A
 		viewPopupMenuRunGroup.add(actionGroup, Constraints.FIRST);
 	}
 
+	/** Saved for compatibility. */
 	private void clear(DefaultActionGroup editorPopupMenu, DefaultActionGroup projectViewPopupMenuRunGroup,
 					   DefaultActionGroup mavenHelperBaseProjectMenu, String name) {
 		clear(editorPopupMenu, name);

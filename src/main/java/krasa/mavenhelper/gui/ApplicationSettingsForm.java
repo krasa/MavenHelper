@@ -48,6 +48,9 @@ public class ApplicationSettingsForm {
 	private JTextField terminalCommand;
 	private JCheckBox useTerminalCommand;
 	private JButton terminalFeedback;
+	private JCheckBox initActionsInEditorCheckBox;
+	private JCheckBox initActionsInMavenCheckBox;
+	private JCheckBox initActionsInProjectCheckBox;
 
 	protected JBList focusedComponent;
 	private AliasTable aliasTable;
@@ -57,32 +60,12 @@ public class ApplicationSettingsForm {
 		aliasTable = new AliasTable(this.settings);
 		myPathVariablesPanel.add(
 				ToolbarDecorator.createDecorator(aliasTable)
-						.setAddAction(new AnActionButtonRunnable() {
-					@Override
-					public void run(AnActionButton button) {
-						aliasTable.addAlias();
-					}
-				}).setRemoveAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					aliasTable.removeSelectedAliases();
-				}
-			}).setEditAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					aliasTable.editAlias();
-				}
-			}).setMoveUpAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton anActionButton) {
-					aliasTable.moveUp();
-				}
-			}).setMoveDownAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton anActionButton) {
-					aliasTable.moveDown();
-				}
-			}).addExtraAction(new AnActionButton("Reset Default Aliases", AllIcons.Actions.Rollback) {
+						.setAddAction(button -> aliasTable.addAlias()).setRemoveAction(button ->
+								aliasTable.removeSelectedAliases()).setEditAction(button ->
+								aliasTable.editAlias()).setMoveUpAction(anActionButton ->
+								aliasTable.moveUp()).setMoveDownAction(anActionButton ->
+								aliasTable.moveDown()).addExtraAction(new AnActionButton(
+										"Reset Default Aliases", AllIcons.Actions.Rollback) {
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
 					aliasTable.resetDefaultAliases();
@@ -116,48 +99,26 @@ public class ApplicationSettingsForm {
 
 		goalsPanel.add(
 			ToolbarDecorator.createDecorator(goals)
-				.setAddAction(new AnActionButtonRunnable() {
-					@Override
-					public void run(AnActionButton button) {
-						Goal o = newGoal(ApplicationSettingsForm.this.settings);
-						if (o != null) {
-							goalsModel.addElement(o);
-						}
+				.setAddAction(button -> {
+					Goal o = newGoal(ApplicationSettingsForm.this.settings);
+					if (o != null) {
+						goalsModel.addElement(o);
 					}
-				}).setRemoveAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					delete(goalsModel);
-				}
-			}).setEditAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					editGoal(goals);
-				}
-			}).createPanel(), BorderLayout.CENTER);
+				}).setRemoveAction(button ->
+							delete(goalsModel)).setEditAction(button ->
+							editGoal(goals)).createPanel(), BorderLayout.CENTER);
 
 
 		pluginAwareGoalsPanel.add(
 			ToolbarDecorator.createDecorator(pluginAwareGoals)
-				.setAddAction(new AnActionButtonRunnable() {
-					@Override
-					public void run(AnActionButton button) {
-						Goal o = newGoal(ApplicationSettingsForm.this.settings);
-						if (o != null) {
-							pluginsModel.addElement(o);
-						}
+				.setAddAction(button -> {
+					Goal o = newGoal(ApplicationSettingsForm.this.settings);
+					if (o != null) {
+						pluginsModel.addElement(o);
 					}
-				}).setRemoveAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					delete(pluginsModel);
-				}
-			}).setEditAction(new AnActionButtonRunnable() {
-				@Override
-				public void run(AnActionButton button) {
-					editGoal(pluginAwareGoals);
-				}
-			}).createPanel(), BorderLayout.CENTER);
+				}).setRemoveAction(button ->
+							delete(pluginsModel)).setEditAction(button ->
+							editGoal(pluginAwareGoals)).createPanel(), BorderLayout.CENTER);
 
 
 		final FocusAdapter focusListener = getFocusListener();
@@ -170,12 +131,7 @@ public class ApplicationSettingsForm {
 
 		useIgnoredPoms.setSelected(this.settings.isUseIgnoredPoms());
 		Donate.init(donate);
-		terminalFeedback.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BrowserUtil.browse("https://github.com/krasa/MavenHelper/issues/85");
-			}
-		});
+		terminalFeedback.addActionListener(e -> BrowserUtil.browse("https://github.com/krasa/MavenHelper/issues/85"));
 
 		searchBackgroundColorPickerLabel.setPreferredSize(new Dimension(20, 20));
 		searchBackgroundColorPickerLabel.setOpaque(true);
@@ -214,7 +170,7 @@ public class ApplicationSettingsForm {
 				super.mouseClicked(e);
 			}
 		});
-	}
+    }
 
 
 	private KeyAdapter getDeleteKeyListener() {
@@ -263,12 +219,7 @@ public class ApplicationSettingsForm {
 	}
 
 	private ActionListener deleteListener() {
-		return new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				deleteGoal();
-			}
-		};
+		return e -> deleteGoal();
 	}
 
 	private void deleteGoal() {
@@ -364,6 +315,9 @@ public class ApplicationSettingsForm {
 		resolveWorkspaceArtifactsCheckBox.setSelected(data.isResolveWorkspaceArtifacts());
 		useTerminalCommand.setSelected(data.isUseTerminalCommand());
 		terminalCommand.setText(data.getTerminalCommand());
+		initActionsInEditorCheckBox.setSelected(data.isInitializeEditorPopups());
+		initActionsInProjectCheckBox.setSelected(data.isInitializeProjectPopups());
+		initActionsInMavenCheckBox.setSelected(data.isInitializeMavenGroupPopups());
 	}
 
 	public void getData(ApplicationSettings data) {
@@ -372,6 +326,9 @@ public class ApplicationSettingsForm {
 		data.setResolveWorkspaceArtifacts(resolveWorkspaceArtifactsCheckBox.isSelected());
 		data.setUseTerminalCommand(useTerminalCommand.isSelected());
 		data.setTerminalCommand(terminalCommand.getText());
+		data.setInitializeEditorPopups(initActionsInEditorCheckBox.isSelected());
+		data.setInitializeProjectPopups(initActionsInProjectCheckBox.isSelected());
+		data.setInitializeMavenGroupPopups(initActionsInMavenCheckBox.isSelected());
 	}
 
 	public boolean isModified(ApplicationSettings data) {
@@ -381,6 +338,8 @@ public class ApplicationSettingsForm {
 		if (useTerminalCommand.isSelected() != data.isUseTerminalCommand()) return true;
 		if (terminalCommand.getText() != null ? !terminalCommand.getText().equals(data.getTerminalCommand()) : data.getTerminalCommand() != null)
 			return true;
-		return false;
+		if (initActionsInEditorCheckBox.isSelected() != data.isInitializeEditorPopups()) return true;
+		if (initActionsInProjectCheckBox.isSelected() != data.isInitializeProjectPopups()) return true;
+		return initActionsInMavenCheckBox.isSelected() != data.isInitializeMavenGroupPopups();
 	}
 }
