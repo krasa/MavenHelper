@@ -14,7 +14,7 @@ public class OpenTerminalAction extends MyAnAction {
 	private boolean pluginEnabled;
 
 	public OpenTerminalAction() {
-		pluginEnabled = isPluginEnabled();
+		pluginEnabled = isTerminalEnabled();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class OpenTerminalAction extends MyAnAction {
 		p.setVisible(pluginEnabled && isVisible(e));
 	}
 
-	private boolean isPluginEnabled() {
+	public static boolean isTerminalEnabled() {
 		IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.plugins.terminal"));
 		if (plugin != null) {
 			return plugin.isEnabled();

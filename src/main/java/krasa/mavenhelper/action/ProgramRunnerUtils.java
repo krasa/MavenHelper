@@ -1,6 +1,7 @@
 package krasa.mavenhelper.action;
 
 import com.intellij.execution.*;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -8,6 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.sh.run.ShConfigurationType;
@@ -69,11 +71,13 @@ public class ProgramRunnerUtils {
 	}
 
 	public static void executeInTerminal(MavenRunnerParameters params, Project project, ApplicationSettings applicationSettings) {
-		IdeaPluginDescriptor enabledPlugin = PluginManager.getInstance().findEnabledPlugin(PluginId.getId("org.jetbrains.plugins.terminal"));
-		if (enabledPlugin == null || !enabledPlugin.isEnabled()) {
-			com.intellij.openapi.ui.Messages.showErrorDialog(project, "Terminal plugin not enabled, enable it and restart the IDE", "Maven Helper");
+		if (!isShellEnabled()) {
+			com.intellij.openapi.ui.Messages.showErrorDialog(project, "Shell Script plugin not enabled, enable it and restart the IDE (or disable using Terminal in Settings | Maven Helper)", "Maven Helper");
 			return;
-//			throw new RuntimeException("Terminal plugin not enabled, enable it and restart IDE");
+		}
+		if (!OpenTerminalAction.isTerminalEnabled()) {
+			com.intellij.openapi.ui.Messages.showErrorDialog(project, "Terminal plugin not enabled, enable it and restart the IDE (or disable using Terminal in Settings | Maven Helper)", "Maven Helper");
+			return;
 		}
 
 		String commandLine = params.getCommandLine();
@@ -83,6 +87,13 @@ public class ProgramRunnerUtils {
 		}
 
 		RunnerAndConfigurationSettings configurationSettings = RunManager.getInstance(project).createConfiguration(applicationSettings.getTerminalCommand() + " " + commandLine, ShConfigurationType.class);
+		RunConfiguration configuration = configurationSettings.getConfiguration();
+		if (!(configuration instanceof ShRunConfiguration)) {
+			PluginDescriptor pluginByClass = PluginManager.getPluginByClass(configuration.getClass());
+			String name = pluginByClass == null ? "unknown" : pluginByClass.getName();
+			com.intellij.openapi.ui.Messages.showErrorDialog(project, "Conflict detected with plugin: " + name + " (disable using Terminal in Settings | Maven Helper)", "Maven Helper");
+			return;
+		}
 		ShRunConfiguration runConfiguration = (ShRunConfiguration) configurationSettings.getConfiguration();
 		runConfiguration.setScriptPath(applicationSettings.getTerminalCommand());
 		runConfiguration.setScriptOptions(commandLine);
@@ -108,6 +119,11 @@ public class ProgramRunnerUtils {
 		if (builder != null) {
 			ExecutionManager.getInstance(project).restartRunProfile(builder.build());
 		}
+	}
+
+	private static boolean isShellEnabled() {
+		IdeaPluginDescriptor plugin = PluginManager.getInstance().findEnabledPlugin(PluginId.getId("com.jetbrains.sh"));
+		return plugin != null && plugin.isEnabled();
 	}
 
 //	private static @NotNull
