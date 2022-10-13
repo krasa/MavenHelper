@@ -8,15 +8,21 @@ import org.jetbrains.idea.maven.project.MavenProject;
 public class MavenProjectInfo {
 
 	MavenProject mavenProject;
+	MavenProject childProject;
 	boolean root;
 
-	public MavenProjectInfo(MavenProject mavenProject, boolean root) {
+	public MavenProjectInfo(MavenProject mavenProject) {
 		this.mavenProject = mavenProject;
-		this.root = root;
 	}
 
 	public MavenProjectInfo(DataContext dataContext) {
-		this(Utils.getMavenProject(dataContext), false);
+		this(Utils.getMavenProject(dataContext));
+	}
+
+	public MavenProjectInfo(MavenProject root, MavenProject child) {
+		this.mavenProject = root;
+		this.childProject = child;
+		this.root = true;
 	}
 
 	@NotNull
@@ -28,8 +34,8 @@ public class MavenProjectInfo {
 		return mavenProjectInfo;
 	}
 
-	public MavenProject getMavenProject() {
-		return mavenProject;
+	public MavenProject getCurrentOrRootMavenProject() {
+		return childProject != null ? childProject : mavenProject;
 	}
 
 	public boolean isRoot() {

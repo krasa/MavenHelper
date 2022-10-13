@@ -20,12 +20,12 @@ public class RunGoalAction extends MyAnAction {
 
 	private final Goal goal;
 	@Nullable
-	private final MavenProjectInfo mavenProject;
+	private final MavenProjectInfo mavenProjectInfo;
 
-	protected RunGoalAction(Goal goal, String text, String description, Icon icon, @Nullable MavenProjectInfo mavenProject) {
+	protected RunGoalAction(Goal goal, String text, String description, Icon icon, @Nullable MavenProjectInfo mavenProjectInfo) {
 		super(text, description, icon);
 		this.goal = goal;
-		this.mavenProject = mavenProject;
+		this.mavenProjectInfo = mavenProjectInfo;
 	}
 
 	public static RunGoalAction create(Goal goal, Icon icon, boolean popupAction, MavenProjectInfo mavenProject) {
@@ -43,7 +43,7 @@ public class RunGoalAction extends MyAnAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final DataContext context = e.getDataContext();
-		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(mavenProject, e);
+		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(this.mavenProjectInfo, e);
 
 		Project project = MavenActionUtil.getProject(context);
 		String pomDir = Utils.getPomDirAsString(context, mavenProjectInfo);
@@ -54,9 +54,9 @@ public class RunGoalAction extends MyAnAction {
 		actionPerformed(project, pomDir, projectsManager, data, configurationContext, mavenProjectInfo);
 	}
 
-	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext, MavenProjectInfo mavenProject1) {
+	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext, MavenProjectInfo mavenProjectInfo) {
 		if (pomDir != null) {
-			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProject1);
+			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProjectInfo);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
 			params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 			run(params, project);
@@ -69,7 +69,7 @@ public class RunGoalAction extends MyAnAction {
 
 	@Override
 	protected boolean isEnabled(AnActionEvent e) {
-		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
+		return MavenProjectInfo.get(mavenProjectInfo, e).mavenProject != null;
 	}
 
 }

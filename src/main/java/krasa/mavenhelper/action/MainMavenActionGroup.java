@@ -54,26 +54,26 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	public AnAction[] getActions(DataContext dataContext, Project project) {
 		List<AnAction> result = new ArrayList<>();
-		MavenProjectInfo mavenProject = getMavenProject(dataContext);
-		if (mavenProject.mavenProject != null) {
+		MavenProjectInfo mavenProjectInfo = getMavenProject(dataContext);
+		if (mavenProjectInfo.mavenProject != null) {
 			addTestFile(result);
 			separator(result);
-			addRunConfigurations(result, project, mavenProject);
+			addRunConfigurations(result, project, mavenProjectInfo);
 			separator(result);
 
-			addGoals(result, mavenProject);
+			addGoals(result, mavenProjectInfo);
 			separator(result);
 
-			List<DefaultActionGroup> mavenActionGroups = getPlugins(mavenProject);
+			List<DefaultActionGroup> mavenActionGroups = getPlugins(mavenProjectInfo);
 
-			addPluginAwareActions(result, mavenActionGroups, mavenProject);
+			addPluginAwareActions(result, mavenActionGroups, mavenProjectInfo);
 			separator(result);
 
 			addPlugins(result, mavenActionGroups);
 
 			separator(result);
-			addReimport(result, mavenProject);
-			result.add(getCreateCustomGoalAction(mavenProject));
+			addReimport(result, mavenProjectInfo);
+			result.add(getCreateCustomGoalAction(mavenProjectInfo));
 
 		}
 		return result.toArray(new AnAction[result.size()]);
@@ -81,7 +81,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	@NotNull
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
-		return new MavenProjectInfo(Utils.getMavenProject(dataContext), false);
+		return new MavenProjectInfo(Utils.getMavenProject(dataContext));
 	}
 
 	private void addRunConfigurations(List<AnAction> result, Project project, final MavenProjectInfo mavenProject) {

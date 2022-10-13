@@ -14,9 +14,10 @@ public class RootMavenActionGroup extends MainMavenActionGroup {
 	@NotNull
 	@Override
 	protected MavenProjectInfo getMavenProject(DataContext dataContext) {
-		MavenProject mavenProject = Utils.getMavenProject(dataContext);
+		MavenProject childProject = Utils.getMavenProject(dataContext);
+		MavenProject mavenProject = childProject;
 		if (mavenProject == null) {
-			return new MavenProjectInfo(null, false);
+			return new MavenProjectInfo(null);
 		}
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(dataContext);
 		List<MavenProject> rootProjects = projectsManager.getRootProjects();
@@ -39,6 +40,6 @@ public class RootMavenActionGroup extends MainMavenActionGroup {
 			}
 		}
 
-		return new MavenProjectInfo(root, true);
+		return new MavenProjectInfo(root, childProject);
 	}
 }

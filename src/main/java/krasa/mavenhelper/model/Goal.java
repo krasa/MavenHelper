@@ -33,9 +33,9 @@ public class Goal extends DomainObject {
 		return Utils.limitLength(commandLine);
 	}
 
-	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext, @NotNull MavenProjectInfo mavenProject) {
+	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext, @NotNull MavenProjectInfo mavenProjectInfo) {
 		String cmd = getCommandLine();
-		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProject);
+		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProjectInfo);
 
 		return ContainerUtil.newArrayList(StringUtil.tokenize(new CommandLineTokenizer(cmd)));
 	}

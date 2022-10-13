@@ -175,7 +175,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	public String applyAliases(@NotNull String commandLine, @Nullable PsiFile psiFile, @Nullable ConfigurationContext fromContext, @NotNull MavenProjectInfo mavenProjectInfo) {
 		String s = aliases.applyAliases(commandLine);
 		if (s.contains(CURRENT_MODULE_NAME)) {
-			MavenProject mavenProject = mavenProjectInfo.getMavenProject();
+			MavenProject mavenProject = mavenProjectInfo.getCurrentOrRootMavenProject();
 			if (mavenProject == null) {
 				throw new RuntimeException("maven project not found");
 			}

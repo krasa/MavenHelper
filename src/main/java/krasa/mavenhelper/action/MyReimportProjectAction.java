@@ -14,10 +14,10 @@ import java.util.List;
  */
 class MyReimportProjectAction extends ReimportProjectAction {
 
-	private final MavenProjectInfo mavenProject;
+	private final MavenProjectInfo mavenProjectInfo;
 
-	public MyReimportProjectAction(@NotNull MavenProjectInfo mavenProject) {
-		this.mavenProject = mavenProject;
+	public MyReimportProjectAction(@NotNull MavenProjectInfo mavenProjectInfo) {
+		this.mavenProjectInfo = mavenProjectInfo;
 	}
 
 	@Override
@@ -25,17 +25,17 @@ class MyReimportProjectAction extends ReimportProjectAction {
 		final DataContext context = e.getDataContext();
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(context);
 		if (projectsManager != null) {
-			perform(projectsManager, List.of(mavenProject.mavenProject), e);
+			perform(projectsManager, List.of(mavenProjectInfo.mavenProject), e);
 		}
 	}
 
 	@Override
 	protected boolean isAvailable(AnActionEvent e) {
-		return mavenProject.getMavenProject() != null;
+		return mavenProjectInfo.mavenProject != null;
 	}
 
 	@Override
 	protected boolean isVisible(AnActionEvent e) {
-		return mavenProject.getMavenProject() != null;
+		return mavenProjectInfo.mavenProject != null;
 	}
 }

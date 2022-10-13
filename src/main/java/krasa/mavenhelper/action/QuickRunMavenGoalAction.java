@@ -206,14 +206,14 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		private final RunGoalAction goalRunAction;
 		private final boolean plugin;
 		private final Goal goal;
-		private final MavenProjectInfo mavenProject;
+		private final MavenProjectInfo mavenProjectInfo;
 
-		public MyActionGroup(RunGoalAction goalRunAction, boolean plugin, Goal goal, MavenProjectInfo mavenProject) {
+		public MyActionGroup(RunGoalAction goalRunAction, boolean plugin, Goal goal, MavenProjectInfo mavenProjectInfo) {
 			super(goalRunAction.getTemplatePresentation().getText(), goalRunAction.getTemplatePresentation().getDescription(), goalRunAction.getTemplatePresentation().getIcon());
 			this.goalRunAction = goalRunAction;
 			this.plugin = plugin;
 			this.goal = goal;
-			this.mavenProject = mavenProject;
+			this.mavenProjectInfo = mavenProjectInfo;
 		}
 
 		@Override
@@ -236,12 +236,12 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
 			if (plugin) {
 				return new AnAction[]{
-						debug(goal, mavenProject)
+						debug(goal, mavenProjectInfo)
 				};
 
 			} else {
 				return new AnAction[]{
-						debug(goal, mavenProject), editAndRun(goal, mavenProject), delete(goal), new MyCreateAction(goal, mavenProject)
+						debug(goal, mavenProjectInfo), editAndRun(goal, mavenProjectInfo), delete(goal), new MyCreateAction(goal, mavenProjectInfo)
 				};
 			}
 		}
@@ -278,13 +278,13 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 		private class MyCreateAction extends DumbAwareAction {
 			private final Goal goal;
-			private final MavenProjectInfo mavenProject;
+			private final MavenProjectInfo mavenProjectInfo;
 			private CreateAction createAction;
 
-			public MyCreateAction(@NotNull Goal goal, @NotNull MavenProjectInfo mavenProject) {
+			public MyCreateAction(@NotNull Goal goal, @NotNull MavenProjectInfo mavenProjectInfo) {
 				super("Create Run Configuration");
 				this.goal = goal;
-				this.mavenProject = mavenProject;
+				this.mavenProjectInfo = mavenProjectInfo;
 				createAction = new CreateAction();
 			}
 
@@ -307,8 +307,8 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 						if (Location.DATA_KEY.is(s)) {
 							PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 							ConfigurationContext fromContext = ConfigurationContext.getFromContext(e.getDataContext());
-							PsiFile psiFile = PsiManager.getInstance(e.getProject()).findFile(mavenProject.mavenProject.getFile());
-							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext, mavenProject));
+							PsiFile psiFile = PsiManager.getInstance(e.getProject()).findFile(mavenProjectInfo.mavenProject.getFile());
+							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext, mavenProjectInfo));
 						}
 						return e.getDataContext().getData(s);
 					}

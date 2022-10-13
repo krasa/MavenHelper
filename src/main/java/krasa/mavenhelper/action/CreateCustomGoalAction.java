@@ -20,20 +20,20 @@ import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 public class CreateCustomGoalAction extends MyAnAction {
 	@Nullable
-	protected MavenProjectInfo mavenProject;
+	protected MavenProjectInfo mavenProjectInfo;
 	private boolean runGoal = true;
 
 	public CreateCustomGoalAction() {
 	}
 
-	public CreateCustomGoalAction(@Nullable String text, @NotNull MavenProjectInfo mavenProject) {
+	public CreateCustomGoalAction(@Nullable String text, @NotNull MavenProjectInfo mavenProjectInfo) {
 		super(text);
-		this.mavenProject = mavenProject;
+		this.mavenProjectInfo = mavenProjectInfo;
 	}
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(mavenProject, e);
+		MavenProjectInfo mavenProjectInfo = MavenProjectInfo.get(this.mavenProjectInfo, e);
 
 		MavenHelperApplicationService instance = MavenHelperApplicationService.getInstance();
 		ApplicationSettings state = instance.getState();
@@ -74,7 +74,7 @@ public class CreateCustomGoalAction extends MyAnAction {
 
 	@Override
 	protected boolean isEnabled(AnActionEvent e) {
-		return MavenProjectInfo.get(mavenProject, e).mavenProject != null;
+		return MavenProjectInfo.get(mavenProjectInfo, e).mavenProject != null;
 	}
 
 }
