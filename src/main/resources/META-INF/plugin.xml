@@ -42,7 +42,7 @@
 
     <change-notes><![CDATA[
             <br>4.23
-            <br> - Replacing <<<CURRENT_MODULE_NAME>>> with context module, even when using "Run Maven Goal on Root Module" popup, to support `mvn compile -pl <submodule> -am`
+            <br> - Replacing alias CURRENT_MODULE_NAME with context module, even when using "Run Maven Goal on Root Module" popup, to support `mvn compile -pl <submodule> -am`
             <br> - Fixed terminal command escaping
             <br>4.22
             <br> - Settings for having actions in different menus.
