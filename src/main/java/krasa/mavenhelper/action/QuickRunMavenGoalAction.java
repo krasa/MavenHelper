@@ -152,7 +152,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 				return true;
 			}
 
-			@Override
+//			@Override
 			public boolean canBePerformed(@NotNull DataContext context) {
 				return true;
 			}
@@ -184,7 +184,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 				action.actionPerformed(e);
 			}
 
-			@Override
+			//			@Override
 			public boolean canBePerformed(@NotNull DataContext context) {
 				return true;
 			}
@@ -221,7 +221,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			goalRunAction.actionPerformed(e);
 		}
 
-		@Override
+		//		@Override
 		public boolean canBePerformed(@NotNull DataContext context) {
 			return true;
 		}

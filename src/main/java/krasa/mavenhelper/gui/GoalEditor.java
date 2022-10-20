@@ -488,7 +488,7 @@ public class GoalEditor extends DialogWrapper {
 			return FINAL_CHOICE;
 		}
 
-		@Override
+//		@Override
 		public PopupStep onChosen(ListItem listItem, boolean finalChoice, int eventModifiers) {
 			return onChosen(listItem, finalChoice);
 		}
