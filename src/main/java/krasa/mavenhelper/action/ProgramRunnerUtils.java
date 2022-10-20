@@ -12,6 +12,8 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.sh.run.ShConfigurationType;
 import com.intellij.sh.run.ShRunConfiguration;
 import krasa.mavenhelper.model.ApplicationSettings;
@@ -25,6 +27,8 @@ import org.jetbrains.idea.maven.execution.MavenRunnerSettings;
 import org.jetbrains.idea.maven.project.MavenGeneralSettings;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ProgramRunnerUtils {
@@ -80,7 +84,9 @@ public class ProgramRunnerUtils {
 			return;
 		}
 
-		String commandLine = params.getCommandLine();
+//		#95 The goal content should be passed to the terminal as is.
+//		String commandLine = params.getCommandLine();
+		String commandLine = getCommandLine(params.getGoals(), params.getPomFileName());
 		Map<String, Boolean> profilesMap = params.getProfilesMap();
 		if (!profilesMap.isEmpty()) {
 			commandLine += " -P " + encodeProfiles(profilesMap);
@@ -119,6 +125,15 @@ public class ProgramRunnerUtils {
 		if (builder != null) {
 			ExecutionManager.getInstance(project).restartRunProfile(builder.build());
 		}
+	}
+
+	public static @NotNull String getCommandLine(List<String> goals, @NlsSafe String pomFileName) {
+		List<String> commandLine = new ArrayList(goals);
+		if (pomFileName != null) {
+			commandLine.add("-f");
+			commandLine.add(pomFileName);
+		}
+		return StringUtil.join(commandLine, " ");
 	}
 
 	private static boolean isShellEnabled() {

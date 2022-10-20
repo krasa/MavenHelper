@@ -37,6 +37,10 @@ public class Goal extends DomainObject {
 		String cmd = getCommandLine();
 		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProjectInfo);
 
+		if (ApplicationSettings.get().isUseTerminalCommand()) {
+			return List.of(cmd);
+		}
+
 		return ContainerUtil.newArrayList(StringUtil.tokenize(new CommandLineTokenizer(cmd)));
 	}
 }
