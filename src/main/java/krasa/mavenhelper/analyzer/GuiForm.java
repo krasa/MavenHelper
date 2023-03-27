@@ -66,6 +66,9 @@ public class GuiForm implements Disposable {
 		}
 	};
 	private static final String LAST_RADIO_BUTTON = "MavenHelper.lastRadioButton";
+	private static final String LAST_SHOW_GROUP_ID_CHECKBOX = "MavenHelper.lastShowGroupIdCheckBox";
+	private static final String LAST_SHOW_SIZE_CHECKBOX = "MavenHelper.lastShowSizeCheckBox";
+	private static final String LAST_FILTER_CHECKBOX = "MavenHelper.lastFilterCheckBox";
 	public static final SimpleTextAttributes SIZE_ATTRIBUTES = SimpleTextAttributes.GRAY_ATTRIBUTES;
 
 	private final Project project;
@@ -250,25 +253,25 @@ public class GuiForm implements Disposable {
 		leftPanelList.addMouseListener(leftPanelListPopupHandler);
 		leftPanelList.addKeyListener(new ListKeyStrokeAdapter(this));
 
-		showGroupId.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
-				updateLeftPanel();
-				restoreSelection.restore();
-			}
+		showGroupId.addActionListener((event) -> {
+			final RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
+			updateLeftPanel();
+			restoreSelection.restore();
+			PropertiesComponent.getInstance().setValue(LAST_SHOW_GROUP_ID_CHECKBOX, showGroupId.isSelected());
 		});
 
 		showSize.addActionListener((event) -> {
 			RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
 			updateLeftPanel();
 			restoreSelection.restore();
+			PropertiesComponent.getInstance().setValue(LAST_SHOW_SIZE_CHECKBOX, showSize.isSelected());
 		});
 
 		filter.addActionListener((event) -> {
 			RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
 			updateLeftPanel();
 			restoreSelection.restore();
+			PropertiesComponent.getInstance().setValue(LAST_FILTER_CHECKBOX, filter.isSelected());
 		});
 
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
@@ -288,6 +291,9 @@ public class GuiForm implements Disposable {
 		} else {
 			conflictsRadioButton.setSelected(true);
 		}
+		showGroupId.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_SHOW_GROUP_ID_CHECKBOX)));
+		showSize.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_SHOW_SIZE_CHECKBOX)));
+		filter.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_FILTER_CHECKBOX)));
 		Donate.init(donate);
 
 
