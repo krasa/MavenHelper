@@ -17,7 +17,7 @@ public class RootMavenActionGroup extends MainMavenActionGroup {
 		MavenProject childProject = Utils.getMavenProject(dataContext);
 		MavenProject mavenProject = childProject;
 		if (mavenProject == null) {
-			return new MavenProjectInfo(null);
+			return new MavenProjectInfo((MavenProject) null);
 		}
 		MavenProjectsManager projectsManager = MavenActionUtil.getProjectsManager(dataContext);
 		List<MavenProject> rootProjects = projectsManager.getRootProjects();

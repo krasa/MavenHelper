@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 public class Donate {
 	private static final Logger LOG = Logger.getInstance(Donate.class);
 
-	public static final Icon ICON = IconLoader.getIcon("/krasa/mavenhelper/icons/coins_in_hand.png", Donate.class);
+	public static final Icon ICON = IconLoader.getIcon("/icons/coins_in_hand.png", Donate.class);
 
 	public static void init(JButton donate) {
 		donate.setText("Donate");

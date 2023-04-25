@@ -16,3 +16,8 @@ rebel.xml
 
 
 DependencyManager/target/
+
+.gradle
+.idea
+.qodana
+build
