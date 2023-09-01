@@ -34,7 +34,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 
 // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
-    implementation("commons-beanutils:commons-beanutils:1.9.4")
+    implementation("commons-beanutils:commons-beanutils:1.9.4") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
 
 // https://mvnrepository.com/artifact/org.apache.maven.shared/maven-shared-utils
     implementation("org.apache.maven.shared:maven-shared-utils:3.3.4")
