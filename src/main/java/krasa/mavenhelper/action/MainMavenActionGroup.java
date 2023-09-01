@@ -194,9 +194,9 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 	}
 
 	@Override
-	public boolean hideIfNoVisibleChildren() {
-		return true;
+	public void update(@NotNull AnActionEvent e) {
+		super.update(e);
+		e.getPresentation().setHideGroupIfEmpty(true);
 	}
-
 
 }

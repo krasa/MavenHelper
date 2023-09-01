@@ -140,6 +140,8 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			@Override
 			public void update(@NotNull AnActionEvent e) {
 				action.update(e);
+				e.getPresentation().setHideGroupIfEmpty(true);
+				e.getPresentation().setPerformGroup(true);
 			}
 
 			@Override
@@ -147,20 +149,8 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 				action.actionPerformed(e);
 			}
 
-			@Override
-			public boolean hideIfNoVisibleChildren() {
-				return true;
-			}
 
-//			@Override
-			public boolean canBePerformed(@NotNull DataContext context) {
-				return true;
-			}
 
-			@Override
-			public boolean isPopup() {
-				return true;
-			}
 
 		});
 
@@ -184,16 +174,13 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 				action.actionPerformed(e);
 			}
 
-			//			@Override
-			public boolean canBePerformed(@NotNull DataContext context) {
-				return true;
-			}
 
 			@Override
-			public boolean isPopup() {
-				return true;
+			public void update(@NotNull AnActionEvent e) {
+				super.update(e);
+				e.getPresentation().setPopupGroup(true);
+				e.getPresentation().setPerformGroup(true);
 			}
-
 		};
 	}
 
@@ -221,14 +208,11 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			goalRunAction.actionPerformed(e);
 		}
 
-		//		@Override
-		public boolean canBePerformed(@NotNull DataContext context) {
-			return true;
-		}
-
 		@Override
-		public boolean isPopup() {
-			return true;
+		public void update(@NotNull AnActionEvent e) {
+			super.update(e);
+			e.getPresentation().setPopupGroup(true);
+			e.getPresentation().setPerformGroup(true);
 		}
 
 		@NotNull
