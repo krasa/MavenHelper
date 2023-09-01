@@ -8,7 +8,9 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenConstants;
@@ -26,16 +28,22 @@ public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 		return isPomFile(project, file);
 	}
 
+
 	private boolean isPomFile(@NotNull final Project project, @NotNull final VirtualFile file) {
-		final String path = file.getPath();
-		if (!path.endsWith("/" + MavenConstants.POM_XML) && !path.endsWith("\\" + MavenConstants.POM_XML))
-			return false;
+		String name = file.getName();
+		if (!isPotentialPomFile(name)) return false;
+
 		MavenProjectsManager instance = MavenProjectsManager.getInstance(project);
 		final MavenProject mavenProject = instance == null ? null : instance.findProject(file);
 		if (mavenProject != null) {
 			return mavenProject.getFile().equals(file);
 		}
 		return false;
+	}
+
+
+	public static boolean isPotentialPomFile(String nameOrPath) {
+		return ArrayUtil.contains(FileUtilRt.getExtension(nameOrPath), MavenConstants.POM_EXTENSIONS);
 	}
 
 	@Override
