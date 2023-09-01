@@ -2,9 +2,11 @@ package krasa.mavenhelper.action;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Vojtech Krasa
@@ -38,4 +40,10 @@ public class RunConfigurationAction extends DumbAwareAction {
 		super.update(e);
 		e.getPresentation().setEnabled(myEnabled);
 	}
+
+	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.BGT;
+	}
+
 }

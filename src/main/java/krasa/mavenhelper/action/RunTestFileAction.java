@@ -39,6 +39,11 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.BGT;
+	}
+
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		MavenProject mavenProject = Utils.getMavenProject(e.getDataContext());
 		if (mavenProject != null) {

@@ -3,10 +3,12 @@ package krasa.mavenhelper.action.debug;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import krasa.mavenhelper.action.ProgramRunnerUtils;
 import krasa.mavenhelper.action.RunConfigurationAction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 
 /**
@@ -36,4 +38,10 @@ public class DebugConfigurationAction extends RunConfigurationAction {
 		MavenRunConfiguration mavenRunConfiguration = (MavenRunConfiguration) configSettings.getConfiguration();
 		mavenRunConfiguration.getRunnerParameters().getGoals().addAll(Debug.DEBUG_FORK_MODE);
 	}
+
+	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.BGT;
+	}
+
 }

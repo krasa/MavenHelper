@@ -145,6 +145,11 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			}
 
 			@Override
+			public @NotNull ActionUpdateThread getActionUpdateThread() {
+				return ActionUpdateThread.BGT;
+			}
+
+			@Override
 			public void actionPerformed(@NotNull AnActionEvent e) {
 				action.actionPerformed(e);
 			}
@@ -281,6 +286,12 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			public void update(@NotNull AnActionEvent e) {
 //				createAction.update(getAnActionEvent(e));
 			}
+
+			@Override
+			public @NotNull ActionUpdateThread getActionUpdateThread() {
+				return ActionUpdateThread.BGT;
+			}
+
 
 			@NotNull
 			private AnActionEvent getAnActionEvent(@NotNull AnActionEvent e) {

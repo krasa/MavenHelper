@@ -2,6 +2,7 @@ package krasa.mavenhelper.gui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.*;
@@ -66,7 +67,13 @@ public class ApplicationSettingsForm {
 								aliasTable.moveUp()).setMoveDownAction(anActionButton ->
 								aliasTable.moveDown()).addExtraAction(new AnActionButton(
 										"Reset Default Aliases", AllIcons.Actions.Rollback) {
-				@Override
+
+							@Override
+							public @NotNull ActionUpdateThread getActionUpdateThread() {
+								return ActionUpdateThread.BGT;
+							}
+
+							@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
 					aliasTable.resetDefaultAliases();
 				}
