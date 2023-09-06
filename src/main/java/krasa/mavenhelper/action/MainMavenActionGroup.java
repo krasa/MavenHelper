@@ -199,4 +199,8 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 		e.getPresentation().setHideGroupIfEmpty(true);
 	}
 
+	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.BGT;
+	}
 }
