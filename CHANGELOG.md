@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- exception fix
+- context menu actions initialized sooner
+
 ## [4.24.1-IJ2022.2] - 2023-09-01
 - Persist CheckBoxes state of Dependency Analyzer UI
 - Dependency Analyzer: allowing all kinds of pom file names
