@@ -11,7 +11,5 @@
 - Dependency Analyzer: allowing all kinds of pom file names
 
 [Unreleased]: https://github.com/krasa/MavenHelper/compare/v4.25.1-IJ2022.2...HEAD
-
 [4.25.1-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.24.1-IJ2022.2...v4.25.1-IJ2022.2
-
 [4.24.1-IJ2022.2]: https://github.com/krasa/MavenHelper/commits/v4.24.1-IJ2022.2
