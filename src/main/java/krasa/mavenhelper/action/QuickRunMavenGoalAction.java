@@ -181,6 +181,11 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 
 
 			@Override
+			public @NotNull ActionUpdateThread getActionUpdateThread() {
+				return ActionUpdateThread.BGT;
+			}
+
+			@Override
 			public void update(@NotNull AnActionEvent e) {
 				super.update(e);
 				e.getPresentation().setPopupGroup(true);
