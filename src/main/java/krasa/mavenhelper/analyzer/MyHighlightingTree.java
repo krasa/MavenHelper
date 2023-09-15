@@ -2,6 +2,7 @@ package krasa.mavenhelper.analyzer;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.Tree;
@@ -9,6 +10,7 @@ import com.intellij.util.ui.UIUtil;
 import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.analyzer.action.BaseAction;
 import krasa.mavenhelper.model.ApplicationSettings;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.MavenProject;
 
@@ -57,6 +59,14 @@ public class MyHighlightingTree extends Tree implements DataProvider {
 	@Nullable
 	@Override
 	public Object getData(String s) {
+		if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(s)) {
+			return (DataProvider) slowId -> getSlowData(slowId);
+		}
+
+		return null;
+	}
+
+	private @Nullable Object getSlowData(@NotNull String s) {
 		if (CommonDataKeys.NAVIGATABLE.is(s)) {
 			final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
 			if (selectedNode == null) {
@@ -68,6 +78,7 @@ public class MyHighlightingTree extends Tree implements DataProvider {
 			final MyTreeUserObject myTreeUserObject = (MyTreeUserObject) selectedNode.getUserObject();
 			return BaseAction.getNavigatable(myTreeUserObject.getMavenArtifactNode(), project, mavenProject);
 		}
+
 		return null;
 	}
 }
