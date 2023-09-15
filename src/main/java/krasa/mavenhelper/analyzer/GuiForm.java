@@ -474,7 +474,7 @@ public class GuiForm implements Disposable {
 				}
 			}
 			sortList();
-			showNoConflictsLabel = listDataModel.isEmpty();
+			showNoConflictsLabel = isNoConflicts();
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {  //list
 			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
@@ -508,6 +508,18 @@ public class GuiForm implements Disposable {
 		filter.setVisible(allDependenciesAsTreeRadioButton.isSelected());
 		noConflictsWarningLabelScrollPane.setVisible(conflictsWarning);
 		noConflictsLabel.setVisible(showNoConflictsLabel);
+	}
+
+	private boolean isNoConflicts() {
+		boolean hasNoConflicts = true;
+		for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
+			final List<MavenArtifactNode> nodes = s.getValue();
+			if (nodes.size() > 1 && hasConflicts(nodes)) {
+				hasNoConflicts = false;
+				break;
+			}
+		}
+		return hasNoConflicts;
 	}
 
 	private void sortTree() {
