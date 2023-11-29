@@ -59,11 +59,15 @@ public class MyHighlightingTree extends Tree implements DataProvider {
 	@Nullable
 	@Override
 	public Object getData(String s) {
-		if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(s)) {
-			return (DataProvider) slowId -> getSlowData(slowId);
-		}
+		try {
+			if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.is(s)) {
+				return (DataProvider) slowId -> getSlowData(slowId);
+			}
 
-		return null;
+			return null;
+		} catch (NoSuchFieldError e) { // https://github.com/krasa/MavenHelper/issues/111 java.lang.NoSuchFieldError: BGT_DATA_PROVIDER
+			return getSlowData(s);
+		}
 	}
 
 	private @Nullable Object getSlowData(@NotNull String s) {
