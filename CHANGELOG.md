@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 
-## [4.27.1-IJ2022.2] - 2023-11-29
+## [4.28.0-IJ2022.2] - 2024-04-04
+- compatibility with 2024.1
 
+## [4.27.1-IJ2022.2] - 2023-11-29
 - compatibility with 2023.3
 - compatibility with 2022.2
 
@@ -21,8 +23,9 @@
 - Persist CheckBoxes state of Dependency Analyzer UI
 - Dependency Analyzer: allowing all kinds of pom file names
 
-[Unreleased]: https://github.com/krasa/MavenHelper/compare/v4.27.1-IJ2022.2...HEAD
+[Unreleased]: https://github.com/krasa/MavenHelper/compare/v4.28.0-IJ2022.2...HEAD
 
+[4.28.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.27.1-IJ2022.2...v4.28.0-IJ2022.2
 [4.27.1-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.27.0-IJ2022.2...v4.27.1-IJ2022.2
 [4.27.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.26.0-IJ2022.2...v4.27.0-IJ2022.2
 [4.26.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.25.1-IJ2022.2...v4.26.0-IJ2022.2

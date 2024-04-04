@@ -199,7 +199,7 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 		return new MyActionGroup(goalRunAction, plugin, goal, mavenProject);
 	}
 
-	private class MyActionGroup extends ActionGroup {
+	private class MyActionGroup extends ActionGroup implements DumbAware {
 		private final RunGoalAction goalRunAction;
 		private final boolean plugin;
 		private final Goal goal;
@@ -211,6 +211,11 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 			this.plugin = plugin;
 			this.goal = goal;
 			this.mavenProjectInfo = mavenProjectInfo;
+		}
+
+		@Override
+		public @NotNull ActionUpdateThread getActionUpdateThread() {
+			return ActionUpdateThread.BGT;
 		}
 
 		@Override
