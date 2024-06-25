@@ -182,7 +182,8 @@ public class GoalEditor extends DialogWrapper {
 			new ListItem("versions:display-dependency-updates", "Check dependencies for newer versions").withSeparatorAbove(),
 			new ListItem("versions:display-plugin-updates", "Check plugins for newer versions"),
 			new ListItem("versions:display-property-updates", "Check for newer versions defined as properties"),
-
+			new ListItem("versions:set -DnewVersion=$version$", "Set new version for all modules"),
+			new ListItem("versions:revert", "Revert changes made to the POM"),
 		};
 	}
 
@@ -488,10 +489,10 @@ public class GoalEditor extends DialogWrapper {
 			return FINAL_CHOICE;
 		}
 
-//		@Override
-		public PopupStep onChosen(ListItem listItem, boolean finalChoice, int eventModifiers) {
-			return onChosen(listItem, finalChoice);
-		}
+// //		@Override
+// 		public PopupStep onChosen(ListItem listItem, boolean finalChoice, int eventModifiers) {
+// 			return onChosen(listItem, finalChoice);
+// 		}
 
 		@Nullable
 		@Override

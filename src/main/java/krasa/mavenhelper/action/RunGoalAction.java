@@ -56,7 +56,7 @@ public class RunGoalAction extends MyAnAction {
 
 	public void actionPerformed(Project project, String pomDir, MavenProjectsManager projectsManager, PsiFile psiFile, ConfigurationContext configurationContext, MavenProjectInfo mavenProjectInfo) {
 		if (pomDir != null) {
-			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProjectInfo);
+			List<String> goalsToRun = goal.parse(psiFile, configurationContext, mavenProjectInfo, projectsManager);
 			MavenRunnerParameters params = new MavenRunnerParameters(true, pomDir, null, goalsToRun, projectsManager.getExplicitProfiles());
 			params.setResolveToWorkspace(ApplicationSettings.get().isResolveWorkspaceArtifacts());
 			run(params, project);

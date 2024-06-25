@@ -31,6 +31,7 @@ import krasa.mavenhelper.model.Goal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.execution.MavenGoalLocation;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
@@ -313,7 +314,8 @@ public class QuickRunMavenGoalAction extends QuickSwitchSchemeAction implements 
 							PsiFile data = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 							ConfigurationContext fromContext = ConfigurationContext.getFromContext(e.getDataContext());
 							PsiFile psiFile = PsiManager.getInstance(e.getProject()).findFile(mavenProjectInfo.mavenProject.getFile());
-							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext, mavenProjectInfo));
+							MavenProjectsManager manager = MavenProjectsManager.getInstanceIfCreated(e.getProject());
+							return new MavenGoalLocation(e.getProject(), psiFile, goal.parse(data, fromContext, mavenProjectInfo, manager));
 						}
 						return e.getDataContext().getData(s);
 					}

@@ -8,6 +8,7 @@ import com.intellij.util.containers.ContainerUtil;
 import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import java.util.List;
 
@@ -33,9 +34,9 @@ public class Goal extends DomainObject {
 		return Utils.limitLength(commandLine);
 	}
 
-	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext, @NotNull MavenProjectInfo mavenProjectInfo) {
+	public List<String> parse(PsiFile psiFile, ConfigurationContext configurationContext, @NotNull MavenProjectInfo mavenProjectInfo, MavenProjectsManager manager) {
 		String cmd = getCommandLine();
-		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProjectInfo);
+		cmd = ApplicationSettings.get().applyAliases(cmd, psiFile, configurationContext, mavenProjectInfo, manager);
 
 		if (ApplicationSettings.get().isUseTerminalCommand()) {
 			return List.of(cmd);
