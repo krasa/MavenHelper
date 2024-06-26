@@ -166,7 +166,7 @@ public class AliasRealEditor extends DialogWrapper {
     @Override
     protected void dispose() {
         super.dispose();
-        if (versionField != null) {
+        if (modules != null) {
             List<String> lastSelected = getSelectModules().stream().map(MavenProject::getDisplayName)
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(lastSelected)) {
