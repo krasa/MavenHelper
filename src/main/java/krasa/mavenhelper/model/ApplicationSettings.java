@@ -9,12 +9,14 @@ import com.rits.cloning.Cloner;
 import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.Utils;
+import krasa.mavenhelper.gui.AliasRealEditor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +30,8 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 	public static final String CURRENT_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_CLASS_WITH_TEST_METHOD>>>";
 	public static final String CURRENT_FULL_CLASS_MACRO = "<<<CURRENT_FULL_CLASS>>>";
 	public static final String CURRENT_FULL_CLASS_WITH_METHOD_MACRO = "<<<CURRENT_FULL_CLASS_WITH_TEST_METHOD>>>";
+	public static final String MODULES = "<<<MODULES>>>";
+	public static final String VERSION = "<<<VERSION>>>";
 
 	int version = 1;
 	private boolean useIgnoredPoms = false;
@@ -127,6 +131,8 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		aliases.add(new Alias("$classWithMethod$", CURRENT_CLASS_WITH_METHOD_MACRO));
 		aliases.add(new Alias("$fullClass$", CURRENT_FULL_CLASS_MACRO));
 		aliases.add(new Alias("$fullClassWithMethod$", CURRENT_FULL_CLASS_WITH_METHOD_MACRO));
+		aliases.add(new Alias("$modules$", MODULES));
+		aliases.add(new Alias("$version$", VERSION));
 		return aliases;
 	}
 
@@ -172,7 +178,7 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 		return remove;
 	}
 
-	public String applyAliases(@NotNull String commandLine, @Nullable PsiFile psiFile, @Nullable ConfigurationContext fromContext, @NotNull MavenProjectInfo mavenProjectInfo) {
+	public String applyAliases(@NotNull String commandLine, @Nullable PsiFile psiFile, @Nullable ConfigurationContext fromContext, @NotNull MavenProjectInfo mavenProjectInfo, MavenProjectsManager manager) {
 		String s = aliases.applyAliases(commandLine);
 		if (s.contains(CURRENT_MODULE_NAME)) {
 			MavenProject mavenProject = mavenProjectInfo.getCurrentOrRootMavenProject();
@@ -212,8 +218,9 @@ public class ApplicationSettings extends DomainObject implements Cloneable {
 			}
 			s = s.replace(CURRENT_FULL_CLASS_WITH_METHOD_MACRO, to);
 		}
-		return s;
+		return AliasRealEditor.alias(s, mavenProjectInfo, manager);
 	}
+
 
 	public boolean isEnableDelete() {
 		return enableDelete;
