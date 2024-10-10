@@ -60,6 +60,8 @@ intellij {
     pluginName = properties("pluginName")
     version = properties("platformVersion")
     type = properties("platformType")
+
+//    The sandbox directory location is used to save IDEA settings. By default, it is under the build file. To prevent clean, it is placed in the root directory.
     // 沙箱目录位置，用于保存IDEA的设置，默认在build文件下面，防止clean，放在根目录下。
     sandboxDir.set("${rootProject.rootDir}/.idea-sandbox")
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.

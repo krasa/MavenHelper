@@ -49,7 +49,7 @@ public class AliasRealEditor extends DialogWrapper {
 
     public AliasRealEditor(String command, @NotNull MavenProjectInfo mavenProjectInfo, @NotNull MavenProjectsManager manager) {
         super(false);
-        MavenProject mavenProject = Validate.notNull(mavenProjectInfo.getCurrentOrRootMavenProject(), "maven project not found");
+        MavenProject mavenProject = Validate.notNull(mavenProjectInfo.getCurrentOrRootMavenProject(), "Maven project not found");
         this.mavenProject = mavenProject;
         if (command.contains(ApplicationSettings.MODULES)) {
             Collection<MavenProject> projects = manager.findInheritors(mavenProject);
@@ -130,13 +130,13 @@ public class AliasRealEditor extends DialogWrapper {
         FormBuilder builder = FormBuilder.createFormBuilder();
         if (null != modules) {
             // builder.addComponent(new JLabel("$modules$"));
-            builder.addLabeledComponentFillVertically("$modules$", modules);
+            builder.addLabeledComponentFillVertically("$modules$ = ", modules);
         }
         if (null != versionField) {
             versionField.setPreferredSize(JBUI.size(200, 30));
             builder.addComponent(versionField);
             BorderLayoutPanel panel = BorderLayoutPanel.getInstance(0, 0).center(versionField).right(suggestButton());
-            builder.addLabeledComponent("$version$", panel);
+            builder.addLabeledComponent("$version$ = ", panel);
         }
         if (MapUtils.isNotEmpty(editorFields)) {
             editorFields.forEach(builder::addLabeledComponent);
@@ -144,6 +144,7 @@ public class AliasRealEditor extends DialogWrapper {
         builder.addVerticalGap(-1);
         JBScrollPane pane = new JBScrollPane(builder.getPanel());
         pane.setMaximumSize(JBUI.size(500, 800));
+        pane.setPreferredSize(JBUI.size(400, 200));
         pane.setMinimumSize(JBUI.size(50, 100));
         return pane;
     }
@@ -180,7 +181,7 @@ public class AliasRealEditor extends DialogWrapper {
 
     private JButton suggestButton() {
         JButton button = new JButton();
-        button.setText("Maybe");
+        button.setText("Choose...");
         button.addActionListener(event -> JBPopupFactory.getInstance().createPopupChooserBuilder(versionSuggests)
                 .setItemChosenCallback(versionField::setText)
                 .createPopup()
