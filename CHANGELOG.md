@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.29.0-IJ2022.2] - 2024-10-10
+
+- exception workaround for 2024.2
+- Support for submodules using -pl -am
+
 ## [4.28.0-IJ2022.2] - 2024-04-04
 - compatibility with 2024.1
 
@@ -23,8 +28,9 @@
 - Persist CheckBoxes state of Dependency Analyzer UI
 - Dependency Analyzer: allowing all kinds of pom file names
 
-[Unreleased]: https://github.com/krasa/MavenHelper/compare/v4.28.0-IJ2022.2...HEAD
+[Unreleased]: https://github.com/krasa/MavenHelper/compare/v4.29.0-IJ2022.2...HEAD
 
+[4.29.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.28.0-IJ2022.2...v4.29.0-IJ2022.2
 [4.28.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.27.1-IJ2022.2...v4.28.0-IJ2022.2
 [4.27.1-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.27.0-IJ2022.2...v4.27.1-IJ2022.2
 [4.27.0-IJ2022.2]: https://github.com/krasa/MavenHelper/compare/v4.26.0-IJ2022.2...v4.27.0-IJ2022.2
