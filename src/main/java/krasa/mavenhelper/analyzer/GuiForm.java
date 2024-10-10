@@ -122,7 +122,7 @@ public class GuiForm implements Disposable {
 	private LeftTreePopupHandler leftTreePopupHandler;
 	private ListPopupHandler leftPanelListPopupHandler;
 
-	public GuiForm(@NotNull Project project, VirtualFile file, final MavenProject mavenProject) {
+	public GuiForm(@NotNull Project project, VirtualFile file, @NotNull MavenProject mavenProject) {
 		this.project = project;
 		this.file = file;
 		mavenProjectsManager = MavenProjectsManager.getInstance(project);

@@ -12,11 +12,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
 public final class UIFormEditor extends UserDataHolderBase implements /* Navigatable */FileEditor {
+	private static final Logger log = LoggerFactory.getLogger(UIFormEditor.class);
+
 	public static final FileEditorState MY_EDITOR_STATE = new FileEditorState() {
 		@Override
 		public boolean canBeMergedWith(FileEditorState otherState, FileEditorStateLevel level) {
@@ -29,16 +33,20 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 	public UIFormEditor(@NotNull Project project, final VirtualFile file) {
 		this.file = file;
 		final MavenProject mavenProject = MavenProjectsManager.getInstance(project).findProject(file);
-		if (mavenProject == null) {
-			throw new RuntimeException("Report this bug please. MavenProject not found for file " + file.getPath());
+		if (mavenProject != null) {
+			myEditor = new GuiForm(project, file, mavenProject);
+		} else {
+			log.warn("MavenProject not found for file " + file.getPath(), new RuntimeException());
 		}
-		myEditor = new GuiForm(project, file, mavenProject);
 	}
 
 	@Override
 	@NotNull
 	public JComponent getComponent() {
-		return myEditor.getRootComponent();
+		if (myEditor != null) {
+			return myEditor.getRootComponent();
+		}
+		return new JLabel("Unexpected error. Try it again.");
 	}
 
 	@Override
@@ -55,7 +63,10 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 
 	@Override
 	public JComponent getPreferredFocusedComponent() {
-		return myEditor.getPreferredFocusedComponent();
+		if (myEditor != null) {
+			return myEditor.getPreferredFocusedComponent();
+		}
+		return null;
 	}
 
 	@Override
@@ -76,7 +87,9 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 
 	@Override
 	public void selectNotify() {
-		myEditor.selectNotify();
+		if (myEditor != null) {
+			myEditor.selectNotify();
+		}
 	}
 
 	@Override
