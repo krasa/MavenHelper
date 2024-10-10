@@ -10,16 +10,11 @@
 		<ul>
 		<li>easy way for analyzing and excluding conflicting dependencies</li>
         <li>actions to run/debug maven goals for a module that contains the current file or on the root module</li>
-	    <li>action to open terminal at the current maven module path</li> 
+	    <li>action to open terminal at the current maven module path</li>
         <li>actions to run/debug the current test file.
         </li> 
         </ul>
-        <br>    
-        Sponsored by:<br> 
-        <p><a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_mavenhelper&amp;utm_medium=banner"><img src="https://alt-images.codestream.com/codestream_logo_vojta_mavenhelper.png"></a><br>
-        Manage pull requests and conduct code reviews in your IDE with full source-tree context. Comment on any line, not just the diffs. Use jump-to-definition, your favorite keybindings, and code intelligence with more of your workflow.<br>
-        <a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_mavenhelper&amp;utm_medium=banner">Learn More</a></p>
-        <br><br>
+        <br>
         Usage:<br>
 		<ul>
         <li>Right click in Editor | Run Maven<br>
@@ -34,7 +29,7 @@
         </li>
 	    </ul>
 	   <br>If maven-surefire-plugin is configured to skip or exclude the test, 'verify' goal will be used, see different configuration styles at <a href="https://github.com/harishkannarao/MavenSurefireFailsafeExamples">https://github.com/harishkannarao/MavenSurefireFailsafeExamples</a>
-	       
+
         <br> <br>
         <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/MavenHelper/">GitHub</a> | <a href="https://github.com/krasa/MavenHelper/issues">Issues</a>
       ]]></description>
