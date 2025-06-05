@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
@@ -42,19 +43,18 @@ public class JumpToSourceAction extends BaseAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		final Navigatable navigatable = getNavigatable(myArtifact, myProject, myMavenProject);
-		if (navigatable != null && navigatable.canNavigate()) {
-			navigatable.navigate(true);
-		} else {
-			final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "", "Parent dependency not found, strange...",
-					NotificationType.WARNING);
-			ApplicationManager.getApplication().invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					Notifications.Bus.notify(notification, myProject);
-				}
-			});
-		}
+		ApplicationManager.getApplication().executeOnPooledThread(() -> {
+			final Navigatable navigatable = ReadAction.compute(() -> getNavigatable(myArtifact, myProject, myMavenProject));
+			if (navigatable != null && navigatable.canNavigate()) {
+				ApplicationManager.getApplication().invokeLater(() -> {
+					navigatable.navigate(true);
+				});
+			} else {
+				final Notification notification = new Notification(MAVEN_HELPER_DEPENDENCY_ANALYZER_NOTIFICATION, "", "Parent dependency not found, strange...",
+						NotificationType.WARNING);
+				ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification, myProject));
+			}
+		});
 	}
 
 }
