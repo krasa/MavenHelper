@@ -16,7 +16,7 @@ import krasa.mavenhelper.action.debug.MainMavenDebugActionGroup;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = "MavenRunHelper", storages = {@Storage("mavenRunHelper.xml")})

@@ -46,6 +46,11 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
 
     implementation("uk.com.robust-it:cloning:1.9.12")
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    implementation("org.apache.commons:commons-text:1.13.1")
 }
 
 
