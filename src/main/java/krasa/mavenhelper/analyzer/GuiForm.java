@@ -69,6 +69,7 @@ public class GuiForm implements Disposable {
 	private static final String LAST_SHOW_GROUP_ID_CHECKBOX = "MavenHelper.lastShowGroupIdCheckBox";
 	private static final String LAST_SHOW_SIZE_CHECKBOX = "MavenHelper.lastShowSizeCheckBox";
 	private static final String LAST_FILTER_CHECKBOX = "MavenHelper.lastFilterCheckBox";
+	private static final String LAST_HIDE_TESTS_CHECKBOX = "MavenHelper.lastHideTestsCheckBox";
 	public static final SimpleTextAttributes SIZE_ATTRIBUTES = SimpleTextAttributes.GRAY_ATTRIBUTES;
 
 	private final Project project;
@@ -93,6 +94,7 @@ public class GuiForm implements Disposable {
 	private MyHighlightingTree leftTree;
 	private JCheckBox showGroupId;
 	private JCheckBox showSize;
+	private JCheckBox hideTests;
 	private JPanel buttonsPanel;
 	private JButton donate;
 	private JButton reimport;
@@ -101,12 +103,14 @@ public class GuiForm implements Disposable {
 	private JCheckBox filter;
 	protected MyDefaultListModel listDataModel;
 	protected Map<String, List<MavenArtifactNode>> allArtifactsMap;
+	protected Map<String, List<MavenArtifactNode>> allArtifactsMapWithoutTests;
 	protected final DefaultTreeModel rightTreeModel;
 	protected final DefaultTreeModel leftTreeModel;
 	protected final MyDefaultMutableTreeNode rightTreeRoot;
 	protected final MyDefaultMutableTreeNode leftTreeRoot;
 	protected ListSpeedSearch myListSpeedSearch;
 	protected List<MavenArtifactNode> dependencyTree;
+	protected List<MavenArtifactNode> dependencyTreeWithoutTests;
 	protected CardLayout leftPanelLayout;
 
 	private boolean notificationShown;
@@ -274,6 +278,13 @@ public class GuiForm implements Disposable {
 			PropertiesComponent.getInstance().setValue(LAST_FILTER_CHECKBOX, filter.isSelected());
 		});
 
+		hideTests.addActionListener((event) -> {
+			RestoreSelection restoreSelection = new RestoreSelection(leftPanelList, leftTree);
+			updateLeftPanel();
+			restoreSelection.restore();
+			PropertiesComponent.getInstance().setValue(LAST_HIDE_TESTS_CHECKBOX, hideTests.isSelected());
+		});
+
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(leftTree);
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, leftTree));
@@ -294,6 +305,7 @@ public class GuiForm implements Disposable {
 		showGroupId.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_SHOW_GROUP_ID_CHECKBOX)));
 		showSize.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_SHOW_SIZE_CHECKBOX)));
 		filter.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_FILTER_CHECKBOX)));
+		hideTests.setSelected(Boolean.parseBoolean(PropertiesComponent.getInstance().getValue(LAST_HIDE_TESTS_CHECKBOX)));
 		Donate.init(donate);
 
 
@@ -442,7 +454,9 @@ public class GuiForm implements Disposable {
 		final Object selectedValue = leftPanelList.getSelectedValue();
 
 		dependencyTree = mavenProject.getDependencyTree();
-		allArtifactsMap = createAllArtifactsMap(dependencyTree);
+		dependencyTreeWithoutTests = dependencyTree.stream().filter(n -> !"test".equals(n.getArtifact().getScope())).toList();
+		allArtifactsMap = createAllArtifactsMap(dependencyTree, false);
+		allArtifactsMapWithoutTests = createAllArtifactsMap(dependencyTree, true);
 		updateLeftPanel();
 
 		rightTreeRoot.removeAllChildren();
@@ -477,7 +491,7 @@ public class GuiForm implements Disposable {
 			showNoConflictsLabel = isNoConflicts();
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else if (allDependenciesAsListRadioButton.isSelected()) {  //list
-			for (Map.Entry<String, List<MavenArtifactNode>> s : allArtifactsMap.entrySet()) {
+			for (Map.Entry<String, List<MavenArtifactNode>> s : hideTests.isSelected() ? allArtifactsMapWithoutTests.entrySet() : allArtifactsMap.entrySet()) {
 				if (contains(searchFieldText, s.getKey())) {
 					listDataModel.add(new MyListNode(s));
 				}
@@ -486,7 +500,7 @@ public class GuiForm implements Disposable {
 			showNoConflictsLabel = false;
 			leftPanelLayout.show(leftPanelWrapper, "list");
 		} else { // tree
-			fillLeftTree(leftTreeRoot, dependencyTree, searchFieldText, false);
+			fillLeftTree(leftTreeRoot, hideTests.isSelected() ? dependencyTreeWithoutTests : dependencyTree, searchFieldText, false);
 			sortTree();
 			leftTreeModel.nodeStructureChanged(leftTreeRoot);
 			TreeUtils.expandAll(leftTree);
@@ -584,13 +598,13 @@ public class GuiForm implements Disposable {
 		return false;
 	}
 
-	private Map<String, List<MavenArtifactNode>> createAllArtifactsMap(List<MavenArtifactNode> dependencyTree) {
+	private Map<String, List<MavenArtifactNode>> createAllArtifactsMap(List<MavenArtifactNode> dependencyTree, boolean ignoreTestScope) {
 		final Map<String, List<MavenArtifactNode>> map = new TreeMap<String, List<MavenArtifactNode>>();
-		addAll(map, dependencyTree, 0);
+		addAll(map, dependencyTree, ignoreTestScope, 0);
 		return map;
 	}
 
-	private void addAll(Map<String, List<MavenArtifactNode>> map, List<MavenArtifactNode> artifactNodes, int i) {
+	private void addAll(Map<String, List<MavenArtifactNode>> map, List<MavenArtifactNode> artifactNodes, boolean ignoreTestScope, int i) {
 		if (map == null) {
 			return;
 		}
@@ -606,7 +620,9 @@ public class GuiForm implements Disposable {
 		}
 		for (MavenArtifactNode mavenArtifactNode : artifactNodes) {
 			final MavenArtifact artifact = mavenArtifactNode.getArtifact();
-
+			if (ignoreTestScope && i == 0 && "test".equals(artifact.getScope())) {
+				continue;
+			}
 			final String key = getArtifactKey(artifact);
 			final List<MavenArtifactNode> mavenArtifactNodes = map.get(key);
 			if (mavenArtifactNodes == null) {
@@ -616,7 +632,7 @@ public class GuiForm implements Disposable {
 			} else {
 				mavenArtifactNodes.add(mavenArtifactNode);
 			}
-			addAll(map, mavenArtifactNode.getDependencies(), i + 1);
+			addAll(map, mavenArtifactNode.getDependencies(), ignoreTestScope, i + 1);
 		}
 	}
 
