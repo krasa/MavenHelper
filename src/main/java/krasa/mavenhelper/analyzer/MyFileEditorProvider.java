@@ -49,7 +49,9 @@ public class MyFileEditorProvider implements FileEditorProvider, DumbAware {
 	@Override
 	@NotNull
 	public FileEditor createEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
-		LOG.assertTrue(accept(project, file));
+//		https://github.com/krasa/MavenHelper/issues/130
+//		LOG.assertTrue(accept(project, file));
+
 		return new UIFormEditor(project, file);
 	}
 
