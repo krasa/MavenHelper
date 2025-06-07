@@ -5,16 +5,6 @@ IntelliJ Plugin - https://plugins.jetbrains.com/plugin/7179
 
 ---
 
-### Project setup:
-
-- Manually by guides: [Gif](projectSetup.gif), [MP4](https://mega.nz/#!HupmEChL!zMlxvYjuR3qjnyZnHuvPn6E3BC2aU1VBX_vkB7_cEWs).
-  - In this case, you need to install a [maven-server-api](https://search.maven.org/search?q=g:com.github.adedayo.intellij.sdk) library manually (because bundled packages of the latest IDEA versions don't support *MavenId* class).
-- Use [Plugin](https://plugins.jetbrains.com/plugin/6844-useful-actions).
-  -  `Tools | Add Dependant Bundled Plugins to IntelliJ Platform Plugin SDK` — instead of manual adding of Terminal and
-  Maven jars to the SDK.
-
----
-
 ### Sponsored by
 
 
