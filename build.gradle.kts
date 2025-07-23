@@ -33,22 +33,14 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-// https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
+    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
     implementation("commons-beanutils:commons-beanutils:1.9.4") {
         exclude(group = "commons-logging", module = "commons-logging")
     }
-
-// https://mvnrepository.com/artifact/org.apache.maven.shared/maven-shared-utils
-    implementation("org.apache.maven.shared:maven-shared-utils:3.3.4")
-
-
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-
+    // https://mvnrepository.com/artifact/uk.com.robust-it/cloning
     implementation("uk.com.robust-it:cloning:1.9.12")
-
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("org.apache.commons:commons-lang3:3.18.0")
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation("org.apache.commons:commons-text:1.13.1")
 }

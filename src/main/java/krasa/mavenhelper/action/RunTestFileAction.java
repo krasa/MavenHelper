@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.analyzer.ComparableVersion;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
-import org.apache.maven.shared.utils.io.MatchPatterns;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,10 @@ import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.utils.actions.MavenActionUtil;
 
 import javax.swing.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +121,11 @@ public class RunTestFileAction extends DumbAwareAction {
 						if (fullName == null) {
 							fullName = getPsiFilePath(psiFile);
 						}
-						excluded = matchClassRegexPatter(fullName, element.getText());
+						try {
+							excluded = matchClassRegexPatter(fullName, element.getText());
+						} catch (IllegalArgumentException e) {
+							LOG.warn("MavenProject Invalid glob pattern: " + element.getText());
+						}
 						if (excluded) {
 							break;
 						}
@@ -132,7 +139,9 @@ public class RunTestFileAction extends DumbAwareAction {
 	}
 
 	protected static boolean matchClassRegexPatter(String testClassFile, String classPattern) {
-		return MatchPatterns.from(classPattern).matches(testClassFile, true);
+		FileSystem fs = FileSystems.getDefault();
+		PathMatcher matcher = fs.getPathMatcher("glob:" + classPattern);
+		return matcher.matches(Paths.get(testClassFile));
 	}
 
 	@NotNull
