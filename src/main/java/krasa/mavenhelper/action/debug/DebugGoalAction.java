@@ -9,6 +9,7 @@ import krasa.mavenhelper.model.Goal;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class DebugGoalAction extends RunGoalAction {
 
@@ -26,12 +27,15 @@ public class DebugGoalAction extends RunGoalAction {
 
 	public static AnAction createDebug(Goal goal, String name, Icon icon, MavenProjectInfo mavenProject) {
 		return new DebugGoalAction(goal, name, "Debug: " + goal.getPresentableName(), icon, mavenProject);
-		
+
 	}
 
 	@Override
 	protected void run(final MavenRunnerParameters params, Project project) {
-		params.getGoals().addAll(Debug.DEBUG_FORK_MODE);
+		ArrayList<String> newGoals = new ArrayList<>();
+		newGoals.addAll(params.getGoals());
+		newGoals.addAll(Debug.DEBUG_FORK_MODE);
+		params.setGoals(newGoals);
 		runInternal(project, params);
 	}
 
