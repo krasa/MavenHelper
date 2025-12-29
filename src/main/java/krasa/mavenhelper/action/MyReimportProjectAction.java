@@ -35,7 +35,7 @@ class MyReimportProjectAction extends ReimportProjectAction {
 	}
 
 	@Override
-	protected boolean isVisible(AnActionEvent e) {
+	public boolean isVisible(AnActionEvent e) {
 		return mavenProjectInfo.mavenProject != null;
 	}
 }

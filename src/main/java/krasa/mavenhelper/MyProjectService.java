@@ -3,12 +3,10 @@ package krasa.mavenhelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectChanges;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
-import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
 
 import javax.swing.*;
 import java.util.List;
@@ -34,21 +32,22 @@ public class MyProjectService {
 			}
 
 			@Override
-
-			public void projectsUpdated(@NotNull List<Pair<MavenProject, MavenProjectChanges>> updated, @NotNull List<MavenProject> deleted) {
+			public void projectsUpdated(@NotNull List<? extends Pair<MavenProject, MavenProjectChanges>> updated, @NotNull List<MavenProject> deleted) {
+				MavenProjectsTree.Listener.super.projectsUpdated(updated, deleted);
 			}
 
 			@Override
-			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges, @Nullable NativeMavenProjectHolder nativeMavenProject) {
+			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
 						for (MyEventListener myEventListener : myEventListeners) {
-							myEventListener.projectResolved(projectWithChanges, nativeMavenProject);
+							myEventListener.projectResolved(projectWithChanges);
 						}
 					}
 				});
 			}
+
 
 			@Override
 			public void pluginsResolved(@NotNull MavenProject project) {
@@ -78,6 +77,6 @@ public class MyProjectService {
 	}
 
 	public interface MyEventListener {
-		void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges, @Nullable NativeMavenProjectHolder nativeMavenProject);
+		void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges);
 	}
 }

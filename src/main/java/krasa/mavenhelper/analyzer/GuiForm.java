@@ -25,13 +25,11 @@ import krasa.mavenhelper.analyzer.action.ListPopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectChanges;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
-import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -45,8 +43,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -312,7 +310,7 @@ public class GuiForm implements Disposable {
 		myEventListener = new MyProjectService.MyEventListener() {
 
 			@Override
-			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges, @Nullable NativeMavenProjectHolder nativeMavenProject) {
+			public void projectResolved(@NotNull Pair<MavenProject, MavenProjectChanges> projectWithChanges) {
 				if (projectWithChanges.first == mavenProject) {
 					if (refreshButton.isShowing() && manualReimport) {
 						manualReimport = false;
