@@ -14,7 +14,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.*;
+import com.intellij.ui.ColoredListCellRenderer;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.ListSpeedSearch;
+import com.intellij.ui.SearchTextField;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBList;
 import krasa.mavenhelper.Donate;
 import krasa.mavenhelper.MavenHelperApplicationService;
@@ -23,6 +27,7 @@ import krasa.mavenhelper.analyzer.action.LeftTreePopupHandler;
 import krasa.mavenhelper.analyzer.action.ListKeyStrokeAdapter;
 import krasa.mavenhelper.analyzer.action.ListPopupHandler;
 import krasa.mavenhelper.analyzer.action.RightTreePopupHandler;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
@@ -32,7 +37,12 @@ import org.jetbrains.idea.maven.project.MavenProjectChanges;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -43,8 +53,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Vojtech Krasa
@@ -125,6 +138,7 @@ public class GuiForm implements Disposable {
 	private ListPopupHandler leftPanelListPopupHandler;
 
 	public GuiForm(@NotNull Project project, VirtualFile file, @NotNull MavenProject mavenProject) {
+		initLocalization();
 		this.project = project;
 		this.file = file;
 		mavenProjectsManager = MavenProjectsManager.getInstance(project);
@@ -330,6 +344,21 @@ public class GuiForm implements Disposable {
 				mavenProjectsManager.forceUpdateAllProjectsOrFindAllAvailablePomFiles();
 			}
 		});
+	}
+
+	private void initLocalization() {
+		conflictsRadioButton.setText(MavenHelperBundle.message("gui.conflicts"));
+		allDependenciesAsListRadioButton.setText(MavenHelperBundle.message("gui.all.dependencies.as.list"));
+		allDependenciesAsTreeRadioButton.setText(MavenHelperBundle.message("gui.all.dependencies.as.tree"));
+		refreshButton.setText(MavenHelperBundle.message("gui.refresh.ui"));
+		reimport.setText(MavenHelperBundle.message("gui.reimport"));
+		reimport.setToolTipText(MavenHelperBundle.message("gui.reimport.tooltip"));
+		donate.setText(MavenHelperBundle.message("gui.donate"));
+		showGroupId.setText(MavenHelperBundle.message("gui.show.group.id"));
+		showSize.setText(MavenHelperBundle.message("gui.show.size"));
+		filter.setText(MavenHelperBundle.message("gui.filter"));
+		hideTests.setText(MavenHelperBundle.message("gui.hide.test.scope"));
+		noConflictsLabel.setText(MavenHelperBundle.message("gui.no.conflicts"));
 	}
 
 	private void createUIComponents() {

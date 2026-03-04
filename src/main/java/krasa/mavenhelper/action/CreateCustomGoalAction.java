@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import krasa.mavenhelper.MavenHelperApplicationService;
 import krasa.mavenhelper.gui.GoalEditor;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -46,7 +47,7 @@ public class CreateCustomGoalAction extends MyAnAction {
 		ConfigurationContext configurationContext = ConfigurationContext.getFromContext(e.getDataContext());
 
 
-		GoalEditor editor = new GoalEditor("Create and Run", "", state, true, e.getProject(), e.getDataContext());
+		GoalEditor editor = new GoalEditor(MavenHelperBundle.message("action.create.and.run"), "", state, true, e.getProject(), e.getDataContext());
 		if (editor.showAndGet()) {
 			String s = editor.getCmd();
 			if (StringUtils.isNotBlank(s)) {

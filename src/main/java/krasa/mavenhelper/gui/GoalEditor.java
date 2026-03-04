@@ -18,11 +18,16 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.ui.popup.ListPopupStepEx;
+import com.intellij.openapi.ui.popup.ListSeparator;
+import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.StatusText;
 import krasa.mavenhelper.action.Utils;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import krasa.mavenhelper.model.Alias;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -59,6 +64,7 @@ public class GoalEditor extends DialogWrapper {
 	private JPanel optionsPanel2;
 	private JCheckBox saveGoalCheckBox;
 	protected JLabel commandLineLabel;
+	private JLabel appendLabel;
 	private EditorImpl myEditor;
 
 	public static Goal editGoal(String title, final ApplicationSettings settings1, Goal goal) {
@@ -75,6 +81,7 @@ public class GoalEditor extends DialogWrapper {
 	                 
 	public GoalEditor(String title, String initialValue, ApplicationSettings applicationSettings, boolean persist, Project project, DataContext dataContext) {
 		super(true);
+		initLocalization();
 		setTitle(title);
 		saveGoalCheckBox.setSelected(PropertiesComponent.getInstance().getBoolean(SAVE, true));
 		saveGoalCheckBox.setVisible(persist);
@@ -82,24 +89,24 @@ public class GoalEditor extends DialogWrapper {
 		try {
 //		optionsPanel.add(new JBLabel("Append:"));
 //		optionsPanel.setLayout(new WrapLayout());
-			optionsPanel.add(getLinkLabel("-DskipTests", null));
-			optionsPanel.add(getLinkLabel(new ListItem("--update-snapshots", "Forces a check for updated releases and snapshots on remote repositories")));
-			optionsPanel.add(getLinkLabel(new ListItem("--offline", "Work offline")));
-			optionsPanel.add(getLinkLabel(new ListItem("--debug", "Produce execution debug output")));
-			optionsPanel.add(getLinkLabel(new ListItem("--non-recursive", "Do not recurse into sub-projects")));
+			optionsPanel.add(getLinkLabel("-DskipTests", MavenHelperBundle.message("goal.option.skip.tests")));
+			optionsPanel.add(getLinkLabel(new ListItem("--update-snapshots", MavenHelperBundle.message("goal.option.update.snapshots"))));
+			optionsPanel.add(getLinkLabel(new ListItem("--offline", MavenHelperBundle.message("goal.option.offline"))));
+			optionsPanel.add(getLinkLabel(new ListItem("--debug", MavenHelperBundle.message("goal.option.debug"))));
+			optionsPanel.add(getLinkLabel(new ListItem("--non-recursive", MavenHelperBundle.message("goal.option.non.recursive"))));
 
 //		optionsPanel2.setLayout(new WrapLayout());
-			optionsPanel2.add(listPopup("Option...", getOptions(false), false));
-			optionsPanel2.add(listPopup("Short Option...", getOptions(true), true));
+			optionsPanel2.add(listPopup(MavenHelperBundle.message("goal.editor.option"), getOptions(false), false));
+			optionsPanel2.add(listPopup(MavenHelperBundle.message("goal.editor.shortcut.option"), getOptions(true), true));
 
-			optionsPanel2.add(listPopup("Alias...", toListItems(applicationSettings.getAliases().getAliases()), false));
+			optionsPanel2.add(listPopup(MavenHelperBundle.message("goal.editor.alias"), toListItems(applicationSettings.getAliases().getAliases()), false));
 
 //		goalsPanel.add(new JBLabel("Goals:"));
 //		goalsPanel.setLayout(new WrapLayout());
 
-			goalsPanel.add(listPopup("Lifecycle Goal...", getGoals(), false));
-			goalsPanel.add(listPopup("Existing Goal...", getExistingGoals(applicationSettings), false));
-			goalsPanel.add(listPopup("Util...", getHelpfulGoals(), false));
+			goalsPanel.add(listPopup(MavenHelperBundle.message("goal.editor.lifecycle.goal"), getGoals(), false));
+			goalsPanel.add(listPopup(MavenHelperBundle.message("goal.editor.existing.goal"), getExistingGoals(applicationSettings), false));
+			goalsPanel.add(listPopup(MavenHelperBundle.message("goal.editor.util"), getHelpfulGoals(), false));
 
 
 			if (dataContext != null) {
@@ -120,7 +127,7 @@ public class GoalEditor extends DialogWrapper {
 							}
 						}
 					}
-					goalsPanel.add(listPopup("Plugin Goal...", listItems.toArray(new ListItem[0]), false));
+					goalsPanel.add(listPopup(MavenHelperBundle.message("goal.editor.plugin.goal"), listItems.toArray(new ListItem[0]), false));
 				}
 
 
@@ -146,6 +153,11 @@ public class GoalEditor extends DialogWrapper {
 //		IdeFocusManager.findInstanceByComponent(mainPanel).requestFocus(myEditor.getComponent(), true);
 	}
 
+	private void initLocalization() {
+		commandLineLabel.setText(MavenHelperBundle.message("goal.editor.command.line"));
+		appendLabel.setText(MavenHelperBundle.message("goal.editor.append"));
+		saveGoalCheckBox.setText(MavenHelperBundle.message("goal.editor.save.goal"));
+	}
 
 	private ListItem[] getExistingGoals(ApplicationSettings applicationSettings) {
 		Goals goals = applicationSettings.getGoals();
@@ -162,7 +174,7 @@ public class GoalEditor extends DialogWrapper {
 			Goal goal = pluginAwareGoalsGoals.get(i);
 			ListItem e = new ListItem(goal.getCommandLine());
 			if (i == 0) {
-				e.separatorAbove = new ListItem("Plugin aware:");
+				e.separatorAbove = new ListItem(MavenHelperBundle.message("goal.plugin.aware.label"));
 			}
 			arrayList.add(e);
 		}
@@ -172,18 +184,18 @@ public class GoalEditor extends DialogWrapper {
 
 	private ListItem[] getHelpfulGoals() {
 		return new ListItem[]{
-			new ListItem("dependency:tree -Dverbose", "Display project dependencies"),
-			new ListItem("dependency:analyze -Dverbose", "Analyze project dependencies"),
+				new ListItem("dependency:tree -Dverbose", MavenHelperBundle.message("goal.help.dependency.tree")),
+				new ListItem("dependency:analyze -Dverbose", MavenHelperBundle.message("goal.help.dependency.analyze")),
 
-			new ListItem("help:effective-settings", "Display effective Maven settings").withSeparatorAbove(),
-			new ListItem("help:effective-pom", "Display effective POM"),
-			new ListItem("help:active-profiles", "Display all profiles (from settings.xml and POMs hierarchy)"),
+				new ListItem("help:effective-settings", MavenHelperBundle.message("goal.help.effective.settings")).withSeparatorAbove(),
+				new ListItem("help:effective-pom", MavenHelperBundle.message("goal.help.effective.pom")),
+				new ListItem("help:active-profiles", MavenHelperBundle.message("goal.help.active.profiles")),
 
-			new ListItem("versions:display-dependency-updates", "Check dependencies for newer versions").withSeparatorAbove(),
-			new ListItem("versions:display-plugin-updates", "Check plugins for newer versions"),
-			new ListItem("versions:display-property-updates", "Check for newer versions defined as properties"),
-			new ListItem("versions:set -DnewVersion=$version$", "Set new version for all modules"),
-			new ListItem("versions:revert", "Revert changes made to the POM"),
+				new ListItem("versions:display-dependency-updates", MavenHelperBundle.message("goal.help.versions.dependency")).withSeparatorAbove(),
+				new ListItem("versions:display-plugin-updates", MavenHelperBundle.message("goal.help.versions.plugin")),
+				new ListItem("versions:display-property-updates", MavenHelperBundle.message("goal.help.versions.property")),
+				new ListItem("versions:set -DnewVersion=$version$", MavenHelperBundle.message("goal.help.versions.set")),
+				new ListItem("versions:revert", MavenHelperBundle.message("goal.help.versions.revert")),
 		};
 	}
 
@@ -191,82 +203,79 @@ public class GoalEditor extends DialogWrapper {
 		return new ListItem[]{
 
 
-			new ListItem(shortcut, "-am", "--also-make", "If project list is specified, also build projects required by the list"),
-			new ListItem(shortcut, "-amd", "--also-make-dependents", "If project list is specified, also build projects that depend on projects on the list"),
-			new ListItem(shortcut, "-B", "--batch-mode", "Run in non-interactive (batch) mode"),
-			new ListItem(shortcut, "-C", "--strict-checksums", "Fail the build if checksums don't match"),
-			new ListItem(shortcut, "-c", "--lax-checksums", "Warn if checksums don't match"),
-			new ListItem(shortcut, "-cpu", "--check-plugin-updates", "Ineffective, only kept for backward compatibility"),
-			new ListItem(shortcut, "-D", "--define <arg>", "Define a system property"),
-			new ListItem(shortcut, "-e", "--errors", "Produce execution error messages"),
-			new ListItem(shortcut, "-emp", "--encrypt-master-password <arg>", "Encrypt master security password"),
-			new ListItem(shortcut, "-ep", "--encrypt-password <arg>", "Encrypt server password"),
-			new ListItem(shortcut, "-f", "--file <arg>", "Force the use of an alternate POM file (or directory with pom.xml)."),
-			new ListItem(shortcut, "-fae", "--fail-at-end", "Only fail the build afterwards; allow all non-impacted builds to continue"),
-			new ListItem(shortcut, "-ff", "--fail-fast", "Stop at first failure in reactorized builds"),
-			new ListItem(shortcut, "-fn", "--fail-never", "NEVER fail the build, regardless of project result"),
-			new ListItem(shortcut, "-gs", "--global-settings <arg>", "Alternate path for the global settings file"),
-			new ListItem(shortcut, "-h", "--help", "Display help information"),
-			new ListItem(shortcut, "-l", "--log-file <arg>", "Log file to where all build output will go."),
-			new ListItem(shortcut, "-llr", "--legacy-local-repository", "Use Maven 2 Legacy Local Repository behaviour, ie no use of _maven.repositories. Can also be activated by using -Dmaven.legacyLocalRepo=true"),
-			new ListItem(shortcut, "-N", "--non-recursive", "Do not recurse into sub-projects"),
-			new ListItem(shortcut, "-npr", "--no-plugin-registry", "Ineffective, only kept for backward compatibility"),
-			new ListItem(shortcut, "-npu", "--no-plugin-updates", "Ineffective, only kept for backward compatibility"),
-			new ListItem(shortcut, "-nsu", "--no-snapshot-updates", "Suppress SNAPSHOT updates"),
-			new ListItem(shortcut, "-o", "--offline", "Work offline"),
-			new ListItem(shortcut, "-P", "--activate-profiles <arg>", "Comma-delimited list of profiles to activate"),
-			new ListItem(shortcut, "-pl", "--projects <arg>", "Comma-delimited list of specified reactor projects to build instead of all projects. A project can be specified by [groupId]:artifactId or by its relative path."),
-			new ListItem(shortcut, "-q", "--quiet", "Quiet output - only show errors"),
-			new ListItem(shortcut, "-rf", "--resume-from <arg>", "Resume reactor from specified project"),
-			new ListItem(shortcut, "-s", "--settings <arg>", "Alternate path for the user settings file"),
-			new ListItem(shortcut, "-T", "--threads <arg>", "Thread count, for instance 2.0C where C is core multiplied"),
-			new ListItem(shortcut, "-t", "--toolchains <arg>", "Alternate path for the user toolchains file"),
-			new ListItem(shortcut, "-U", "--update-snapshots", "Forces a check for updated releases and snapshots on remote repositories"),
-			new ListItem(shortcut, "-up", "--update-plugins", "Ineffective, only kept for backward compatibility"),
-			new ListItem(shortcut, "-V", "--show-version", "Display version information WITHOUT stopping build"),
-			new ListItem(shortcut, "-v", "--version", "Display version information"),
-			new ListItem(shortcut, "-X", "--debug", "Produce execution debug output"),
+				new ListItem(shortcut, "-am", "--also-make", MavenHelperBundle.message("goal.option.also.make")),
+				new ListItem(shortcut, "-amd", "--also-make-dependents", MavenHelperBundle.message("goal.option.also.make.dependents")),
+				new ListItem(shortcut, "-B", "--batch-mode", MavenHelperBundle.message("goal.option.batch.mode")),
+				new ListItem(shortcut, "-C", "--strict-checksums", MavenHelperBundle.message("goal.option.strict.checksums")),
+				new ListItem(shortcut, "-c", "--lax-checksums", MavenHelperBundle.message("goal.option.lax.checksums")),
+				new ListItem(shortcut, "-cpu", "--check-plugin-updates", MavenHelperBundle.message("goal.option.check.plugin.updates")),
+				new ListItem(shortcut, "-D", "--define <arg>", MavenHelperBundle.message("goal.option.define")),
+				new ListItem(shortcut, "-e", "--errors", MavenHelperBundle.message("goal.option.errors")),
+				new ListItem(shortcut, "-emp", "--encrypt-master-password <arg>", MavenHelperBundle.message("goal.option.encrypt.master.password")),
+				new ListItem(shortcut, "-ep", "--encrypt-password <arg>", MavenHelperBundle.message("goal.option.encrypt.password")),
+				new ListItem(shortcut, "-f", "--file <arg>", MavenHelperBundle.message("goal.option.file")),
+				new ListItem(shortcut, "-fae", "--fail-at-end", MavenHelperBundle.message("goal.option.fail.at.end")),
+				new ListItem(shortcut, "-ff", "--fail-fast", MavenHelperBundle.message("goal.option.fail.fast")),
+				new ListItem(shortcut, "-fn", "--fail-never", MavenHelperBundle.message("goal.option.fail.never")),
+				new ListItem(shortcut, "-gs", "--global-settings <arg>", MavenHelperBundle.message("goal.option.global.settings")),
+				new ListItem(shortcut, "-h", "--help", MavenHelperBundle.message("goal.option.help")),
+				new ListItem(shortcut, "-l", "--log-file <arg>", MavenHelperBundle.message("goal.option.log.file")),
+				new ListItem(shortcut, "-llr", "--legacy-local-repository", MavenHelperBundle.message("goal.option.legacy.local.repository")),
+				new ListItem(shortcut, "-N", "--non-recursive", MavenHelperBundle.message("goal.option.non.recursive")),
+				new ListItem(shortcut, "-npr", "--no-plugin-registry", MavenHelperBundle.message("goal.option.no.plugin.registry")),
+				new ListItem(shortcut, "-npu", "--no-plugin-updates", MavenHelperBundle.message("goal.option.no.plugin.updates")),
+				new ListItem(shortcut, "-nsu", "--no-snapshot-updates", MavenHelperBundle.message("goal.option.no.snapshot.updates")),
+				new ListItem(shortcut, "-o", "--offline", MavenHelperBundle.message("goal.option.offline")),
+				new ListItem(shortcut, "-P", "--activate-profiles <arg>", MavenHelperBundle.message("goal.option.activate.profiles")),
+				new ListItem(shortcut, "-pl", "--projects <arg>", MavenHelperBundle.message("goal.option.projects")),
+				new ListItem(shortcut, "-q", "--quiet", MavenHelperBundle.message("goal.option.quiet")),
+				new ListItem(shortcut, "-rf", "--resume-from <arg>", MavenHelperBundle.message("goal.option.resume.from")),
+				new ListItem(shortcut, "-s", "--settings <arg>", MavenHelperBundle.message("goal.option.settings")),
+				new ListItem(shortcut, "-T", "--threads <arg>", MavenHelperBundle.message("goal.option.threads")),
+				new ListItem(shortcut, "-t", "--toolchains <arg>", MavenHelperBundle.message("goal.option.toolchains")),
+				new ListItem(shortcut, "-U", "--update-snapshots", MavenHelperBundle.message("goal.option.update.snapshots")),
+				new ListItem(shortcut, "-up", "--update-plugins", MavenHelperBundle.message("goal.option.update.plugins")),
+				new ListItem(shortcut, "-V", "--show-version", MavenHelperBundle.message("goal.option.show.version")),
+				new ListItem(shortcut, "-v", "--version", MavenHelperBundle.message("goal.option.version")),
+				new ListItem(shortcut, "-X", "--debug", MavenHelperBundle.message("goal.option.debug")),
 
 		};
 	}
 
 	private ListItem[] getGoals() {
 		return new ListItem[]{
-			new ListItem("Clean Lifecycle").asSeparatorBefore(
-				new ListItem("pre-clean", "execute processes needed prior to the actual project cleaning")),
-			new ListItem("clean", "remove all files generated by the previous build"),
-			new ListItem("post-clean", "execute processes needed to finalize the project cleaning"),
+				new ListItem("Clean Lifecycle").asSeparatorBefore(new ListItem("pre-clean", MavenHelperBundle.message("goal.lifecycle.clean.pre"))),
+				new ListItem("clean", MavenHelperBundle.message("goal.lifecycle.clean")),
+				new ListItem("post-clean", MavenHelperBundle.message("goal.lifecycle.clean.post")),
 
-			new ListItem("Default Lifecycle").asSeparatorBefore(
-				new ListItem("validate", "validate the project is correct and all necessary information is available.")),
-			new ListItem("initialize", "initialize build state, e.g. set properties or create directories."),
-			new ListItem("generate-sources", "generate any source code for inclusion in compilation."),
-			new ListItem("process-sources", "process the source code, for example to filter any values."),
-			new ListItem("generate-resources", "generate resources for inclusion in the package."),
-			new ListItem("process-resources", "copy and process the resources into the destination directory, ready for packaging."),
-			new ListItem("compile", "compile the source code of the project."),
-			new ListItem("process-classes", "post-process the generated files from compilation, for example to do bytecode enhancement on Java classes."),
-			new ListItem("generate-test-sources", "generate any test source code for inclusion in compilation."),
-			new ListItem("process-test-sources", "process the test source code, for example to filter any values."),
-			new ListItem("generate-test-resources", "create resources for testing."),
-			new ListItem("process-test-resources", "copy and process the resources into the test destination directory."),
-			new ListItem("test-compile", "compile the test source code into the test destination directory"),
-			new ListItem("process-test-classes", "post-process the generated files from test compilation, for example to do bytecode enhancement on Java classes. For Maven 2.0.5 and above."),
-			new ListItem("test", "run tests using a suitable unit testing framework. These tests should not require the code be packaged or deployed."),
-			new ListItem("prepare-package", "perform any operations necessary to prepare a package before the actual packaging. This often results in an unpacked, processed version of the package. (Maven 2.1 and above)"),
-			new ListItem("package", "take the compiled code and package it in its distributable format, such as a JAR."),
-			new ListItem("pre-integration-test", "perform actions required before integration tests are executed. This may involve things such as setting up the required environment."),
-			new ListItem("integration-test", "process and deploy the package if necessary into an environment where integration tests can be run."),
-			new ListItem("post-integration-test", "perform actions required after integration tests have been executed. This may including cleaning up the environment."),
-			new ListItem("verify", "run any checks to verify the package is valid and meets quality criteria."),
-			new ListItem("install", "install the package into the local repository, for use as a dependency in other projects locally."),
-			new ListItem("deploy", "done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects."),
+				new ListItem("Default Lifecycle").asSeparatorBefore(new ListItem("validate", MavenHelperBundle.message("goal.lifecycle.default.validate"))),
+				new ListItem("initialize", MavenHelperBundle.message("goal.lifecycle.default.initialize")),
+				new ListItem("generate-sources", MavenHelperBundle.message("goal.lifecycle.default.generate.sources")),
+				new ListItem("process-sources", MavenHelperBundle.message("goal.lifecycle.default.process.sources")),
+				new ListItem("generate-resources", MavenHelperBundle.message("goal.lifecycle.default.generate.resources")),
+				new ListItem("process-resources", MavenHelperBundle.message("goal.lifecycle.default.process.resources")),
+				new ListItem("compile", MavenHelperBundle.message("goal.lifecycle.default.compile")),
+				new ListItem("process-classes", MavenHelperBundle.message("goal.lifecycle.default.process.classes")),
+				new ListItem("generate-test-sources", MavenHelperBundle.message("goal.lifecycle.default.generate.test.sources")),
+				new ListItem("process-test-sources", MavenHelperBundle.message("goal.lifecycle.default.process.test.sources")),
+				new ListItem("generate-test-resources", MavenHelperBundle.message("goal.lifecycle.default.generate.test.resources")),
+				new ListItem("process-test-resources", MavenHelperBundle.message("goal.lifecycle.default.process.test.resources")),
+				new ListItem("test-compile", MavenHelperBundle.message("goal.lifecycle.default.test.compile")),
+				new ListItem("process-test-classes", MavenHelperBundle.message("goal.lifecycle.default.process.test.classes")),
+				new ListItem("test", MavenHelperBundle.message("goal.lifecycle.default.test")),
+				new ListItem("prepare-package", MavenHelperBundle.message("goal.lifecycle.default.prepare.package")),
+				new ListItem("package", MavenHelperBundle.message("goal.lifecycle.default.package")),
+				new ListItem("pre-integration-test", MavenHelperBundle.message("goal.lifecycle.default.pre.integration.test")),
+				new ListItem("integration-test", MavenHelperBundle.message("goal.lifecycle.default.integration.test")),
+				new ListItem("post-integration-test", MavenHelperBundle.message("goal.lifecycle.default.post.integration.test")),
+				new ListItem("verify", MavenHelperBundle.message("goal.lifecycle.default.verify")),
+				new ListItem("install", MavenHelperBundle.message("goal.lifecycle.default.install")),
+				new ListItem("deploy", MavenHelperBundle.message("goal.lifecycle.default.deploy")),
 
-			new ListItem("Site Lifecycle").asSeparatorBefore(
-				new ListItem("pre-site", "execute processes needed prior to the actual project site generation")),
-			new ListItem("site", "generate the project's site documentation"),
-			new ListItem("post-site", "execute processes needed to finalize the site generation, and to prepare for site deployment"),
-			new ListItem("site-deploy", "deploy the generated site documentation to the specified web server"),
+				new ListItem("Site Lifecycle").asSeparatorBefore(new ListItem("pre-site", MavenHelperBundle.message("goal.lifecycle.site.pre"))),
+				new ListItem("site", MavenHelperBundle.message("goal.lifecycle.site")),
+				new ListItem("post-site", MavenHelperBundle.message("goal.lifecycle.site.post")),
+				new ListItem("site-deploy", MavenHelperBundle.message("goal.lifecycle.site.deploy")),
 		};
 	}
 

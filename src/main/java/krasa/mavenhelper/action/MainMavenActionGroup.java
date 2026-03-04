@@ -4,12 +4,19 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
 import krasa.mavenhelper.MavenHelperApplicationService;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
@@ -104,15 +111,15 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private void addReimport(List<AnAction> result, MavenProjectInfo mavenProject) {
 		final ReimportProjectAction e = new MyReimportProjectAction(mavenProject);
-		e.getTemplatePresentation().setText("Reimport");
+		e.getTemplatePresentation().setText(MavenHelperBundle.message("action.group.reimport"));
 		e.getTemplatePresentation().setIcon(AllIcons.Actions.Refresh);
-		e.getTemplatePresentation().setDescription("Reimport selected Maven project");
+		e.getTemplatePresentation().setDescription(MavenHelperBundle.message("action.group.reimport.description"));
 		result.add(e);
 
 	}
 
 	protected CreateCustomGoalAction getCreateCustomGoalAction(MavenProjectInfo mavenProject) {
-		return new CreateCustomGoalAction("New Goal...", mavenProject);
+		return new CreateCustomGoalAction(MavenHelperBundle.message("action.group.new.goal"), mavenProject);
 	}
 
 	protected void addTestFile(List<AnAction> result) {
@@ -121,7 +128,7 @@ public class MainMavenActionGroup extends ActionGroup implements DumbAware {
 
 	private void addPlugins(List<AnAction> anActions, List<DefaultActionGroup> mavenActionGroups) {
 		if (!mavenActionGroups.isEmpty()) {
-			DefaultActionGroup plugins = new DefaultActionGroup("Plugins", true);
+			DefaultActionGroup plugins = new DefaultActionGroup(MavenHelperBundle.message("action.group.plugins"), true);
 			for (DefaultActionGroup mavenActionGroup : mavenActionGroups) {
 				plugins.add(mavenActionGroup);
 			}
