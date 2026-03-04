@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
@@ -72,7 +73,7 @@ public final class UIFormEditor extends UserDataHolderBase implements /* Navigat
 	@Override
 	@NotNull
 	public String getName() {
-		return "Dependency Analyzer";
+		return MavenHelperBundle.message("dependency.analyzer");
 	}
 
 	@Override

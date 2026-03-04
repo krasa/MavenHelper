@@ -3,6 +3,7 @@ package krasa.mavenhelper;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.IconLoader;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +15,7 @@ public class Donate {
 	public static final Icon ICON = IconLoader.getIcon("/icons/coins_in_hand.png", Donate.class);
 
 	public static void init(JButton donate) {
-		donate.setText("Donate");
+		donate.setText(MavenHelperBundle.message("settings.donate"));
 		donate.setIcon(ICON);
 		donate.addActionListener(new ActionListener() {
 			@Override

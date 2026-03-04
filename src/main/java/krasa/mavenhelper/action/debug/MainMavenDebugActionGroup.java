@@ -8,6 +8,7 @@ import krasa.mavenhelper.action.CreateCustomGoalAction;
 import krasa.mavenhelper.action.MainMavenActionGroup;
 import krasa.mavenhelper.action.MavenProjectInfo;
 import krasa.mavenhelper.action.RunConfigurationAction;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import krasa.mavenhelper.icons.MyIcons;
 import krasa.mavenhelper.model.Goal;
 
@@ -23,7 +24,7 @@ public class MainMavenDebugActionGroup extends MainMavenActionGroup {
 
 	@Override
 	protected CreateCustomGoalAction getCreateCustomGoalAction(MavenProjectInfo mavenProject) {
-		return new CreateCustomDebugGoalAction("New Goal...", mavenProject);
+		return new CreateCustomDebugGoalAction(MavenHelperBundle.message("action.group.new.goal"), mavenProject);
 	}
 
 	@Override

@@ -35,6 +35,11 @@ version = providers.gradleProperty("pluginVersion").get()
 //kotlin {
 //    jvmToolchain(21)
 //}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 // Configure project's dependencies
 repositories {

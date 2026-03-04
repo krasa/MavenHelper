@@ -5,9 +5,14 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.ColorPicker;
+import com.intellij.ui.DoubleClickListener;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import krasa.mavenhelper.Donate;
+import krasa.mavenhelper.i18n.MavenHelperBundle;
 import krasa.mavenhelper.model.ApplicationSettings;
 import krasa.mavenhelper.model.Goal;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.List;
@@ -57,6 +68,7 @@ public class ApplicationSettingsForm {
 	private AliasTable aliasTable;
 
 	public ApplicationSettingsForm(ApplicationSettings original) {
+		initLocalization();
 		this.settings = original.clone();
 		aliasTable = new AliasTable(this.settings);
 		myPathVariablesPanel.add(
@@ -66,7 +78,7 @@ public class ApplicationSettingsForm {
 								aliasTable.editAlias()).setMoveUpAction(anActionButton ->
 								aliasTable.moveUp()).setMoveDownAction(anActionButton ->
 								aliasTable.moveDown()).addExtraAction(new AnActionButton(
-										"Reset Default Aliases", AllIcons.Actions.Rollback) {
+										MavenHelperBundle.message("settings.reset.default.aliases"), AllIcons.Actions.Rollback) {
 
 							@Override
 							public @NotNull ActionUpdateThread getActionUpdateThread() {
@@ -151,7 +163,7 @@ public class ApplicationSettingsForm {
 		searchBackgroundColorPickerLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Color color = ColorPicker.showDialog(rootComponent, "ColorPicker", new JBColor(new Color(settings.getSearchBackgroundColor()), new Color(settings.getSearchBackgroundColor())), true, new ArrayList<>(), true);
+				Color color = ColorPicker.showDialog(rootComponent, MavenHelperBundle.message("settings.color.picker"), new JBColor(new Color(settings.getSearchBackgroundColor()), new Color(settings.getSearchBackgroundColor())), true, new ArrayList<>(), true);
 				if (color != null) {
 					searchBackgroundColorPickerLabel.setBackground(color);
 					settings.setSearchBackgroundColor(color.getRGB());
@@ -166,7 +178,7 @@ public class ApplicationSettingsForm {
 		conflictsForegroundColorPickerLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Color color = ColorPicker.showDialog(rootComponent, "ColorPicker", new JBColor(new Color(settings.getConflictsForegroundColor()), new Color(settings.getConflictsForegroundColor())), true, new ArrayList<>(), true);
+				Color color = ColorPicker.showDialog(rootComponent, MavenHelperBundle.message("settings.color.picker"), new JBColor(new Color(settings.getConflictsForegroundColor()), new Color(settings.getConflictsForegroundColor())), true, new ArrayList<>(), true);
 				if (color != null) {
 					conflictsForegroundColorPickerLabel.setBackground(color);
 					settings.setConflictsForegroundColor(color.getRGB());
@@ -179,6 +191,23 @@ public class ApplicationSettingsForm {
 		});
     }
 
+	private void initLocalization() {
+		useIgnoredPoms.setText(MavenHelperBundle.message("settings.use.ignored.poms"));
+		donate.setText(MavenHelperBundle.message("settings.donate"));
+		enableDelete.setText(MavenHelperBundle.message("settings.enable.delete"));
+		resolveWorkspaceArtifactsCheckBox.setText(MavenHelperBundle.message("settings.resolve.workspace.artifacts"));
+		resolveWorkspaceArtifactsCheckBox.setToolTipText(MavenHelperBundle.message("settings.resolve.workspace.artifacts.tooltip"));
+		searchBackgroundColorNameLabel.setText(MavenHelperBundle.message("settings.search.background.color"));
+		conflictsForegroundColorNameLabel.setText(MavenHelperBundle.message("settings.conflicts.foreground.color"));
+		useTerminalCommand.setText(MavenHelperBundle.message("settings.use.terminal.command"));
+		terminalFeedback.setText(MavenHelperBundle.message("settings.feedback"));
+		initActionsInEditorCheckBox.setText(MavenHelperBundle.message("settings.init.actions.in.editor"));
+		initActionsInEditorCheckBox.setToolTipText(MavenHelperBundle.message("settings.init.actions.in.editor.tooltip"));
+		initActionsInProjectCheckBox.setText(MavenHelperBundle.message("settings.init.actions.in.project"));
+		initActionsInProjectCheckBox.setToolTipText(MavenHelperBundle.message("settings.init.actions.in.project.tooltip"));
+		initActionsInMavenCheckBox.setText(MavenHelperBundle.message("settings.init.actions.in.maven"));
+		initActionsInMavenCheckBox.setToolTipText(MavenHelperBundle.message("settings.init.actions.in.maven.tooltip"));
+	}
 
 	private KeyAdapter getDeleteKeyListener() {
 		return new KeyAdapter() {
@@ -194,7 +223,7 @@ public class ApplicationSettingsForm {
 	public Goal newGoal(final ApplicationSettings settings1) {
 		Goal o = null;
 
-		GoalEditor editor = new GoalEditor("New Goal", "", settings1, false, null, null);
+		GoalEditor editor = new GoalEditor(MavenHelperBundle.message("settings.new.goal"), "", settings1, false, null, null);
 		if (editor.showAndGet()) {
 			String s = editor.getCmd();
 			if (StringUtils.isNotBlank(s)) {
@@ -207,7 +236,7 @@ public class ApplicationSettingsForm {
 	private boolean editGoal(JList goals) {
 		Object selectedValue = goals.getSelectedValue();
 		if (selectedValue != null) {
-			GoalEditor.editGoal("Edit Goal", settings, (Goal) selectedValue);
+			GoalEditor.editGoal(MavenHelperBundle.message("settings.edit.goal"), settings, (Goal) selectedValue);
 			return true;
 		}
 		return false;

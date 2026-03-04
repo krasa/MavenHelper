@@ -34,6 +34,7 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/MavenHelper/">GitHub</a> | <a href="https://github.com/krasa/MavenHelper/issues">Issues</a>
       ]]></description>
 
+    <resource-bundle>messages.MavenHelperBundle</resource-bundle>
 
     <application-components>
     </application-components>
